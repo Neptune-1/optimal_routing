@@ -186,7 +186,7 @@ class _FieldState extends State<Field> {
                                       ? (routeIsConnected
                                       ? Style.accentColor
                                       : Style.primaryColor.withOpacity(1))
-                                      : Style.primaryColor.withOpacity(0.1),
+                                      : Style.primaryColor.withOpacity(0),
                                   borderRadius: BorderRadius.circular(100))),
                         ),
                       ),
@@ -214,7 +214,7 @@ class _FieldState extends State<Field> {
                                       ? (routeIsConnected
                                       ? Style.accentColor
                                       : Style.primaryColor.withOpacity(1))
-                                      : Style.primaryColor.withOpacity(0.1),
+                                      : Style.primaryColor.withOpacity(0),
                                   borderRadius: BorderRadius.circular(100))),
                         ),
                       ),
