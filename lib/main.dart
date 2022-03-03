@@ -6,14 +6,15 @@ import 'pages/level_page.dart';
 
 void main() async {
   Prefs.init();
+  runApp(const MyApp());
+
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   String version = packageInfo.version;
-  
+
   if(Prefs.getString("version") != version){
     Prefs.clear();
     Prefs.setString("version", version);
   }
-  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
