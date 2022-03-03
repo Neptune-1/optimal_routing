@@ -77,7 +77,7 @@ class _GamePageState extends State<GamePage> {
                         ),
                       ),
                     Text(
-                      "${["Easy", "Middle", "Hard"][widget.level]} $gameNum/${trees[widget.level].length}",
+                      "${["Easy", "Middle", "Hard"][widget.level]} ${gameNum+1}/${trees[widget.level].length}",
                       style: GoogleFonts.quicksand(
                           fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor),
                     ),
@@ -87,7 +87,7 @@ class _GamePageState extends State<GamePage> {
                           return SizedBox(
                             width: Style.blockM * 3,
                             child: Text(
-                              "${(snapshot.data ?? 0) +1}/${trees[widget.level][gameNum][1]}",
+                              "${(snapshot.data ?? 0)}/${trees[widget.level][gameNum][1]}",
                               style: GoogleFonts.quicksand(
                                   fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
                             ),

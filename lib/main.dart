@@ -13,14 +13,12 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   Future<bool> init(context) async {
-    print(0);
     Prefs.init();
-    print(1);
 
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String version = packageInfo.version;
-    print(2);
-    print(3);
+
+    //Prefs.clear();
 
     if (Prefs.getString("version") != version) {
       Prefs.clear();
