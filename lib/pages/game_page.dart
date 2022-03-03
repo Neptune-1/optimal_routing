@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../data/trees.dart';
+import '../prefs.dart';
 import '../styles.dart';
 import '../widgets/field.dart';
 
@@ -22,85 +24,101 @@ class _GamePageState extends State<GamePage> {
   final StreamController<int> currentNumOfLines = StreamController();
   final StreamController<int> timerStream = StreamController();
   final StreamController<bool> isGameOver = StreamController();
-  late Timer timer;
-  int gameNum = 0;
+  // late Timer timer;
+  late int gameNum;
 
   @override
   void initState() {
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      timerStream.add(timer.tick);
-    });
+    gameNum = Prefs.getInt(widget.level.toString()) ?? 0;
+    gameNum = gameNum >= trees[widget.level].length-1 ? gameNum-1 : gameNum;
+
+    // timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    //   timerStream.add(timer.tick);
+    // });
     super.initState();
   }
 
   void startNewGame() {
-    print("restartrestartrestartrestartrestart");
-    timer.cancel();
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      timerStream.add(timer.tick);
-    });
+    // timer.cancel();
+    // timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    //   timerStream.add(timer.tick);
+    // });
     currentNumOfLines.add(0);
-    gameNum != trees[widget.level].length ? gameNum++ : null;
+    gameNum != trees[widget.level].length-1 ? gameNum++ : null;
     isGameOver.add(false);
     setState(() {});
+  }
+
+  ifGameIsOver(){
+    Prefs.setInt(widget.level.toString(), gameNum+1);
+    // timer.cancel();
   }
 
   @override
   Widget build(BuildContext context) {
     Style.init(context);
-    Style.toPallet1();
     return Scaffold(
         backgroundColor: Style.backgroundColor,
         body: Stack(children: [
           Align(
-              alignment: const Alignment(0, -0.95),
+              alignment: const Alignment(0, kIsWeb ? -0.95 :  -0.9),
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: Style.blockM * 0.5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    SizedBox(
+                      width: Style.blockM * 3,
+                      height: Style.blockM * 1.5,
+                      child: GestureDetector(
+                          onTap: () =>
+                              Navigator.pop(context),
+                          child: Icon(Icons.arrow_back_ios, size: Style.blockM*1.3),
+                        ),
+                      ),
+                    Text(
+                      "${["Easy", "Middle", "Hard"][widget.level]} $gameNum/${trees[widget.level].length}",
+                      style: GoogleFonts.quicksand(
+                          fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor),
+                    ),
                     StreamBuilder<int>(
                         stream: currentNumOfLines.stream,
                         builder: (context, snapshot) {
                           return SizedBox(
                             width: Style.blockM * 3,
                             child: Text(
-                              "${snapshot.data ?? 0}/${trees[widget.level][gameNum][1]}",
+                              "${(snapshot.data ?? 0) +1}/${trees[widget.level][gameNum][1]}",
                               style: GoogleFonts.quicksand(
-                                  fontSize: Style.blockM * 0.6, fontWeight: FontWeight.w800, color: Style.primaryColor),
+                                  fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
                             ),
                           );
                         }),
-                    Text(
-                      ["Easy", "Middle", "Hard"][widget.level],
-                      style: GoogleFonts.quicksand(
-                          fontSize: Style.blockM * 1, fontWeight: FontWeight.w800, color: Style.primaryColor),
-                    ),
-                    StreamBuilder<int>(
-                        stream: timerStream.stream,
-                        builder: (context, snapshot) {
-                          String time = "00:00";
-
-                          if (snapshot.hasData) {
-                            String minutes = ((snapshot.data as int) ~/ 60).toString();
-                            String seconds = ((snapshot.data as int) % 60).toString();
-                            if (minutes.length == 1) minutes = '0' + minutes;
-                            if (seconds.length == 1) seconds = '0' + seconds;
-                            time = "$minutes:$seconds";
-                            if ((snapshot.data as int) ~/ 60 > 60) {
-                              time = "Reeally long";
-                            }
-                          }
-
-                          return SizedBox(
-                            width: Style.blockM * 3,
-                            child: Text(
-                              time,
-                              style: GoogleFonts.quicksand(
-                                  fontSize: Style.blockM * 0.6, fontWeight: FontWeight.w800, color: Style.primaryColor),
-                            ),
-                          );
-                        }),
+                    // StreamBuilder<int>(
+                    //     stream: timerStream.stream,
+                    //     builder: (context, snapshot) {
+                    //       String time = "00:00";
+                    //
+                    //       if (snapshot.hasData) {
+                    //         String minutes = ((snapshot.data as int) ~/ 60).toString();
+                    //         String seconds = ((snapshot.data as int) % 60).toString();
+                    //         if (minutes.length == 1) minutes = '0' + minutes;
+                    //         if (seconds.length == 1) seconds = '0' + seconds;
+                    //         time = "$minutes:$seconds";
+                    //         if ((snapshot.data as int) ~/ 60 > 60) {
+                    //           time = "Reeally long";
+                    //         }
+                    //       }
+                    //
+                    //       return SizedBox(
+                    //         width: Style.blockM * 3,
+                    //         child: Text(
+                    //           time,
+                    //           style: GoogleFonts.quicksand(
+                    //               fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
+                    //           textAlign: TextAlign.right,
+                    //         ),
+                    //       );
+                    //     }),
                   ],
                 ),
               )),
@@ -118,9 +136,10 @@ class _GamePageState extends State<GamePage> {
           StreamBuilder<bool>(
               stream: isGameOver.stream,
               builder: (context, snapshot) {
+                ifGameIsOver();
                 return AnimatedSwitcher(
                   duration: const Duration(milliseconds: 200),
-                  child: snapshot.data == true
+                  child: snapshot.data == true && trees[widget.level].length>gameNum
                       ? Align(
                           alignment: const Alignment(0, 0.9),
                           child: ElevatedButton(
@@ -133,14 +152,12 @@ class _GamePageState extends State<GamePage> {
                                 backgroundColor: MaterialStateProperty.all(Style.primaryColor),
                                 overlayColor: MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
                                 elevation: MaterialStateProperty.all(0)),
-                            onPressed: () {startNewGame();},
+                            onPressed: () {trees[widget.level].length-1 == gameNum ? Navigator.pop(context) : startNewGame();},
                             child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: Style.blockM * 0.5, horizontal: 5 * Style.blockM),
-                              child: Text("Next",
-                                  style: GoogleFonts.quicksand(
-                                      fontSize: Style.blockM * 0.7,
-                                      fontWeight: FontWeight.w800,
-                                      color: Style.secondaryColor)),
+                              padding: EdgeInsets.symmetric(vertical: Style.blockM * 0.5, horizontal: 2.5 * Style.blockM),
+                              child: Text(trees[widget.level].length-1 == gameNum ? "Back" : "Next",
+                                  style: GoogleFonts.quicksand(fontSize: Style.blockM * 1.4, fontWeight: FontWeight.w800, color: Style.secondaryColor)),
+
                             ),
                           ),
                         )

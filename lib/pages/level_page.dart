@@ -25,7 +25,6 @@ class _LevelPageState extends State<LevelPage> {
   @override
   Widget build(BuildContext context) {
     Style.init(context);
-    Style.toPallet1();
     return Scaffold(
         backgroundColor: Style.backgroundColor,
         body: Stack(
@@ -45,19 +44,20 @@ class _LevelPageState extends State<LevelPage> {
                           width: Style.blockM,
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 100),
-                            width: level == 0 ? Style.blockM * 0.35 : 0,
-                            height: level == 0 ? Style.blockM * 0.35 : 0,
+                            width: level == 0 ? Style.blockM * 0.5 : 0,
+                            height: level == 0 ? Style.blockM * 0.5 : 0,
                             decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.amber.shade500),
                           ),
                         ),
                         Text("Easy",
-                            style: GoogleFonts.quicksand(fontSize: Style.blockM * 1, fontWeight: FontWeight.w800)),
+                            style: GoogleFonts.quicksand(fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor)),
                         SizedBox(
                           width: Style.blockM,
                         ),
                       ],
                     ),
                   ),
+                  SizedBox(height: Style.blockM * 0.6,),
                   GestureDetector(
                     onTap: () => choseLevel(1),
                     child: Row(
@@ -67,19 +67,20 @@ class _LevelPageState extends State<LevelPage> {
                           width: Style.blockM,
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 100),
-                            width: level == 1 ? Style.blockM * 0.35 : 0,
-                            height: level == 1 ? Style.blockM * 0.35 : 0,
+                            width: level == 1 ? Style.blockM * 0.5 : 0,
+                            height: level == 1 ? Style.blockM * 0.5 : 0,
                             decoration: BoxDecoration(shape: BoxShape.circle, color: Style.accentColor),
                           ),
                         ),
                         Text("Middle",
-                            style: GoogleFonts.quicksand(fontSize: Style.blockM * 1, fontWeight: FontWeight.w800, color: Style.primaryColor)),
+                            style: GoogleFonts.quicksand(fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor)),
                         SizedBox(
                           width: Style.blockM,
                         ),
                       ],
                     ),
                   ),
+                  SizedBox(height: Style.blockM * 0.6,),
                   GestureDetector(
                     onTap: () => choseLevel(2),
                     child: Row(
@@ -89,13 +90,13 @@ class _LevelPageState extends State<LevelPage> {
                           width: Style.blockM,
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 100),
-                            width: level == 2 ? Style.blockM * 0.35 : 0,
-                            height: level == 2 ? Style.blockM * 0.35 : 0,
+                            width: level == 2 ? Style.blockM * 0.5 : 0,
+                            height: level == 2 ? Style.blockM * 0.5 : 0,
                             decoration: BoxDecoration(shape: BoxShape.circle, color: Style.accentColor),
                           ),
                         ),
                         Text("Hard",
-                            style: GoogleFonts.quicksand(fontSize: Style.blockM * 1, fontWeight: FontWeight.w800, color: Style.primaryColor)),
+                            style: GoogleFonts.quicksand(fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor)),
                         SizedBox(
                           width: Style.blockM,
                         ),
@@ -109,15 +110,20 @@ class _LevelPageState extends State<LevelPage> {
               alignment: const Alignment(0, 0.8),
               child: ElevatedButton(
                 style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(Style.blockM * 0.2),
+                    )),
+                    minimumSize: MaterialStateProperty.all(Size.zero),
+                    padding: MaterialStateProperty.all(EdgeInsets.zero),
                     backgroundColor: MaterialStateProperty.all(Style.primaryColor),
-                    overlayColor: MaterialStateProperty.all(Colors.transparent),
+                    overlayColor: MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
                     elevation: MaterialStateProperty.all(0)),
                 onPressed: () =>
                     Navigator.push(context, MaterialPageRoute(builder: (context) => GamePage(level: level))),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: Style.blockM * 0.3, horizontal: 5 * Style.blockM),
+                  padding: EdgeInsets.symmetric(vertical: Style.blockM * 0.5, horizontal: 2.5 * Style.blockM),
                   child: Text("Start",
-                      style: GoogleFonts.quicksand(fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor)),
+                      style: GoogleFonts.quicksand(fontSize: Style.blockM * 1.4, fontWeight: FontWeight.w800, color: Style.secondaryColor)),
                 ),
               ),
             )

@@ -37,5 +37,6 @@ class Style {
     block = MediaQuery.of(context).size.width / 20;
     blockH = MediaQuery.of(context).size.height / 20;
     blockM = block>blockH ? blockH : block;
+    if(kIsWeb) blockM/=1.5;
   }
 }

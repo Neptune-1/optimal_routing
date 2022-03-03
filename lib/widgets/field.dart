@@ -27,9 +27,10 @@ class Field extends StatefulWidget {
 class _FieldState extends State<Field> {
   final int fieldSize = 9;
   final double spacePointPoint = Style.blockM * 1.3;
-  final double pointDiameter = Style.blockM * 0.35;
+  final double pointDiameter = Style.blockM * 0.5;
   final double spaceLinePoint = Style.blockM * 0.3;
   final double lineThick = Style.blockM * 0.1;
+
   late List<List<bool>> routesH;
   late List<List<bool>> routesV;
   late List<List<bool>> points;
