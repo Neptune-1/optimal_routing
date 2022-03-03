@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:optimal_routing/pages/game_page.dart';
+import 'package:optimal_routing/prefs.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'pages/level_page.dart';
 
-void main() {
+void main() async {
+  Prefs.init();
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  String version = packageInfo.version;
+  
+  if(Prefs.getString("version") != version){
+    Prefs.clear();
+    Prefs.setString("version", version);
+  }
   runApp(const MyApp());
 }
 
