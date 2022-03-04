@@ -160,11 +160,11 @@ class _FieldState extends State<Field> {
                                           height: spacePointPoint - spaceLinePoint,
                                           width: lineThick,
                                           decoration: BoxDecoration(
-                                              color: routesV[x ~/ 2][y ~/ 2] || isGameOver
+                                              color: routesV[x ~/ 2][y ~/ 2]
                                                   ? (routeIsConnected
                                                       ? Style.accentColor
                                                       : Style.primaryColor.withOpacity(1))
-                                                  : Style.primaryColor.withOpacity(0),
+                                                  :  (isGameOver ? Colors.transparent : Style.primaryColor.withOpacity(0)),
                                               borderRadius: BorderRadius.circular(100))),
                                     ),
                                   ),
@@ -187,11 +187,11 @@ class _FieldState extends State<Field> {
                                           width: spacePointPoint - spaceLinePoint,
                                           height: lineThick,
                                           decoration: BoxDecoration(
-                                              color: routesH[x ~/ 2][y ~/ 2] || isGameOver
+                                              color: routesH[x ~/ 2][y ~/ 2]
                                                   ? (routeIsConnected
                                                       ? Style.accentColor
                                                       : Style.primaryColor.withOpacity(1))
-                                                  : Style.primaryColor.withOpacity(0),
+                                                  : (isGameOver ? Colors.transparent: Style.primaryColor.withOpacity(0)),
                                               borderRadius: BorderRadius.circular(100))),
                                     ),
                                   ),
@@ -204,10 +204,10 @@ class _FieldState extends State<Field> {
                                       color: (chosenPoints.firstWhere((e) => e.x == x ~/ 2 && e.y == y ~/ 2,
                                                   orElse: () => nullPoint) !=
                                               nullPoint)
-                                          ? (routeIsConnected && !isGameOver ? Style.primaryColor : Style.accentColor)
-                                          : (points[x ~/ 2][y ~/ 2] || isGameOver
-                                              ? (routeIsConnected ? Style.accentColor : Style.primaryColor)
-                                              : Style.primaryColor.withOpacity(0.1)),
+                                          ? (routeIsConnected ? (isGameOver ? Style.accentColor : Style.primaryColor) : Style.accentColor)
+                                          : (points[x ~/ 2][y ~/ 2]
+                                              ? (routeIsConnected ? Style.accentColor : (isGameOver ? Style.accentColor : Style.primaryColor))
+                                              : (isGameOver ? Colors.transparent : Style.primaryColor.withOpacity(0.1))),
                                       shape: BoxShape.circle)),
                         ))),
           ),
@@ -272,7 +272,7 @@ class _FieldState extends State<Field> {
                                                         width: lineThick,
                                                         decoration: BoxDecoration(
                                                             color: answerRoutesH[x ~/ 2][y ~/ 2]
-                                                                ? Style.primaryColor.withOpacity(1)
+                                                                ? Style.accentColor
                                                                 : Style.primaryColor.withOpacity(0),
                                                             borderRadius: BorderRadius.circular(100))),
                                                   ),
@@ -292,7 +292,7 @@ class _FieldState extends State<Field> {
                                                         height: lineThick,
                                                         decoration: BoxDecoration(
                                                             color: answerRoutesV[x ~/ 2][y ~/ 2]
-                                                                ? Style.primaryColor.withOpacity(1)
+                                                                ? Style.accentColor
                                                                 : Style.primaryColor.withOpacity(0),
                                                             borderRadius: BorderRadius.circular(100))),
                                                   ),
@@ -305,9 +305,9 @@ class _FieldState extends State<Field> {
                                                                   (e) => e.x == x ~/ 2 && e.y == y ~/ 2,
                                                                   orElse: () => nullPoint) !=
                                                               nullPoint)
-                                                          ? Style.accentColor
+                                                          ? Style.primaryColor.withOpacity(1)
                                                           : (points[x ~/ 2][y ~/ 2]
-                                                              ? Style.primaryColor.withOpacity(1)
+                                                              ?  Style.accentColor
                                                               : Style.primaryColor.withOpacity(0.1)),
                                                       shape: BoxShape.circle)),
                                         ))),

@@ -34,7 +34,7 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
   @override
   void initState() {
     gameNum = Prefs.getInt(widget.level.toString()) ?? 0;
-    gameNum = gameNum >= trees[widget.level].length ? gameNum-1 : gameNum;
+    if(gameNum!=0) gameNum -= 1;
     showAnswerStream = showAnswer.stream.asBroadcastStream();
     // timer = Timer.periodic(const Duration(seconds: 1), (timer) {
     //   timerStream.add(timer.tick);
