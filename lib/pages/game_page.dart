@@ -24,13 +24,14 @@ class _GamePageState extends State<GamePage> {
   final StreamController<int> currentNumOfLines = StreamController();
   final StreamController<int> timerStream = StreamController();
   final StreamController<bool> isGameOver = StreamController();
+  final StreamController<bool> showAnswer = StreamController();
   // late Timer timer;
   late int gameNum;
 
   @override
   void initState() {
     gameNum = Prefs.getInt(widget.level.toString()) ?? 0;
-    gameNum = gameNum >= trees[widget.level].length-1 ? gameNum-1 : gameNum;
+    gameNum = gameNum >= trees[widget.level].length ? gameNum-1 : gameNum;
 
     // timer = Timer.periodic(const Duration(seconds: 1), (timer) {
     //   timerStream.add(timer.tick);
@@ -54,6 +55,10 @@ class _GamePageState extends State<GamePage> {
     // timer.cancel();
   }
 
+  showAnswerAndHide(){
+    showAnswer.add(true);
+    // Future.delayed(const Duration(seconds: 5), () => showAnswer.add(false));
+  }
   @override
   Widget build(BuildContext context) {
     Style.init(context);
@@ -67,32 +72,55 @@ class _GamePageState extends State<GamePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(
-                      width: Style.blockM * 3,
-                      height: Style.blockM * 1.5,
-                      child: GestureDetector(
-                          onTap: () =>
-                              Navigator.pop(context),
-                          child: Icon(Icons.arrow_back_ios, size: Style.blockM*1.3),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: Style.blockM * 3,
+                          height: Style.blockM * 1.5,
+                          child: GestureDetector(
+                              onTap: () =>
+                                  Navigator.pop(context),
+                              child: Icon(Icons.arrow_back_ios, size: Style.blockM*1.3),
+                            ),
+                          ),
+                        SizedBox(
+                          width: Style.blockM * 3,
+
                         ),
-                      ),
+                      ],
+                    ),
                     Text(
                       "${["Easy", "Middle", "Hard"][widget.level]} ${gameNum+1}/${trees[widget.level].length}",
                       style: GoogleFonts.quicksand(
                           fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor),
                     ),
-                    StreamBuilder<int>(
-                        stream: currentNumOfLines.stream,
-                        builder: (context, snapshot) {
-                          return SizedBox(
-                            width: Style.blockM * 3,
-                            child: Text(
-                              "${(snapshot.data ?? 0)}/${trees[widget.level][gameNum][1]}",
-                              style: GoogleFonts.quicksand(
-                                  fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
-                            ),
-                          );
-                        }),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        StreamBuilder<int>(
+                            stream: currentNumOfLines.stream,
+                            builder: (context, snapshot) {
+                              return SizedBox(
+                                width: Style.blockM * 3,
+                                child: Text(
+                                  "${(snapshot.data ?? 0)}/${trees[widget.level][gameNum][1]}",
+                                  style: GoogleFonts.quicksand(
+                                      fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
+                                ),
+                              );
+                            }),
+                        SizedBox(
+                          width: Style.blockM * 3,
+                          height: Style.blockM * 1.5,
+                          child: GestureDetector(
+                            onTap: () => showAnswerAndHide(),
+                            child: Icon(Icons.remove_red_eye, size: Style.blockM*1.3),
+                          ),
+                        ),
+                      ],
+                    ),
+
                     // StreamBuilder<int>(
                     //     stream: timerStream.stream,
                     //     builder: (context, snapshot) {
@@ -130,7 +158,8 @@ class _GamePageState extends State<GamePage> {
                   currentNumOfLines: currentNumOfLines,
                   level: widget.level,
                   gameNum: gameNum,
-                  isGameOver: isGameOver),
+                  isGameOver: isGameOver,
+                  showAnswer: showAnswer.stream),
             ),
           ),
           StreamBuilder<bool>(

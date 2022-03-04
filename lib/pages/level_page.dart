@@ -119,7 +119,11 @@ class _LevelPageState extends State<LevelPage> {
                     overlayColor: MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
                     elevation: MaterialStateProperty.all(0)),
                 onPressed: () =>
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => GamePage(level: level))),
+                    Navigator.push(context,PageRouteBuilder(
+                      pageBuilder: (c, a1, a2) => GamePage(level: level),
+                      transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                      transitionDuration: Duration(milliseconds: 300),
+                    ),),
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: Style.blockM * 0.5, horizontal: 2.5 * Style.blockM),
                   child: Text("Start",
