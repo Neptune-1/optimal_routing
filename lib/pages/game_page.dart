@@ -150,7 +150,7 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                                 child: GestureDetector(
                                   behavior: HitTestBehavior.translucent,
                                   onTap: () => showAnswerAndHide(),
-                                  child: Icon(Icons.remove_red_eye, size: Style.blockM*1.3),
+                                  child: Icon(Icons.remove_red_eye, size: Style.blockM*1),
                                 ),
                               ),
                             ],

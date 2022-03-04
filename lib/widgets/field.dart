@@ -245,73 +245,78 @@ class _FieldState extends State<Field> {
                     }
                   }
                 }
-                return snapshot.data == true
-                    ? Container(
-                        color: Style.backgroundColor,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: List.generate(
-                              fieldSize * 2 - 1,
-                              (y) => y % 2 == 1
-                                  ? Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: List.generate(
-                                        fieldSize * 2 - 1,
-                                        (x) => x % 2 == 1
-                                            ? SizedBox(
-                                                width: spacePointPoint,
-                                              )
-                                            : SizedBox(
-                                                height: spacePointPoint,
-                                                width: pointDiameter,
-                                                child: Center(
-                                                  child: Container(
-                                                      height: spacePointPoint - spaceLinePoint,
-                                                      width: lineThick,
-                                                      decoration: BoxDecoration(
-                                                          color: answerRoutesH[x ~/ 2][y ~/ 2]
-                                                              ? Style.primaryColor.withOpacity(1)
-                                                              : Style.primaryColor.withOpacity(0),
-                                                          borderRadius: BorderRadius.circular(100))),
+                return AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  child: snapshot.data == true
+                      ? Container(
+                          color: Style.backgroundColor,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: List.generate(
+                                fieldSize * 2 - 1,
+                                (y) => y % 2 == 1
+                                    ? Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: List.generate(
+                                          fieldSize * 2 - 1,
+                                          (x) => x % 2 == 1
+                                              ? SizedBox(
+                                                  width: spacePointPoint,
+                                                )
+                                              : SizedBox(
+                                                  height: spacePointPoint,
+                                                  width: pointDiameter,
+                                                  child: Center(
+                                                    child: Container(
+                                                        height: spacePointPoint - spaceLinePoint,
+                                                        width: lineThick,
+                                                        decoration: BoxDecoration(
+                                                            color: answerRoutesH[x ~/ 2][y ~/ 2]
+                                                                ? Style.primaryColor.withOpacity(1)
+                                                                : Style.primaryColor.withOpacity(0),
+                                                            borderRadius: BorderRadius.circular(100))),
+                                                  ),
                                                 ),
-                                              ),
-                                      ))
-                                  : Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: List.generate(
-                                        fieldSize * 2 - 1,
-                                        (x) => x % 2 == 1
-                                            ? SizedBox(
-                                                width: spacePointPoint,
-                                                height: pointDiameter,
-                                                child: Center(
-                                                  child: Container(
-                                                      width: spacePointPoint - spaceLinePoint,
-                                                      height: lineThick,
-                                                      decoration: BoxDecoration(
-                                                          color: answerRoutesV[x ~/ 2][y ~/ 2]
+                                        ))
+                                    : Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: List.generate(
+                                          fieldSize * 2 - 1,
+                                          (x) => x % 2 == 1
+                                              ? SizedBox(
+                                                  width: spacePointPoint,
+                                                  height: pointDiameter,
+                                                  child: Center(
+                                                    child: Container(
+                                                        width: spacePointPoint - spaceLinePoint,
+                                                        height: lineThick,
+                                                        decoration: BoxDecoration(
+                                                            color: answerRoutesV[x ~/ 2][y ~/ 2]
+                                                                ? Style.primaryColor.withOpacity(1)
+                                                                : Style.primaryColor.withOpacity(0),
+                                                            borderRadius: BorderRadius.circular(100))),
+                                                  ),
+                                                )
+                                              : Container(
+                                                  width: pointDiameter,
+                                                  height: pointDiameter,
+                                                  decoration: BoxDecoration(
+                                                      color: (chosenPoints.firstWhere(
+                                                                  (e) => e.x == x ~/ 2 && e.y == y ~/ 2,
+                                                                  orElse: () => nullPoint) !=
+                                                              nullPoint)
+                                                          ? Style.accentColor
+                                                          : (points[x ~/ 2][y ~/ 2]
                                                               ? Style.primaryColor.withOpacity(1)
-                                                              : Style.primaryColor.withOpacity(0),
-                                                          borderRadius: BorderRadius.circular(100))),
-                                                ),
-                                              )
-                                            : Container(
-                                                width: pointDiameter,
-                                                height: pointDiameter,
-                                                decoration: BoxDecoration(
-                                                    color: (chosenPoints.firstWhere(
-                                                                (e) => e.x == x ~/ 2 && e.y == y ~/ 2,
-                                                                orElse: () => nullPoint) !=
-                                                            nullPoint)
-                                                        ? Style.accentColor
-                                                        : (points[x ~/ 2][y ~/ 2]
-                                                            ? Style.primaryColor.withOpacity(1)
-                                                            : Style.primaryColor.withOpacity(0.1)),
-                                                    shape: BoxShape.circle)),
-                                      ))),
+                                                              : Style.primaryColor.withOpacity(0.1)),
+                                                      shape: BoxShape.circle)),
+                                        ))),
+                          ),
+                        )
+                      : Container(
+                          key: UniqueKey(),
                         ),
-                      )
-                    : Container();
+                );
               }),
         ),
       ],
