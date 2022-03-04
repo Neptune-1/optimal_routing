@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../data/trees.dart';
@@ -29,8 +30,8 @@ class Field extends StatefulWidget {
 
 class _FieldState extends State<Field> {
   final int fieldSize = 9;
-  final double spacePointPoint = Style.blockM * 1.7;
-  final double pointDiameter = Style.blockM * 0.7;
+  final double spacePointPoint = kIsWeb ? Style.blockM * 1.7 : Style.blockM * 1.5;
+  final double pointDiameter = kIsWeb ? Style.blockM * 0.7 : Style.blockM * 0.6;
   final double spaceLinePoint = Style.blockM * 0.3;
   final double lineThick = Style.blockM * 0.1;
 
@@ -109,14 +110,13 @@ class _FieldState extends State<Field> {
     int r2 = (y != 0 ? routesV[x][y - 1] : false) ? 1 : 0;
     int r3 = (routesH[x][y]) ? 1 : 0;
     int r4 = (x != 0 ? routesH[x - 1][y] : false) ? 1 : 0;
-
     bool res = r1 + r2 + r3 + r4 > 1;
     if (res) {
       filledPoints.add(Point(x, y));
     } else {
       filledPoints.removeWhere((element) => (element!.x == x && element.y == y));
     }
-    //print(filledPoints);
+
     return res;
   }
 
@@ -214,75 +214,105 @@ class _FieldState extends State<Field> {
         ),
         Center(
           child: StreamBuilder<Object>(
-            stream: widget.showAnswer,
-            builder: (context, snapshot) {
+              stream: widget.showAnswer,
+              builder: (context, snapshot) {
+                List<List<List<int>>> answer = trees[widget.level][widget.gameNum][2];
+                List<List<bool>> answerRoutesH =
+                    List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false));
+                List<List<bool>> answerRoutesV =
+                    List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false));
+                List<List<bool>> points = List.generate(
+                    fieldSize,
+                    (x) => List.generate(
+                        fieldSize,
+                        (y) => (chosenPoints.firstWhere((e) => e.x == x && e.y == y, orElse: () => nullPoint) !=
+                            nullPoint)));
 
-              List<List<List<int>>> answer = trees[widget.level][widget.gameNum][2];
-              List<List<bool>> routesH = List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false));
-              List<List<bool>> routesV = List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false));
-              for(var line in answer){
-                Point p1 = Point(line[0][0], line[0][1]);
-                Point p2 = Point(line[1][0], line[1][1]);
-                if(p1.x==p2.x && p1.y!=p2.y) routesH[min(p1.x, p2.x)][min(p2.y, p1.y)] = true;
-                else if (p1.y==p2.y && p1.x!=p2.x) routesV[min(p1.x, p2.x)][min(p2.y, p1.y)] = true;
-              }
-              return snapshot.data == true ?  Column(
-                mainAxisSize: MainAxisSize.min,
-                children: List.generate(
-                    fieldSize * 2 - 1,
-                    (y) => y % 2 == 1
-                        ? Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: List.generate(
+                for (var line in answer) {
+                  Point p1 = Point(line[0][0], line[0][1]);
+                  Point p2 = Point(line[1][0], line[1][1]);
+                  if (p1.x == p2.x && p1.y != p2.y) {
+                    answerRoutesH[min(p1.x, p2.x)][min(p2.y, p1.y)] = true;
+                    points[min(p1.x, p2.x)][min(p2.y, p1.y)] = true;
+                    if (min(p1.y, p2.y) != fieldSize - 1) {
+                      points[min(p1.x, p2.x)][min(p2.y, p1.y) + 1] = true;
+                    }
+                  } else if (p1.y == p2.y && p1.x != p2.x) {
+                    answerRoutesV[min(p1.x, p2.x)][min(p2.y, p1.y)] = true;
+                    points[min(p1.x, p2.x)][min(p2.y, p1.y)] = true;
+                    if (min(p1.x, p2.x) != fieldSize - 1) {
+                      points[min(p1.x, p2.x) + 1][min(p2.y, p1.y)] = true;
+                    }
+                  }
+                }
+                return snapshot.data == true
+                    ? Container(
+                        color: Style.backgroundColor,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: List.generate(
                               fieldSize * 2 - 1,
-                              (x) => x % 2 == 1
-                                  ? SizedBox(
-                                      width: spacePointPoint,
-                                    )
-                                  : SizedBox(
-                                      height: spacePointPoint,
-                                      width: pointDiameter,
-                                      child: Center(
-                                        child: Container(
-                                            height: spacePointPoint - spaceLinePoint,
-                                            width: lineThick,
-                                            decoration: BoxDecoration(
-                                                color:  routesH[x ~/ 2][y ~/ 2]
-                                                    ? Style.primaryColor.withOpacity(1)
-                                                    : Style.primaryColor.withOpacity(0),
-                                                borderRadius: BorderRadius.circular(100))),
-                                      ),
-                                    ),
-                            ))
-                        : Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: List.generate(
-                              fieldSize * 2 - 1,
-                              (x) => x % 2 == 1
-                                  ? SizedBox(
-                                      width: spacePointPoint,
-                                      height: pointDiameter,
-                                      child: Center(
-                                        child: Container(
-                                            width: spacePointPoint - spaceLinePoint,
-                                            height: lineThick,
-                                            decoration: BoxDecoration(
-                                                color:  routesV[x ~/ 2][y ~/ 2]
-                                                    ? Style.primaryColor.withOpacity(1)
-                                                    : Style.primaryColor.withOpacity(0),
-                                                borderRadius: BorderRadius.circular(100))),
-                                      ),
-                                    )
-                                  : Container(
-                                      width: pointDiameter,
-                                      height: pointDiameter,
-                                      decoration: BoxDecoration(
-                                          color: false ? Style.primaryColor.withOpacity(1) : Style.primaryColor.withOpacity(0.1),
-                                          shape: BoxShape.circle)),
-                            ))),
-              ) : Container();
-            }
-          ),
+                              (y) => y % 2 == 1
+                                  ? Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: List.generate(
+                                        fieldSize * 2 - 1,
+                                        (x) => x % 2 == 1
+                                            ? SizedBox(
+                                                width: spacePointPoint,
+                                              )
+                                            : SizedBox(
+                                                height: spacePointPoint,
+                                                width: pointDiameter,
+                                                child: Center(
+                                                  child: Container(
+                                                      height: spacePointPoint - spaceLinePoint,
+                                                      width: lineThick,
+                                                      decoration: BoxDecoration(
+                                                          color: answerRoutesH[x ~/ 2][y ~/ 2]
+                                                              ? Style.primaryColor.withOpacity(1)
+                                                              : Style.primaryColor.withOpacity(0),
+                                                          borderRadius: BorderRadius.circular(100))),
+                                                ),
+                                              ),
+                                      ))
+                                  : Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: List.generate(
+                                        fieldSize * 2 - 1,
+                                        (x) => x % 2 == 1
+                                            ? SizedBox(
+                                                width: spacePointPoint,
+                                                height: pointDiameter,
+                                                child: Center(
+                                                  child: Container(
+                                                      width: spacePointPoint - spaceLinePoint,
+                                                      height: lineThick,
+                                                      decoration: BoxDecoration(
+                                                          color: answerRoutesV[x ~/ 2][y ~/ 2]
+                                                              ? Style.primaryColor.withOpacity(1)
+                                                              : Style.primaryColor.withOpacity(0),
+                                                          borderRadius: BorderRadius.circular(100))),
+                                                ),
+                                              )
+                                            : Container(
+                                                width: pointDiameter,
+                                                height: pointDiameter,
+                                                decoration: BoxDecoration(
+                                                    color: (chosenPoints.firstWhere(
+                                                                (e) => e.x == x ~/ 2 && e.y == y ~/ 2,
+                                                                orElse: () => nullPoint) !=
+                                                            nullPoint)
+                                                        ? Style.accentColor
+                                                        : (points[x ~/ 2][y ~/ 2]
+                                                            ? Style.primaryColor.withOpacity(1)
+                                                            : Style.primaryColor.withOpacity(0.1)),
+                                                    shape: BoxShape.circle)),
+                                      ))),
+                        ),
+                      )
+                    : Container();
+              }),
         ),
       ],
     );

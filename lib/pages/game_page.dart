@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -19,24 +19,36 @@ class GamePage extends StatefulWidget {
   State<GamePage> createState() => _GamePageState();
 }
 
-class _GamePageState extends State<GamePage> {
+class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin {
+  late final AnimationController controller;
   int currentLinesNumber = 0;
   final StreamController<int> currentNumOfLines = StreamController();
   final StreamController<int> timerStream = StreamController();
   final StreamController<bool> isGameOver = StreamController();
   final StreamController<bool> showAnswer = StreamController();
+  late final Stream<bool> showAnswerStream;
   // late Timer timer;
   late int gameNum;
+  final int answerShowTime = 5;
 
   @override
   void initState() {
     gameNum = Prefs.getInt(widget.level.toString()) ?? 0;
     gameNum = gameNum >= trees[widget.level].length ? gameNum-1 : gameNum;
-
+    showAnswerStream = showAnswer.stream.asBroadcastStream();
     // timer = Timer.periodic(const Duration(seconds: 1), (timer) {
     //   timerStream.add(timer.tick);
     // });
+
+
+
     super.initState();
+
+    controller = AnimationController(
+      value: 1,
+      vsync: this,
+      duration: Duration(seconds: answerShowTime),
+    );
   }
 
   void startNewGame() {
@@ -56,8 +68,15 @@ class _GamePageState extends State<GamePage> {
   }
 
   showAnswerAndHide(){
-    showAnswer.add(true);
-    // Future.delayed(const Duration(seconds: 5), () => showAnswer.add(false));
+    if(!controller.isAnimating) {
+      controller.forward(from: 0);
+      showAnswer.add(true);
+      Future.delayed(Duration(seconds: answerShowTime), () {
+        showAnswer.add(false);
+        controller.value = 1;
+        controller.stop(canceled: false);
+      });
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -113,9 +132,28 @@ class _GamePageState extends State<GamePage> {
                         SizedBox(
                           width: Style.blockM * 3,
                           height: Style.blockM * 1.5,
-                          child: GestureDetector(
-                            onTap: () => showAnswerAndHide(),
-                            child: Icon(Icons.remove_red_eye, size: Style.blockM*1.3),
+                          child: Stack(
+                            children: [
+
+                              Center(
+                                child: SizedBox(
+                                  width: Style.blockM * 1.5,
+                                  height: Style.blockM * 1.5,
+                                  child: AnimatedBuilder(
+                                    animation: controller,
+                                    builder: (context, w) {
+                                      return Center(child: CircularProgressIndicator(value:1- controller.value, color: Colors.black,strokeWidth: Style.blockM*0.1,));
+                                    }
+                                  ),
+                                ),
+                              ), Center(
+                                child: GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
+                                  onTap: () => showAnswerAndHide(),
+                                  child: Icon(Icons.remove_red_eye, size: Style.blockM*1.3),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -159,7 +197,7 @@ class _GamePageState extends State<GamePage> {
                   level: widget.level,
                   gameNum: gameNum,
                   isGameOver: isGameOver,
-                  showAnswer: showAnswer.stream),
+                  showAnswer: showAnswerStream),
             ),
           ),
           StreamBuilder<bool>(
