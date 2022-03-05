@@ -203,7 +203,7 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                   duration: const Duration(milliseconds: 200),
                   child: snapshot.data == true && trees[widget.level].length > gameNum
                       ? Align(
-                          alignment: const Alignment(0, 0.9),
+                          alignment: const Alignment(0, kIsWeb ? 0.9 : 0.8),
                           child: ElevatedButton(
                             style: ButtonStyle(
                                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(

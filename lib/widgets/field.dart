@@ -212,7 +212,7 @@ class _FieldState extends State<Field> {
                                               ? (routeIsConnected ? (isGameOver ? Style.accentColor : Style.primaryColor) : Style.accentColor)
                                               : (points[x ~/ 2][y ~/ 2]
                                                   ? (routeIsConnected ? Style.accentColor : (isGameOver ? Style.accentColor : Style.primaryColor))
-                                                  : (isGameOver ? Colors.transparent : Style.primaryColor.withOpacity(0.5))),
+                                                  : (isGameOver ? Style.primaryColor.withOpacity(1) : Style.primaryColor.withOpacity(0.5))),
                                           shape: BoxShape.circle)),
                                 ),
                               ),
