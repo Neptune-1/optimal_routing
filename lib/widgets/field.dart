@@ -30,9 +30,10 @@ class Field extends StatefulWidget {
 
 class _FieldState extends State<Field> {
   final int fieldSize = 9;
-  final double spacePointPoint = kIsWeb ? Style.blockM * 1.7 : Style.blockM * 1.5;
-  final double pointDiameter = kIsWeb ? Style.blockM * 0.7 : Style.blockM * 0.6;
-  final double spaceLinePoint = Style.blockM * 0.3;
+  final double spacePointPoint = kIsWeb ? Style.blockM * 1.3 : Style.blockM * 1;
+  final double pointDiameter = kIsWeb ? Style.blockM * 1 : Style.blockM * 1;
+  late final double showedPointDiameter;
+  final double spaceLinePoint = Style.blockM * 0;
   final double lineThick = Style.blockM * 0.1;
 
   late List<List<bool>> routesH;
@@ -49,7 +50,7 @@ class _FieldState extends State<Field> {
   @override
   void initState() {
     super.initState();
-
+    showedPointDiameter = pointDiameter*0.2;
     graph = Graph(fieldSize);
     routesH = List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false));
     routesV = List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false));
@@ -196,19 +197,25 @@ class _FieldState extends State<Field> {
                                     ),
                                   ),
                                 )
-                              : AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  width: pointDiameter,
-                                  height: pointDiameter,
-                                  decoration: BoxDecoration(
-                                      color: (chosenPoints.firstWhere((e) => e.x == x ~/ 2 && e.y == y ~/ 2,
-                                                  orElse: () => nullPoint) !=
-                                              nullPoint)
-                                          ? (routeIsConnected ? (isGameOver ? Style.accentColor : Style.primaryColor) : Style.accentColor)
-                                          : (points[x ~/ 2][y ~/ 2]
-                                              ? (routeIsConnected ? Style.accentColor : (isGameOver ? Style.accentColor : Style.primaryColor))
-                                              : (isGameOver ? Colors.transparent : Style.primaryColor.withOpacity(0.1))),
-                                      shape: BoxShape.circle)),
+                              : SizedBox(
+                                width: pointDiameter,
+                                height: pointDiameter,
+                                child: Center(
+                                  child: AnimatedContainer(
+                                      duration: const Duration(milliseconds: 200),
+                                      width: showedPointDiameter *(isInTargets(x ~/ 2, y ~/ 2) || points[x ~/ 2][y ~/ 2] ? 3 : 1),
+                                      height: showedPointDiameter*(isInTargets(x ~/ 2, y ~/ 2) || points[x ~/ 2][y ~/ 2] ? 3 : 1),
+                                      decoration: BoxDecoration(
+                                          color: (chosenPoints.firstWhere((e) => e.x == x ~/ 2 && e.y == y ~/ 2,
+                                                      orElse: () => nullPoint) !=
+                                                  nullPoint)
+                                              ? (routeIsConnected ? (isGameOver ? Style.accentColor : Style.primaryColor) : Style.accentColor)
+                                              : (points[x ~/ 2][y ~/ 2]
+                                                  ? (routeIsConnected ? Style.accentColor : (isGameOver ? Style.accentColor : Style.primaryColor))
+                                                  : (isGameOver ? Colors.transparent : Style.primaryColor.withOpacity(0.5))),
+                                          shape: BoxShape.circle)),
+                                ),
+                              ),
                         ))),
           ),
         ),
@@ -297,19 +304,25 @@ class _FieldState extends State<Field> {
                                                             borderRadius: BorderRadius.circular(100))),
                                                   ),
                                                 )
-                                              : Container(
-                                                  width: pointDiameter,
-                                                  height: pointDiameter,
-                                                  decoration: BoxDecoration(
-                                                      color: (chosenPoints.firstWhere(
-                                                                  (e) => e.x == x ~/ 2 && e.y == y ~/ 2,
-                                                                  orElse: () => nullPoint) !=
-                                                              nullPoint)
-                                                          ? Style.primaryColor.withOpacity(1)
-                                                          : (points[x ~/ 2][y ~/ 2]
-                                                              ?  Style.accentColor
-                                                              : Style.primaryColor.withOpacity(0.1)),
-                                                      shape: BoxShape.circle)),
+                                              :  SizedBox(
+                                            width: pointDiameter,
+                                            height: pointDiameter,
+                                                child: Center(
+                                                  child: Container(
+                                                      width: showedPointDiameter *(isInTargets(x ~/ 2, y ~/ 2) || points[x ~/ 2][y ~/ 2] ? 3 : 1),
+                                                      height: showedPointDiameter*(isInTargets(x ~/ 2, y ~/ 2) || points[x ~/ 2][y ~/ 2] ? 3 : 1),
+                                                      decoration: BoxDecoration(
+                                                          color: (chosenPoints.firstWhere(
+                                                                      (e) => e.x == x ~/ 2 && e.y == y ~/ 2,
+                                                                      orElse: () => nullPoint) !=
+                                                                  nullPoint)
+                                                              ? Style.primaryColor.withOpacity(1)
+                                                              : (points[x ~/ 2][y ~/ 2]
+                                                                  ?  Style.accentColor
+                                                                  : Style.primaryColor.withOpacity(0.5)),
+                                                          shape: BoxShape.circle)),
+                                                ),
+                                              ),
                                         ))),
                           ),
                         )
