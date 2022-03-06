@@ -4,38 +4,38 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:optimal_routing/pages/level_page.dart';
 
 import '../data/trees.dart';
 import '../prefs.dart';
 import '../styles.dart';
 import '../widgets/field.dart';
 
-class GamePage extends StatefulWidget {
-  final int level;
-
-  const GamePage({Key? key, required this.level}) : super(key: key);
+class ExplainPage extends StatefulWidget {
+  const ExplainPage({Key? key}) : super(key: key);
 
   @override
-  State<GamePage> createState() => _GamePageState();
+  State<ExplainPage> createState() => _ExplainPageState();
 }
 
-class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin {
+class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStateMixin {
   late final AnimationController controller;
   int currentLinesNumber = 0;
   final StreamController<int> currentNumOfLines = StreamController();
-  final StreamController<int> timerStream = StreamController();
+  List tree = [[[0, 0], [2, 0], [2, 2], [0, 2]], 6, [[[0, 0], [0, 1]], [[0, 1], [0, 2]], [[0, 1], [1, 1]], [[1, 1], [2, 1]], [[2, 0], [2, 1]], [[2, 1], [2, 2]]], 3];
+  //final StreamController<int> timerStream = StreamController();
   final StreamController<bool> isGameOver = StreamController();
   final StreamController<bool> showAnswer = StreamController();
   late final Stream<bool> showAnswerStream;
+  int explainStep = 0;
+  List<String> explainTexts = ["Tap on the gray lines to connect the neighboring points", "To complete the level, connect all the marked points with a certain number of lines \n(Tap on the 'eye' to see the answer, if you need help)", ];
 
   // late Timer timer;
-  late int gameNum;
+
   final int answerShowTime = 5;
 
   @override
   void initState() {
-    gameNum = Prefs.getInt(widget.level.toString()) ?? 0;
-    if (gameNum != 0) gameNum -= 1;
     showAnswerStream = showAnswer.stream.asBroadcastStream();
     // timer = Timer.periodic(const Duration(seconds: 1), (timer) {
     //   timerStream.add(timer.tick);
@@ -56,13 +56,11 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
     //   timerStream.add(timer.tick);
     // });
     currentNumOfLines.add(0);
-    gameNum != trees[widget.level].length - 1 ? gameNum++ : null;
     isGameOver.add(false);
     setState(() {});
   }
 
   ifGameIsOver() {
-    Prefs.setInt(widget.level.toString(), gameNum + 1);
     // timer.cancel();
   }
 
@@ -76,6 +74,28 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
         controller.stop(canceled: false);
       });
     }
+  }
+  getSelection(Widget child, activate){
+    return Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(Style.blockM*0.5),color: Colors.white.withOpacity(0.1), border: Border.all(
+          width: Style.blockM*0.15,
+          color: Style.accentColor.withOpacity(activate ? 1 : 0),
+          style: BorderStyle.solid,
+        ),),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: Style.blockM*0.2, vertical: Style.blockM*0.1),
+              child:child,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -95,45 +115,54 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                       width: Style.blockM * 3,
                       height: Style.blockM * 1.5,
                       child: GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Icon(Icons.arrow_back_ios, size: Style.blockM * 1.3),
+                        onTap: (){
+                          Prefs.setBool("new", false);
+                          Navigator.push(context, PageRouteBuilder(
+                            pageBuilder: (c, a1, a2) => const LevelPage(),
+                            transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                            transitionDuration: const Duration(milliseconds: 300),
+                          ));},
+                        child: Text(
+                          "skip",
+                          style: GoogleFonts.quicksand(
+                              fontSize: Style.blockM * 1, fontWeight: FontWeight.w800, color: Style.primaryColor),
+                        ),
                       ),
                     ),
-                    Text(
-                      ["Easy", "Middle", "Hard"][widget.level],
-                      style: GoogleFonts.quicksand(
-                          fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor),
-                    ),
-                    SizedBox(
-                      width: Style.blockM * 3,
-                      height: Style.blockM * 1.5,
-                      child: Stack(
-                        children: [
-                          Center(
-                            child: SizedBox(
-                              width: Style.blockM * 1.5,
-                              height: Style.blockM * 1.5,
-                              child: AnimatedBuilder(
-                                  animation: controller,
-                                  builder: (context, w) {
-                                    return Center(
-                                        child: CircularProgressIndicator(
-                                      value: 1 - controller.value,
-                                      color: Colors.black,
-                                      strokeWidth: Style.blockM * 0.1,
-                                    ));
-                                  }),
+
+                    getSelection(
+                      SizedBox(
+                        width: Style.blockM * 3,
+                        height: Style.blockM * 1.5,
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: SizedBox(
+                                width: Style.blockM * 1.5,
+                                height: Style.blockM * 1.5,
+                                child: AnimatedBuilder(
+                                    animation: controller,
+                                    builder: (context, w) {
+                                      return Center(
+                                          child: CircularProgressIndicator(
+                                        value: 1 - controller.value,
+                                        color: Colors.black,
+                                        strokeWidth: Style.blockM * 0.1,
+                                      ));
+                                    }),
+                              ),
                             ),
-                          ),
-                          Center(
-                            child: GestureDetector(
-                              behavior: HitTestBehavior.translucent,
-                              onTap: () => showAnswerAndHide(),
-                              child: Icon(Icons.remove_red_eye, size: Style.blockM * 1),
+                            Center(
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onTap: () => showAnswerAndHide(),
+                                child: Icon(Icons.remove_red_eye, size: Style.blockM * 1),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
+                        explainStep == 1
                     ),
 
                     // StreamBuilder<int>(
@@ -165,34 +194,35 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                   ],
                 ),
               )),
-          Align(
+         Align(
             alignment: const Alignment(0, -0.8),
             child: StreamBuilder<int>(
                 stream: currentNumOfLines.stream,
                 builder: (context, snapshot) {
-                  return SizedBox(
-                    width: Style.blockM * 3,
-                    child: Text(
-                      "${(snapshot.data ?? 0)}/${trees[widget.level][gameNum][1]}",
-                      style: GoogleFonts.quicksand(
-                          fontSize: Style.blockM * 0.7,
-                          fontWeight: FontWeight.w800,
-                          color: Style.primaryColor),
-                      textAlign: TextAlign.center,
-                    ),
-                  );
+                  if(snapshot.hasData && explainStep == 0){
+                    WidgetsBinding.instance!.addPostFrameCallback((_) => setState(() => explainStep=1));
+                  }
+                  return getSelection(Text(
+                    "${(snapshot.data ?? 0)}/${tree[1]}",
+                    style: GoogleFonts.quicksand(
+                        fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
+                    textAlign: TextAlign.center,
+                  ), explainStep==1);
                 }),
           ),
           Center(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 200),
-              child: Field(
-                  key: UniqueKey(),
-                  currentNumOfLines: currentNumOfLines,
-                  tree: trees[widget.level][gameNum],
-                  isGameOver: isGameOver,
-                  showAnswer: showAnswerStream),
-            ),
+            child: getSelection(
+               SizedBox(
+                 width: Style.blockM*10,
+                 height:  Style.blockM*10,
+                 child: Field(
+                    currentNumOfLines: currentNumOfLines,
+                    tree: tree,
+                    isGameOver: isGameOver,
+                    showLines: true,
+                    showAnswer: showAnswerStream),
+               ),
+            explainStep==0),
           ),
           StreamBuilder<bool>(
               stream: isGameOver.stream,
@@ -200,7 +230,7 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                 ifGameIsOver();
                 return AnimatedSwitcher(
                   duration: const Duration(milliseconds: 200),
-                  child: snapshot.data == true && trees[widget.level].length > gameNum
+                  child: snapshot.data == true
                       ? Align(
                           alignment: const Alignment(0, kIsWeb ? 0.9 : 0.8),
                           child: ElevatedButton(
@@ -214,12 +244,16 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                                 overlayColor: MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
                                 elevation: MaterialStateProperty.all(0)),
                             onPressed: () {
-                              trees[widget.level].length - 1 == gameNum ? Navigator.pop(context) : startNewGame();
-                            },
+                              Prefs.setBool("new", false);
+                              Navigator.push(context, PageRouteBuilder(
+                              pageBuilder: (c, a1, a2) => const LevelPage(),
+                              transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                              transitionDuration: const Duration(milliseconds: 300),
+                            ));},
                             child: Padding(
                               padding:
                                   EdgeInsets.symmetric(vertical: Style.blockM * 0.5, horizontal: 2.5 * Style.blockM),
-                              child: Text(trees[widget.level].length - 1 == gameNum ? "Back" : "Next",
+                              child: Text("GO",
                                   style: GoogleFonts.quicksand(
                                       fontSize: Style.blockM * 1.4,
                                       fontWeight: FontWeight.w800,
@@ -230,22 +264,19 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                       : Container(),
                 );
               }),
-          Positioned(
-              bottom: Style.blockM * 1,
-              left: Style.block * 2.5,
-              child: SizedBox(
-              width: Style.block * 15,
-              height: Style.blockM,
-                 child: Center(
-                   child: Text(
-                      "Level ${gameNum + 1} from ${trees[widget.level].length}",
-                      style: GoogleFonts.quicksand(
-                          fontSize: Style.blockM * 0.7,
-                          fontWeight: FontWeight.w800,
-                          color: Style.primaryColor),
-                    ),
-                 ),
-              ))
+          Align(
+            alignment: const Alignment(0, -0.5),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: Style.blockM*2),
+              child: Text(
+                explainTexts[explainStep%explainTexts.length],
+                style: GoogleFonts.quicksand(
+                    fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+
         ]));
   }
 }

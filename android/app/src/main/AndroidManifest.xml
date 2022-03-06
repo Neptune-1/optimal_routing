@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.alex_osh.optimal_routing">
    <application
-        android:label="optimal_routing"
+        android:label="Optimal Routes"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

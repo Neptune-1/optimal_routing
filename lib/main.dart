@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:optimal_routing/pages/explain_page.dart';
 import 'package:optimal_routing/prefs.dart';
 import 'package:optimal_routing/styles.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -49,7 +50,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Routs',
+      title: 'Routes',
+
       theme: ThemeData(
         primarySwatch: Colors.amber,
       ),
@@ -58,7 +60,7 @@ class MyApp extends StatelessWidget {
           builder: (context, snapshot) {
             Style.init(context);
 
-            return snapshot.hasData ? const LevelPage() : Container();
+            return snapshot.hasData ?  (Prefs.getBool("new") ?? true) ? const ExplainPage() : const LevelPage() : Container(color: Style.backgroundColor,);
           }),
     );
   }

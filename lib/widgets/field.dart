@@ -4,24 +4,23 @@ import 'dart:math';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
-import '../data/trees.dart';
 import '../graph.dart';
 import '../styles.dart';
 
 class Field extends StatefulWidget {
   final StreamController<int> currentNumOfLines;
-  final int level;
-  final int gameNum;
+  final List tree;
   final StreamController<bool> isGameOver;
   final Stream<bool> showAnswer;
+  final bool showLines;
 
   const Field(
       {Key? key,
       required this.currentNumOfLines,
-      required this.level,
-      required this.gameNum,
+      required this.tree,
       required this.isGameOver,
-      required this.showAnswer})
+      required this.showAnswer,
+      this.showLines = false})
       : super(key: key);
 
   @override
@@ -29,7 +28,7 @@ class Field extends StatefulWidget {
 }
 
 class _FieldState extends State<Field> {
-  final int fieldSize = 9;
+  late final int fieldSize;
   final double spacePointPoint = kIsWeb ? Style.blockM * 1.3 : Style.blockM * 1;
   final double pointDiameter = kIsWeb ? Style.blockM * 1 : Style.blockM * 1;
   late final double showedPointDiameter;
@@ -50,13 +49,13 @@ class _FieldState extends State<Field> {
   @override
   void initState() {
     super.initState();
-    showedPointDiameter = pointDiameter*0.2;
+    fieldSize = widget.tree[3];
+    showedPointDiameter = pointDiameter * 0.2;
     graph = Graph(fieldSize);
     routesH = List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false));
     routesV = List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false));
 
-    chosenPoints =
-        (trees[widget.level][widget.gameNum][0] as List).map((e) => Point(e[0], e[1])).toList().cast<Point>();
+    chosenPoints = (widget.tree[0] as List).map((e) => Point(e[0], e[1])).toList().cast<Point>();
 
     filledPoints = [...chosenPoints];
 
@@ -99,7 +98,7 @@ class _FieldState extends State<Field> {
       currentNumOfLines += currentState ? -1 : 1;
       widget.currentNumOfLines.add(currentNumOfLines);
 
-      if (routeIsConnected && trees[widget.level][widget.gameNum][1] == currentNumOfLines) {
+      if (routeIsConnected && widget.tree[1] == currentNumOfLines) {
         widget.isGameOver.add(true);
         isGameOver = true;
       }
@@ -165,7 +164,9 @@ class _FieldState extends State<Field> {
                                                   ? (routeIsConnected
                                                       ? Style.accentColor
                                                       : Style.primaryColor.withOpacity(1))
-                                                  :  (isGameOver ? Colors.transparent : Style.primaryColor.withOpacity(0)),
+                                                  : (isGameOver
+                                                      ? Colors.transparent
+                                                      : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0)),
                                               borderRadius: BorderRadius.circular(100))),
                                     ),
                                   ),
@@ -192,30 +193,40 @@ class _FieldState extends State<Field> {
                                                   ? (routeIsConnected
                                                       ? Style.accentColor
                                                       : Style.primaryColor.withOpacity(1))
-                                                  : (isGameOver ? Colors.transparent: Style.primaryColor.withOpacity(0)),
+                                                  : (isGameOver
+                                                      ? Colors.transparent
+                                                      : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0)),
                                               borderRadius: BorderRadius.circular(100))),
                                     ),
                                   ),
                                 )
                               : SizedBox(
-                                width: pointDiameter,
-                                height: pointDiameter,
-                                child: Center(
-                                  child: AnimatedContainer(
-                                      duration: const Duration(milliseconds: 200),
-                                      width: showedPointDiameter *(isInTargets(x ~/ 2, y ~/ 2) || points[x ~/ 2][y ~/ 2] ? 3 : 1),
-                                      height: showedPointDiameter*(isInTargets(x ~/ 2, y ~/ 2) || points[x ~/ 2][y ~/ 2] ? 3 : 1),
-                                      decoration: BoxDecoration(
-                                          color: (chosenPoints.firstWhere((e) => e.x == x ~/ 2 && e.y == y ~/ 2,
-                                                      orElse: () => nullPoint) !=
-                                                  nullPoint)
-                                              ? (routeIsConnected ? (isGameOver ? Style.accentColor : Style.primaryColor) : Style.accentColor)
-                                              : (points[x ~/ 2][y ~/ 2]
-                                                  ? (routeIsConnected ? Style.accentColor : (isGameOver ? Style.accentColor : Style.primaryColor))
-                                                  : (isGameOver ? Style.primaryColor.withOpacity(1) : Style.primaryColor.withOpacity(0.5))),
-                                          shape: BoxShape.circle)),
+                                  width: pointDiameter,
+                                  height: pointDiameter,
+                                  child: Center(
+                                    child: AnimatedContainer(
+                                        duration: const Duration(milliseconds: 200),
+                                        width: showedPointDiameter *
+                                            (isInTargets(x ~/ 2, y ~/ 2) || points[x ~/ 2][y ~/ 2] ? 3 : 1),
+                                        height: showedPointDiameter *
+                                            (isInTargets(x ~/ 2, y ~/ 2) || points[x ~/ 2][y ~/ 2] ? 3 : 1),
+                                        decoration: BoxDecoration(
+                                            color: (chosenPoints.firstWhere((e) => e.x == x ~/ 2 && e.y == y ~/ 2,
+                                                        orElse: () => nullPoint) !=
+                                                    nullPoint)
+                                                ? (routeIsConnected
+                                                    ? (isGameOver ? Style.accentColor : Style.primaryColor)
+                                                    : Style.accentColor)
+                                                : (points[x ~/ 2][y ~/ 2]
+                                                    ? (routeIsConnected
+                                                        ? Style.accentColor
+                                                        : (isGameOver ? Style.accentColor : Style.primaryColor))
+                                                    : (isGameOver
+                                                        ? Style.primaryColor.withOpacity(1)
+                                                        : Style.primaryColor.withOpacity(0.5))),
+                                            shape: BoxShape.circle)),
+                                  ),
                                 ),
-                              ),
                         ))),
           ),
         ),
@@ -223,7 +234,7 @@ class _FieldState extends State<Field> {
           child: StreamBuilder<Object>(
               stream: widget.showAnswer,
               builder: (context, snapshot) {
-                List<List<List<int>>> answer = trees[widget.level][widget.gameNum][2];
+                List<List<List<int>>> answer = widget.tree[2];
                 List<List<bool>> answerRoutesH =
                     List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false));
                 List<List<bool>> answerRoutesV =
@@ -280,7 +291,7 @@ class _FieldState extends State<Field> {
                                                         decoration: BoxDecoration(
                                                             color: answerRoutesH[x ~/ 2][y ~/ 2]
                                                                 ? Style.accentColor
-                                                                : Style.primaryColor.withOpacity(0),
+                                                                : Style.primaryColor.withOpacity(widget.showLines ? 0.2 : 0),
                                                             borderRadius: BorderRadius.circular(100))),
                                                   ),
                                                 ),
@@ -300,29 +311,35 @@ class _FieldState extends State<Field> {
                                                         decoration: BoxDecoration(
                                                             color: answerRoutesV[x ~/ 2][y ~/ 2]
                                                                 ? Style.accentColor
-                                                                : Style.primaryColor.withOpacity(0),
+                                                                : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0),
                                                             borderRadius: BorderRadius.circular(100))),
                                                   ),
                                                 )
-                                              :  SizedBox(
-                                            width: pointDiameter,
-                                            height: pointDiameter,
-                                                child: Center(
-                                                  child: Container(
-                                                      width: showedPointDiameter *(isInTargets(x ~/ 2, y ~/ 2) || points[x ~/ 2][y ~/ 2] ? 3 : 1),
-                                                      height: showedPointDiameter*(isInTargets(x ~/ 2, y ~/ 2) || points[x ~/ 2][y ~/ 2] ? 3 : 1),
-                                                      decoration: BoxDecoration(
-                                                          color: (chosenPoints.firstWhere(
-                                                                      (e) => e.x == x ~/ 2 && e.y == y ~/ 2,
-                                                                      orElse: () => nullPoint) !=
-                                                                  nullPoint)
-                                                              ? Style.primaryColor.withOpacity(1)
-                                                              : (points[x ~/ 2][y ~/ 2]
-                                                                  ?  Style.accentColor
-                                                                  : Style.primaryColor.withOpacity(0.5)),
-                                                          shape: BoxShape.circle)),
+                                              : SizedBox(
+                                                  width: pointDiameter,
+                                                  height: pointDiameter,
+                                                  child: Center(
+                                                    child: Container(
+                                                        width: showedPointDiameter *
+                                                            (isInTargets(x ~/ 2, y ~/ 2) || points[x ~/ 2][y ~/ 2]
+                                                                ? 3
+                                                                : 1),
+                                                        height: showedPointDiameter *
+                                                            (isInTargets(x ~/ 2, y ~/ 2) || points[x ~/ 2][y ~/ 2]
+                                                                ? 3
+                                                                : 1),
+                                                        decoration: BoxDecoration(
+                                                            color: (chosenPoints.firstWhere(
+                                                                        (e) => e.x == x ~/ 2 && e.y == y ~/ 2,
+                                                                        orElse: () => nullPoint) !=
+                                                                    nullPoint)
+                                                                ? Style.primaryColor.withOpacity(1)
+                                                                : (points[x ~/ 2][y ~/ 2]
+                                                                    ? Style.accentColor
+                                                                    : Style.primaryColor.withOpacity(0.5)),
+                                                            shape: BoxShape.circle)),
+                                                  ),
                                                 ),
-                                              ),
                                         ))),
                           ),
                         )
