@@ -5,10 +5,10 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../consts/styles.dart';
 import '../data/trees.dart';
-import '../prefs.dart';
-import '../styles.dart';
-import '../widgets/field.dart';
+import '../utils/prefs.dart';
+import '../widgets/field/field.dart';
 
 class GamePage extends StatefulWidget {
   final int level;
@@ -175,9 +175,7 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                     child: Text(
                       "${(snapshot.data ?? 0)}/${trees[widget.level][gameNum][1]}",
                       style: GoogleFonts.quicksand(
-                          fontSize: Style.blockM * 0.7,
-                          fontWeight: FontWeight.w800,
-                          color: Style.primaryColor),
+                          fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
                       textAlign: TextAlign.center,
                     ),
                   );
@@ -234,17 +232,15 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
               bottom: Style.blockM * 1,
               left: Style.block * 2.5,
               child: SizedBox(
-              width: Style.block * 15,
-              height: Style.blockM,
-                 child: Center(
-                   child: Text(
-                      "Level ${gameNum + 1} from ${trees[widget.level].length}",
-                      style: GoogleFonts.quicksand(
-                          fontSize: Style.blockM * 0.7,
-                          fontWeight: FontWeight.w800,
-                          color: Style.primaryColor),
-                    ),
-                 ),
+                width: Style.block * 15,
+                height: Style.blockM,
+                child: Center(
+                  child: Text(
+                    "Level ${gameNum + 1} from ${trees[widget.level].length}",
+                    style: GoogleFonts.quicksand(
+                        fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
+                  ),
+                ),
               ))
         ]));
   }

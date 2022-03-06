@@ -1,10 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:optimal_routing/pages/game_page.dart';
 
-import '../styles.dart';
+import '../consts/styles.dart';
 
 class LevelPage extends StatefulWidget {
   const LevelPage({Key? key}) : super(key: key);
@@ -50,14 +48,17 @@ class _LevelPageState extends State<LevelPage> {
                           ),
                         ),
                         Text("Easy",
-                            style: GoogleFonts.quicksand(fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor)),
+                            style: GoogleFonts.quicksand(
+                                fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor)),
                         SizedBox(
                           width: Style.blockM,
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: Style.blockM * 0.6,),
+                  SizedBox(
+                    height: Style.blockM * 0.6,
+                  ),
                   GestureDetector(
                     onTap: () => choseLevel(1),
                     child: Row(
@@ -73,14 +74,17 @@ class _LevelPageState extends State<LevelPage> {
                           ),
                         ),
                         Text("Middle",
-                            style: GoogleFonts.quicksand(fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor)),
+                            style: GoogleFonts.quicksand(
+                                fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor)),
                         SizedBox(
                           width: Style.blockM,
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: Style.blockM * 0.6,),
+                  SizedBox(
+                    height: Style.blockM * 0.6,
+                  ),
                   GestureDetector(
                     onTap: () => choseLevel(2),
                     child: Row(
@@ -96,7 +100,8 @@ class _LevelPageState extends State<LevelPage> {
                           ),
                         ),
                         Text("Hard",
-                            style: GoogleFonts.quicksand(fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor)),
+                            style: GoogleFonts.quicksand(
+                                fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor)),
                         SizedBox(
                           width: Style.blockM,
                         ),
@@ -118,16 +123,19 @@ class _LevelPageState extends State<LevelPage> {
                     backgroundColor: MaterialStateProperty.all(Style.primaryColor),
                     overlayColor: MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
                     elevation: MaterialStateProperty.all(0)),
-                onPressed: () =>
-                    Navigator.push(context,PageRouteBuilder(
-                      pageBuilder: (c, a1, a2) => GamePage(level: level),
-                      transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                      transitionDuration: Duration(milliseconds: 300),
-                    ),),
+                onPressed: () => Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (c, a1, a2) => GamePage(level: level),
+                    transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                    transitionDuration: Duration(milliseconds: 300),
+                  ),
+                ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: Style.blockM * 0.5, horizontal: 2.5 * Style.blockM),
                   child: Text("Start",
-                      style: GoogleFonts.quicksand(fontSize: Style.blockM * 1.4, fontWeight: FontWeight.w800, color: Style.secondaryColor)),
+                      style: GoogleFonts.quicksand(
+                          fontSize: Style.blockM * 1.4, fontWeight: FontWeight.w800, color: Style.secondaryColor)),
                 ),
               ),
             )

@@ -4,8 +4,8 @@ import 'dart:math';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
-import '../graph.dart';
-import '../styles.dart';
+import '../../consts/styles.dart';
+import 'graph.dart';
 
 class Field extends StatefulWidget {
   final StreamController<int> currentNumOfLines;
@@ -29,8 +29,8 @@ class Field extends StatefulWidget {
 
 class _FieldState extends State<Field> {
   late final int fieldSize;
-  final double spacePointPoint = kIsWeb ? Style.blockM * 1.3 : Style.blockM * 1;
-  final double pointDiameter = kIsWeb ? Style.blockM * 1 : Style.blockM * 1;
+  final double spacePointPoint = kIsWeb ? Style.blockM * 1.4 : Style.blockM * 1;
+  final double pointDiameter = kIsWeb ? Style.blockM * 1.2 : Style.blockM * 1;
   late final double showedPointDiameter;
   final double spaceLinePoint = Style.blockM * 0;
   final double lineThick = Style.blockM * 0.1;
@@ -65,44 +65,47 @@ class _FieldState extends State<Field> {
             (y) => (chosenPoints.firstWhere((e) => e.x == x && e.y == y, orElse: () => nullPoint) != nullPoint)));
   }
 
-  void chooseRout(int x, int y, String type) {
-    setState(() {
-      late bool currentState;
-      if (type == "v") {
-        currentState = routesV[x][y];
-        if (!currentState) {
-          graph.addConnection(Point(x, y), Point(x, y + 1));
+  void chooseRout(int x, int y, String type, {state}) {
+    if ((type == "h" && x >= 0 && x < fieldSize - 1 && y >= 0) || (type == "v" && y >= 0 && y < fieldSize - 1)) {
+      print("$x $y $fieldSize");
+      setState(() {
+        late bool currentState;
+        if (type == "v") {
+          currentState = routesV[x][y];
+          if (state ?? !currentState) {
+            graph.addConnection(Point(x, y), Point(x, y + 1));
+          } else {
+            graph.removeConnection(Point(x, y), Point(x, y + 1));
+          }
+          routesV[x][y] = state ?? !currentState;
+          points[x][y] = connectedPoint(x, y);
+          if (y != fieldSize - 1) {
+            points[x][y + 1] = connectedPoint(x, y + 1);
+          }
         } else {
-          graph.removeConnection(Point(x, y), Point(x, y + 1));
+          currentState = routesH[x][y];
+          if (state ?? !currentState) {
+            graph.addConnection(Point(x, y), Point(x + 1, y));
+          } else {
+            graph.removeConnection(Point(x, y), Point(x + 1, y));
+          }
+          routesH[x][y] = state ?? !currentState;
+          points[x][y] = connectedPoint(x, y);
+          if (x != fieldSize - 1) {
+            points[x + 1][y] = connectedPoint(x + 1, y);
+          }
         }
-        routesV[x][y] = !currentState;
-        points[x][y] = connectedPoint(x, y);
-        if (y != fieldSize - 1) {
-          points[x][y + 1] = connectedPoint(x, y + 1);
-        }
-      } else {
-        currentState = routesH[x][y];
-        if (!currentState) {
-          graph.addConnection(Point(x, y), Point(x + 1, y));
-        } else {
-          graph.removeConnection(Point(x, y), Point(x + 1, y));
-        }
-        routesH[x][y] = !currentState;
-        points[x][y] = connectedPoint(x, y);
-        if (x != fieldSize - 1) {
-          points[x + 1][y] = connectedPoint(x + 1, y);
-        }
-      }
-      routeIsConnected = graph.areTargetsConnected(chosenPoints);
-      // print(routeIsConnected);
-      currentNumOfLines += currentState ? -1 : 1;
-      widget.currentNumOfLines.add(currentNumOfLines);
+        routeIsConnected = graph.areTargetsConnected(chosenPoints);
+        // print(routeIsConnected);
+        currentNumOfLines += currentState ? -1 : 1;
+        widget.currentNumOfLines.add(currentNumOfLines);
 
-      if (routeIsConnected && widget.tree[1] == currentNumOfLines) {
-        widget.isGameOver.add(true);
-        isGameOver = true;
-      }
-    });
+        if (routeIsConnected && widget.tree[1] == currentNumOfLines) {
+          widget.isGameOver.add(true);
+          isGameOver = true;
+        }
+      });
+    }
   }
 
   bool connectedPoint(x, y) {
@@ -130,106 +133,138 @@ class _FieldState extends State<Field> {
     return res;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: List.generate(
-                fieldSize * 2 - 1,
-                (y) => y % 2 == 1
-                    ? Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: List.generate(
-                          fieldSize * 2 - 1,
-                          (x) => x % 2 == 1
-                              ? SizedBox(
-                                  width: spacePointPoint,
-                                )
-                              : GestureDetector(
-                                  behavior: HitTestBehavior.translucent,
-                                  onTap: () => chooseRout(x ~/ 2, y ~/ 2, "v"),
-                                  child: SizedBox(
-                                    height: spacePointPoint,
-                                    width: pointDiameter,
-                                    child: Center(
-                                      child: AnimatedContainer(
-                                          duration: const Duration(milliseconds: 200),
-                                          height: spacePointPoint - spaceLinePoint,
-                                          width: lineThick,
-                                          decoration: BoxDecoration(
-                                              color: routesV[x ~/ 2][y ~/ 2]
-                                                  ? (routeIsConnected
-                                                      ? Style.accentColor
-                                                      : Style.primaryColor.withOpacity(1))
-                                                  : (isGameOver
-                                                      ? Colors.transparent
-                                                      : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0)),
-                                              borderRadius: BorderRadius.circular(100))),
-                                    ),
+  Point? firstPoint;
+
+  getFieldV2() {
+    return Center(
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onPanStart: (details) {
+          firstPoint = null;
+        },
+        onPanUpdate: (details) {
+          // print("Update");
+          Point? currentPoint;
+          int y = (details.localPosition.dy) ~/ (pointDiameter + spacePointPoint);
+          int x = (details.localPosition.dx) ~/ (pointDiameter + spacePointPoint);
+          if (sqrt(pow(details.localPosition.dy % (pointDiameter + spacePointPoint), 2) +
+                  pow(details.localPosition.dx % (pointDiameter + spacePointPoint), 2)) <
+              pointDiameter * 2) {
+            currentPoint = Point(x, y);
+          }
+
+          firstPoint ??= currentPoint;
+
+          if (currentPoint != null && !firstPoint!.samePoint(currentPoint)) {
+            chooseRout(min(currentPoint.x, firstPoint!.x), min(currentPoint.y, firstPoint!.y),
+                currentPoint.x == firstPoint!.x ? "v" : "h");
+
+            firstPoint = Point(currentPoint.x, currentPoint.y);
+          }
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(
+              fieldSize * 2 - 1,
+              (y) => y % 2 == 1
+                  ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(
+                        fieldSize * 2 - 1,
+                        (x) => x % 2 == 1
+                            ? SizedBox(
+                                width: spacePointPoint,
+                              )
+                            : GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onTap: () => chooseRout(x ~/ 2, y ~/ 2, "v"),
+                                child: SizedBox(
+                                  height: spacePointPoint,
+                                  width: pointDiameter,
+                                  child: Center(
+                                    child: AnimatedContainer(
+                                        duration: const Duration(milliseconds: 200),
+                                        height: spacePointPoint - spaceLinePoint,
+                                        width: lineThick,
+                                        decoration: BoxDecoration(
+                                            color: routesV[x ~/ 2][y ~/ 2]
+                                                ? (routeIsConnected
+                                                    ? Style.accentColor
+                                                    : Style.primaryColor.withOpacity(1))
+                                                : (isGameOver
+                                                    ? Colors.transparent
+                                                    : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0)),
+                                            borderRadius: BorderRadius.circular(100))),
                                   ),
                                 ),
-                        ))
-                    : Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: List.generate(
-                          fieldSize * 2 - 1,
-                          (x) => x % 2 == 1
-                              ? GestureDetector(
-                                  behavior: HitTestBehavior.translucent,
-                                  onTap: () => chooseRout(x ~/ 2, y ~/ 2, "h"),
-                                  child: SizedBox(
-                                    width: spacePointPoint,
-                                    height: pointDiameter,
-                                    child: Center(
-                                      child: AnimatedContainer(
-                                          duration: const Duration(milliseconds: 200),
-                                          width: spacePointPoint - spaceLinePoint,
-                                          height: lineThick,
-                                          decoration: BoxDecoration(
-                                              color: routesH[x ~/ 2][y ~/ 2]
-                                                  ? (routeIsConnected
-                                                      ? Style.accentColor
-                                                      : Style.primaryColor.withOpacity(1))
-                                                  : (isGameOver
-                                                      ? Colors.transparent
-                                                      : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0)),
-                                              borderRadius: BorderRadius.circular(100))),
-                                    ),
-                                  ),
-                                )
-                              : SizedBox(
-                                  width: pointDiameter,
+                              ),
+                      ))
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(
+                        fieldSize * 2 - 1,
+                        (x) => x % 2 == 1
+                            ? GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onTap: () => chooseRout(x ~/ 2, y ~/ 2, "h"),
+                                child: SizedBox(
+                                  width: spacePointPoint,
                                   height: pointDiameter,
                                   child: Center(
                                     child: AnimatedContainer(
                                         duration: const Duration(milliseconds: 200),
-                                        width: showedPointDiameter *
-                                            (isInTargets(x ~/ 2, y ~/ 2) || points[x ~/ 2][y ~/ 2] ? 3 : 1),
-                                        height: showedPointDiameter *
-                                            (isInTargets(x ~/ 2, y ~/ 2) || points[x ~/ 2][y ~/ 2] ? 3 : 1),
+                                        width: spacePointPoint - spaceLinePoint,
+                                        height: lineThick,
                                         decoration: BoxDecoration(
-                                            color: (chosenPoints.firstWhere((e) => e.x == x ~/ 2 && e.y == y ~/ 2,
-                                                        orElse: () => nullPoint) !=
-                                                    nullPoint)
+                                            color: routesH[x ~/ 2][y ~/ 2]
                                                 ? (routeIsConnected
-                                                    ? (isGameOver ? Style.accentColor : Style.primaryColor)
-                                                    : Style.accentColor)
-                                                : (points[x ~/ 2][y ~/ 2]
-                                                    ? (routeIsConnected
-                                                        ? Style.accentColor
-                                                        : (isGameOver ? Style.accentColor : Style.primaryColor))
-                                                    : (isGameOver
-                                                        ? Style.primaryColor.withOpacity(1)
-                                                        : Style.primaryColor.withOpacity(0.5))),
-                                            shape: BoxShape.circle)),
+                                                    ? Style.accentColor
+                                                    : Style.primaryColor.withOpacity(1))
+                                                : (isGameOver
+                                                    ? Colors.transparent
+                                                    : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0)),
+                                            borderRadius: BorderRadius.circular(100))),
                                   ),
                                 ),
-                        ))),
-          ),
+                              )
+                            : SizedBox(
+                                width: pointDiameter,
+                                height: pointDiameter,
+                                child: Center(
+                                  child: AnimatedContainer(
+                                      duration: const Duration(milliseconds: 200),
+                                      width: showedPointDiameter *
+                                          (isInTargets(x ~/ 2, y ~/ 2) || points[x ~/ 2][y ~/ 2] ? 3 : 1),
+                                      height: showedPointDiameter *
+                                          (isInTargets(x ~/ 2, y ~/ 2) || points[x ~/ 2][y ~/ 2] ? 3 : 1),
+                                      decoration: BoxDecoration(
+                                          color: (chosenPoints.firstWhere((e) => e.x == x ~/ 2 && e.y == y ~/ 2,
+                                                      orElse: () => nullPoint) !=
+                                                  nullPoint)
+                                              ? (routeIsConnected
+                                                  ? (isGameOver ? Style.accentColor : Style.primaryColor)
+                                                  : Style.accentColor)
+                                              : (points[x ~/ 2][y ~/ 2]
+                                                  ? (routeIsConnected
+                                                      ? Style.accentColor
+                                                      : (isGameOver ? Style.accentColor : Style.primaryColor))
+                                                  : (isGameOver
+                                                      ? Style.primaryColor.withOpacity(1)
+                                                      : Style.primaryColor.withOpacity(0.5))),
+                                          shape: BoxShape.circle)),
+                                ),
+                              ),
+                      ))),
         ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        getFieldV2(),
         Center(
           child: StreamBuilder<Object>(
               stream: widget.showAnswer,
@@ -291,7 +326,8 @@ class _FieldState extends State<Field> {
                                                         decoration: BoxDecoration(
                                                             color: answerRoutesH[x ~/ 2][y ~/ 2]
                                                                 ? Style.accentColor
-                                                                : Style.primaryColor.withOpacity(widget.showLines ? 0.2 : 0),
+                                                                : Style.primaryColor
+                                                                    .withOpacity(widget.showLines ? 0.2 : 0),
                                                             borderRadius: BorderRadius.circular(100))),
                                                   ),
                                                 ),
@@ -311,7 +347,8 @@ class _FieldState extends State<Field> {
                                                         decoration: BoxDecoration(
                                                             color: answerRoutesV[x ~/ 2][y ~/ 2]
                                                                 ? Style.accentColor
-                                                                : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0),
+                                                                : Style.primaryColor
+                                                                    .withOpacity(widget.showLines ? 0.1 : 0),
                                                             borderRadius: BorderRadius.circular(100))),
                                                   ),
                                                 )

@@ -6,10 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:optimal_routing/pages/level_page.dart';
 
-import '../data/trees.dart';
-import '../prefs.dart';
-import '../styles.dart';
-import '../widgets/field.dart';
+import '../consts/styles.dart';
+import '../utils/prefs.dart';
+import '../widgets/field/field.dart';
 
 class ExplainPage extends StatefulWidget {
   const ExplainPage({Key? key}) : super(key: key);
@@ -22,13 +21,52 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
   late final AnimationController controller;
   int currentLinesNumber = 0;
   final StreamController<int> currentNumOfLines = StreamController();
-  List tree = [[[0, 0], [2, 0], [2, 2], [0, 2]], 6, [[[0, 0], [0, 1]], [[0, 1], [0, 2]], [[0, 1], [1, 1]], [[1, 1], [2, 1]], [[2, 0], [2, 1]], [[2, 1], [2, 2]]], 3];
+  List tree = [
+    [
+      [0, 0],
+      [2, 0],
+      [2, 2],
+      [0, 2]
+    ],
+    6,
+    [
+      [
+        [0, 0],
+        [0, 1]
+      ],
+      [
+        [0, 1],
+        [0, 2]
+      ],
+      [
+        [0, 1],
+        [1, 1]
+      ],
+      [
+        [1, 1],
+        [2, 1]
+      ],
+      [
+        [2, 0],
+        [2, 1]
+      ],
+      [
+        [2, 1],
+        [2, 2]
+      ]
+    ],
+    3
+  ];
+
   //final StreamController<int> timerStream = StreamController();
   final StreamController<bool> isGameOver = StreamController();
   final StreamController<bool> showAnswer = StreamController();
   late final Stream<bool> showAnswerStream;
   int explainStep = 0;
-  List<String> explainTexts = ["Tap on the gray lines to connect the neighboring points", "To complete the level, connect all the marked points with a certain number of lines \n(Tap on the 'eye' to see the answer, if you need help)", ];
+  List<String> explainTexts = [
+    "Try to connect the neighboring points",
+    "To complete the level, connect all the marked points with a certain number of lines \n(Tap on the 'eye' to see the answer, if you need help)",
+  ];
 
   // late Timer timer;
 
@@ -75,22 +113,27 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
       });
     }
   }
-  getSelection(Widget child, activate){
+
+  getSelection(Widget child, activate) {
     return Container(
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(Style.blockM*0.5),color: Colors.white.withOpacity(0.1), border: Border.all(
-          width: Style.blockM*0.15,
-          color: Style.accentColor.withOpacity(activate ? 1 : 0),
-          style: BorderStyle.solid,
-        ),),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(Style.blockM * 0.5),
+          color: Colors.white.withOpacity(0.1),
+          border: Border.all(
+            width: Style.blockM * 0.15,
+            color: Style.accentColor.withOpacity(activate ? 1 : 0),
+            style: BorderStyle.solid,
+          ),
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: Style.blockM*0.2, vertical: Style.blockM*0.1),
-              child:child,
+              padding: EdgeInsets.symmetric(horizontal: Style.blockM * 0.2, vertical: Style.blockM * 0.1),
+              child: child,
             ),
           ],
         ),
@@ -115,13 +158,16 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                       width: Style.blockM * 3,
                       height: Style.blockM * 1.5,
                       child: GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           Prefs.setBool("new", false);
-                          Navigator.push(context, PageRouteBuilder(
-                            pageBuilder: (c, a1, a2) => const LevelPage(),
-                            transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                            transitionDuration: const Duration(milliseconds: 300),
-                          ));},
+                          Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (c, a1, a2) => const LevelPage(),
+                                transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                                transitionDuration: const Duration(milliseconds: 300),
+                              ));
+                        },
                         child: Text(
                           "skip",
                           style: GoogleFonts.quicksand(
@@ -131,39 +177,38 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                     ),
 
                     getSelection(
-                      SizedBox(
-                        width: Style.blockM * 3,
-                        height: Style.blockM * 1.5,
-                        child: Stack(
-                          children: [
-                            Center(
-                              child: SizedBox(
-                                width: Style.blockM * 1.5,
-                                height: Style.blockM * 1.5,
-                                child: AnimatedBuilder(
-                                    animation: controller,
-                                    builder: (context, w) {
-                                      return Center(
-                                          child: CircularProgressIndicator(
-                                        value: 1 - controller.value,
-                                        color: Colors.black,
-                                        strokeWidth: Style.blockM * 0.1,
-                                      ));
-                                    }),
+                        SizedBox(
+                          width: Style.blockM * 3,
+                          height: Style.blockM * 1.5,
+                          child: Stack(
+                            children: [
+                              Center(
+                                child: SizedBox(
+                                  width: Style.blockM * 1.5,
+                                  height: Style.blockM * 1.5,
+                                  child: AnimatedBuilder(
+                                      animation: controller,
+                                      builder: (context, w) {
+                                        return Center(
+                                            child: CircularProgressIndicator(
+                                          value: 1 - controller.value,
+                                          color: Colors.black,
+                                          strokeWidth: Style.blockM * 0.1,
+                                        ));
+                                      }),
+                                ),
                               ),
-                            ),
-                            Center(
-                              child: GestureDetector(
-                                behavior: HitTestBehavior.translucent,
-                                onTap: () => showAnswerAndHide(),
-                                child: Icon(Icons.remove_red_eye, size: Style.blockM * 1),
+                              Center(
+                                child: GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
+                                  onTap: () => showAnswerAndHide(),
+                                  child: Icon(Icons.remove_red_eye, size: Style.blockM * 1),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                        explainStep == 1
-                    ),
+                        explainStep == 1),
 
                     // StreamBuilder<int>(
                     //     stream: timerStream.stream,
@@ -194,35 +239,36 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                   ],
                 ),
               )),
-         Align(
+          Align(
             alignment: const Alignment(0, -0.8),
             child: StreamBuilder<int>(
                 stream: currentNumOfLines.stream,
                 builder: (context, snapshot) {
-                  if(snapshot.hasData && explainStep == 0){
-                    WidgetsBinding.instance!.addPostFrameCallback((_) => setState(() => explainStep=1));
+                  if (snapshot.hasData && explainStep == 0) {
+                    WidgetsBinding.instance!.addPostFrameCallback((_) => setState(() => explainStep = 1));
                   }
-                  return getSelection(Text(
-                    "${(snapshot.data ?? 0)}/${tree[1]}",
-                    style: GoogleFonts.quicksand(
-                        fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
-                    textAlign: TextAlign.center,
-                  ), explainStep==1);
+                  return getSelection(
+                      Text(
+                        "${(snapshot.data ?? 0)}/${tree[1]}",
+                        style: GoogleFonts.quicksand(
+                            fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
+                        textAlign: TextAlign.center,
+                      ),
+                      explainStep == 1);
                 }),
           ),
           Center(
             child: getSelection(
-               SizedBox(
-                 width: Style.blockM*10,
-                 height:  Style.blockM*10,
-                 child: Field(
-                    currentNumOfLines: currentNumOfLines,
-                    tree: tree,
-                    isGameOver: isGameOver,
-                    showLines: true,
-                    showAnswer: showAnswerStream),
-               ),
-            explainStep==0),
+                SizedBox(
+                  width: Style.blockM * 10,
+                  height: Style.blockM * 10,
+                  child: Field(
+                      currentNumOfLines: currentNumOfLines,
+                      tree: tree,
+                      isGameOver: isGameOver,
+                      showAnswer: showAnswerStream),
+                ),
+                explainStep == 0),
           ),
           StreamBuilder<bool>(
               stream: isGameOver.stream,
@@ -245,11 +291,15 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                                 elevation: MaterialStateProperty.all(0)),
                             onPressed: () {
                               Prefs.setBool("new", false);
-                              Navigator.push(context, PageRouteBuilder(
-                              pageBuilder: (c, a1, a2) => const LevelPage(),
-                              transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                              transitionDuration: const Duration(milliseconds: 300),
-                            ));},
+                              Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    pageBuilder: (c, a1, a2) => const LevelPage(),
+                                    transitionsBuilder: (c, anim, a2, child) =>
+                                        FadeTransition(opacity: anim, child: child),
+                                    transitionDuration: const Duration(milliseconds: 300),
+                                  ));
+                            },
                             child: Padding(
                               padding:
                                   EdgeInsets.symmetric(vertical: Style.blockM * 0.5, horizontal: 2.5 * Style.blockM),
@@ -267,16 +317,15 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
           Align(
             alignment: const Alignment(0, -0.5),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: Style.blockM*2),
+              padding: EdgeInsets.symmetric(horizontal: Style.blockM * 2),
               child: Text(
-                explainTexts[explainStep%explainTexts.length],
+                explainTexts[explainStep % explainTexts.length],
                 style: GoogleFonts.quicksand(
                     fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
                 textAlign: TextAlign.center,
               ),
             ),
           ),
-
         ]));
   }
 }

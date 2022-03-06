@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:io' as io;
-
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 //import 'dart:html' as html;
 class Style {
   static late double block;
@@ -15,17 +14,16 @@ class Style {
   static Color secondaryColor = Colors.white;
   static Color accentColor = Colors.amber[500]!;
 
-  static toPallet1(){
+  static toPallet1() {
     backgroundColor = Colors.grey.shade900;
     primaryColor = Colors.white;
     secondaryColor = Colors.black;
     accentColor = Colors.amber[500]!;
   }
 
-  static getTextStyle_1(){
+  static getTextStyle_1() {
     return GoogleFonts.quicksand(fontSize: Style.blockM * 1, fontWeight: FontWeight.w800);
   }
-
 
   static init(BuildContext context) {
     //if(kIsWeb){
@@ -36,7 +34,7 @@ class Style {
 //  }
     block = MediaQuery.of(context).size.width / 20;
     blockH = MediaQuery.of(context).size.height / 20;
-    blockM = block>blockH ? blockH : block;
-    if(kIsWeb) blockM/=1.5;
+    blockM = block > blockH ? blockH : block;
+    if (kIsWeb) blockM /= 1.5;
   }
 }
