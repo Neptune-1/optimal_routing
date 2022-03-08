@@ -96,7 +96,11 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                       height: Style.blockM * 1.5,
                       child: GestureDetector(
                         onTap: () => Navigator.pop(context),
-                        child: Icon(Icons.arrow_back_ios, size: Style.blockM * 1.3, color: Style.primaryColor,),
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          size: Style.blockM * 1.3,
+                          color: Style.primaryColor,
+                        ),
                       ),
                     ),
                     StreamBuilder<int>(
@@ -137,8 +141,7 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                             child: GestureDetector(
                               behavior: HitTestBehavior.translucent,
                               onTap: () => showAnswerAndHide(),
-                              child: Icon(Icons.remove_red_eye, size: Style.blockM * 1,
-                                  color:Style.primaryColor),
+                              child: Icon(Icons.remove_red_eye, size: Style.blockM * 1, color: Style.primaryColor),
                             ),
                           ),
                         ],
@@ -174,16 +177,17 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                   ],
                 ),
               )),
-
           Center(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
               child: Field(
-                  key: UniqueKey(),
-                  currentNumOfLines: currentNumOfLines,
-                  tree: trees[widget.level][gameNum],
-                  isGameOver: isGameOver,
-                  showAnswer: showAnswerStream),
+                key: UniqueKey(),
+                currentNumOfLines: currentNumOfLines,
+                tree: trees[widget.level][gameNum],
+                isGameOver: isGameOver,
+                showAnswer: showAnswerStream,
+                oneTouchMode: widget.level == 1,
+              ),
             ),
           ),
           StreamBuilder<bool>(

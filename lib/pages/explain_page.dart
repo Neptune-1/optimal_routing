@@ -64,7 +64,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
   late final Stream<bool> showAnswerStream;
   int explainStep = 0;
   List<String> explainTexts = [
-    "Try to connect the neighboring points \n your finger should constantly be on the screen",
+    "Try to connect the neighboring point",//your finger should constantly be on the screen
     "To complete the level, connect all the marked points with a certain number of lines (Tap on the 'eye' to see the answer, if you need help)",
   ];
 
@@ -150,7 +150,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
           Align(
               alignment: const Alignment(0, kIsWeb ? -0.95 : -0.9),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: Style.blockM * 0.5),
+                padding: EdgeInsets.symmetric(horizontal: Style.blockM * 0.2, vertical: Style.blockM * 0.1),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -168,14 +168,30 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                                 transitionDuration: const Duration(milliseconds: 300),
                               ));
                         },
-                        child: Text(
-                          "skip",
-                          style: GoogleFonts.quicksand(
-                              fontSize: Style.blockM * 1, fontWeight: FontWeight.w800, color: Style.primaryColor),
+                        child: Center(
+                          child: Text(
+                            "skip",
+                            style: GoogleFonts.quicksand(
+                                fontSize: Style.blockM * 1, fontWeight: FontWeight.w800, color: Style.primaryColor),
+                          ),
                         ),
                       ),
                     ),
-
+                    StreamBuilder<int>(
+                        stream: currentNumOfLines.stream,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData && explainStep == 0) {
+                            WidgetsBinding.instance!.addPostFrameCallback((_) => setState(() => explainStep = 1));
+                          }
+                          return getSelection(
+                              Text(
+                                "${(snapshot.data ?? 0)}/${tree[1]}",
+                                style: GoogleFonts.quicksand(
+                                    fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
+                                textAlign: TextAlign.center,
+                              ),
+                              explainStep == 1);
+                        }),
                     getSelection(
                         SizedBox(
                           width: Style.blockM * 3,
@@ -239,24 +255,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                   ],
                 ),
               )),
-          Align(
-            alignment: const Alignment(0, -0.8),
-            child: StreamBuilder<int>(
-                stream: currentNumOfLines.stream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData && explainStep == 0) {
-                    WidgetsBinding.instance!.addPostFrameCallback((_) => setState(() => explainStep = 1));
-                  }
-                  return getSelection(
-                      Text(
-                        "${(snapshot.data ?? 0)}/${tree[1]}",
-                        style: GoogleFonts.quicksand(
-                            fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
-                        textAlign: TextAlign.center,
-                      ),
-                      explainStep == 1);
-                }),
-          ),
+
           Center(
             child: getSelection(
                 SizedBox(
@@ -266,7 +265,9 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                       currentNumOfLines: currentNumOfLines,
                       tree: tree,
                       isGameOver: isGameOver,
-                      showAnswer: showAnswerStream),
+                      showAnswer: showAnswerStream,
+                    oneTouchMode: false,
+                  ),
                 ),
                 explainStep == 0),
           ),

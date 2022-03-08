@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
           future: init(context),
           builder: (context, snapshot) {
             Style.init(context);
-            Style.toPallet1();
+            //Style.toPallet1();
 
             return snapshot.hasData
                 ? (Prefs.getBool("new") ?? true)

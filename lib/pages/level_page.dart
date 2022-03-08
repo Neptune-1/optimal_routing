@@ -33,8 +33,8 @@ class _LevelPageState extends State<LevelPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children:
-                  List.generate(1, (index) => GestureDetector(
-                    onTap: () => choseLevel(0),
+                  List.generate(2, (index) => GestureDetector(
+                    onTap: () => choseLevel(index),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -42,12 +42,12 @@ class _LevelPageState extends State<LevelPage> {
                           width: Style.blockM,
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 100),
-                            width: level == 0 ? Style.blockM * 0.5 : 0,
-                            height: level == 0 ? Style.blockM * 0.5 : 0,
+                            width: level == index ? Style.blockM * 0.5 : 0,
+                            height: level == index ? Style.blockM * 0.5 : 0,
                             decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.amber.shade500),
                           ),
                         ),
-                        Text(["Classical", "Just one touch"][1],
+                        Text(["Classical", "Just one touch"][index],
                             style: GoogleFonts.quicksand(
                                 fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor)),
                         SizedBox(

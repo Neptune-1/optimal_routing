@@ -13,13 +13,16 @@ class Field extends StatefulWidget {
   final StreamController<bool> isGameOver;
   final Stream<bool> showAnswer;
   final bool showLines;
+  final bool oneTouchMode;
 
   const Field(
       {Key? key,
       required this.currentNumOfLines,
       required this.tree,
       required this.isGameOver,
-      required this.showAnswer,
+        required this.showAnswer,
+        required this.oneTouchMode,
+
       this.showLines = false})
       : super(key: key);
 
@@ -49,6 +52,8 @@ class _FieldState extends State<Field> {
   @override
   void initState() {
     super.initState();
+    print(widget.tree);
+
     fieldSize = widget.tree[3];
     showedPointDiameter = pointDiameter * 0.2;
     graph = Graph(fieldSize);
@@ -286,7 +291,6 @@ class _FieldState extends State<Field> {
           }
         },
         onPanUpdate: (details) {
-          // print("Update");
           Point? currentPoint;
           int y = (details.localPosition.dy) ~/ (pointDiameter + spacePointPoint);
           int x = (details.localPosition.dx) ~/ (pointDiameter + spacePointPoint);
@@ -399,7 +403,7 @@ class _FieldState extends State<Field> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        getFieldV3(),
+        widget.oneTouchMode ? getFieldV3() : getFieldV2(),
         Center(
           child: StreamBuilder<Object>(
               stream: widget.showAnswer,
