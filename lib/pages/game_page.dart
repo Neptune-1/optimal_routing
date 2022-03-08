@@ -96,14 +96,22 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                       height: Style.blockM * 1.5,
                       child: GestureDetector(
                         onTap: () => Navigator.pop(context),
-                        child: Icon(Icons.arrow_back_ios, size: Style.blockM * 1.3),
+                        child: Icon(Icons.arrow_back_ios, size: Style.blockM * 1.3, color: Style.primaryColor,),
                       ),
                     ),
-                    Text(
-                      ["Easy", "Middle", "Hard"][widget.level],
-                      style: GoogleFonts.quicksand(
-                          fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor),
-                    ),
+                    StreamBuilder<int>(
+                        stream: currentNumOfLines.stream,
+                        builder: (context, snapshot) {
+                          return SizedBox(
+                            width: Style.blockM * 3,
+                            child: Text(
+                              "${(snapshot.data ?? 0)}/${trees[widget.level][gameNum][1]}",
+                              style: GoogleFonts.quicksand(
+                                  fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
+                              textAlign: TextAlign.center,
+                            ),
+                          );
+                        }),
                     SizedBox(
                       width: Style.blockM * 3,
                       height: Style.blockM * 1.5,
@@ -119,7 +127,7 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                                     return Center(
                                         child: CircularProgressIndicator(
                                       value: 1 - controller.value,
-                                      color: Colors.black,
+                                      color: Style.primaryColor,
                                       strokeWidth: Style.blockM * 0.1,
                                     ));
                                   }),
@@ -129,7 +137,8 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                             child: GestureDetector(
                               behavior: HitTestBehavior.translucent,
                               onTap: () => showAnswerAndHide(),
-                              child: Icon(Icons.remove_red_eye, size: Style.blockM * 1),
+                              child: Icon(Icons.remove_red_eye, size: Style.blockM * 1,
+                                  color:Style.primaryColor),
                             ),
                           ),
                         ],
@@ -165,22 +174,7 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                   ],
                 ),
               )),
-          Align(
-            alignment: const Alignment(0, -0.8),
-            child: StreamBuilder<int>(
-                stream: currentNumOfLines.stream,
-                builder: (context, snapshot) {
-                  return SizedBox(
-                    width: Style.blockM * 3,
-                    child: Text(
-                      "${(snapshot.data ?? 0)}/${trees[widget.level][gameNum][1]}",
-                      style: GoogleFonts.quicksand(
-                          fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
-                      textAlign: TextAlign.center,
-                    ),
-                  );
-                }),
-          ),
+
           Center(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),

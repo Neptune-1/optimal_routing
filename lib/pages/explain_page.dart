@@ -64,8 +64,8 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
   late final Stream<bool> showAnswerStream;
   int explainStep = 0;
   List<String> explainTexts = [
-    "Try to connect the neighboring points",
-    "To complete the level, connect all the marked points with a certain number of lines \n(Tap on the 'eye' to see the answer, if you need help)",
+    "Try to connect the neighboring points \n your finger should constantly be on the screen",
+    "To complete the level, connect all the marked points with a certain number of lines (Tap on the 'eye' to see the answer, if you need help)",
   ];
 
   // late Timer timer;
@@ -202,7 +202,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                                 child: GestureDetector(
                                   behavior: HitTestBehavior.translucent,
                                   onTap: () => showAnswerAndHide(),
-                                  child: Icon(Icons.remove_red_eye, size: Style.blockM * 1),
+                                  child: Icon(Icons.remove_red_eye, size: Style.blockM * 1,color: Style.primaryColor),
                                 ),
                               ),
                             ],

@@ -32,8 +32,8 @@ class _LevelPageState extends State<LevelPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
+                children:
+                  List.generate(1, (index) => GestureDetector(
                     onTap: () => choseLevel(0),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -47,7 +47,7 @@ class _LevelPageState extends State<LevelPage> {
                             decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.amber.shade500),
                           ),
                         ),
-                        Text("Easy",
+                        Text(["Classical", "Just one touch"][1],
                             style: GoogleFonts.quicksand(
                                 fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor)),
                         SizedBox(
@@ -55,60 +55,8 @@ class _LevelPageState extends State<LevelPage> {
                         ),
                       ],
                     ),
-                  ),
-                  SizedBox(
-                    height: Style.blockM * 0.6,
-                  ),
-                  GestureDetector(
-                    onTap: () => choseLevel(1),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(
-                          width: Style.blockM,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 100),
-                            width: level == 1 ? Style.blockM * 0.5 : 0,
-                            height: level == 1 ? Style.blockM * 0.5 : 0,
-                            decoration: BoxDecoration(shape: BoxShape.circle, color: Style.accentColor),
-                          ),
-                        ),
-                        Text("Middle",
-                            style: GoogleFonts.quicksand(
-                                fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor)),
-                        SizedBox(
-                          width: Style.blockM,
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: Style.blockM * 0.6,
-                  ),
-                  GestureDetector(
-                    onTap: () => choseLevel(2),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(
-                          width: Style.blockM,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 100),
-                            width: level == 2 ? Style.blockM * 0.5 : 0,
-                            height: level == 2 ? Style.blockM * 0.5 : 0,
-                            decoration: BoxDecoration(shape: BoxShape.circle, color: Style.accentColor),
-                          ),
-                        ),
-                        Text("Hard",
-                            style: GoogleFonts.quicksand(
-                                fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor)),
-                        SizedBox(
-                          width: Style.blockM,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ))
+
               ),
             ),
             Align(
@@ -133,7 +81,7 @@ class _LevelPageState extends State<LevelPage> {
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: Style.blockM * 0.5, horizontal: 2.5 * Style.blockM),
-                  child: Text("Start",
+                  child: Text("START",
                       style: GoogleFonts.quicksand(
                           fontSize: Style.blockM * 1.4, fontWeight: FontWeight.w800, color: Style.secondaryColor)),
                 ),

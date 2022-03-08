@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String version = packageInfo.version;
 
-    //await Prefs.clear();
+    await Prefs.clear();
 
     if (Prefs.getString("version") != version) {
       Prefs.clear();
@@ -58,6 +58,7 @@ class MyApp extends StatelessWidget {
           future: init(context),
           builder: (context, snapshot) {
             Style.init(context);
+            Style.toPallet1();
 
             return snapshot.hasData
                 ? (Prefs.getBool("new") ?? true)

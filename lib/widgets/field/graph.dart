@@ -18,6 +18,10 @@ class Graph {
     graph[point2VertexNum(p1)].remove(point2VertexNum(p0));
   }
 
+  clear(){
+    graph = HashMap<int, HashSet<int>>();
+  }
+
   utilDFS(int p, HashSet<int> visited, List<int> targets) {
     visited.add(p);
 
