@@ -1,4 +1,4 @@
-package com.alex_osh.optimal_routing
+package com.alexosh.optimal_routing
 
 import io.flutter.embedding.android.FlutterActivity
 

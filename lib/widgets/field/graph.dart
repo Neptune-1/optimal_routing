@@ -18,16 +18,17 @@ class Graph {
     //int dopX = type == "h" ? 1 : 0;
     //int dopY = type == "v" ? 1 : 0;
     print("${p0.x} ${p1.x}");
-    historyX.add(((direction == Direction.right) ? p0.x > p1.x : p0.x < p1.x) ? point2VertexNum(p0) : point2VertexNum(p1));
-    historyY.add((direction == Direction.down ? p0.y > p1.y : p0.y < p1.y) ? point2VertexNum(p0) : point2VertexNum(p1));
+    historyX.add(p0.x < p1.x ? point2VertexNum(p0) : point2VertexNum(p1));
+    historyY.add(p0.y < p1.y ? point2VertexNum(p0) : point2VertexNum(p1));
   }
 
   removeConnection(Point p0, Point p1) {
     graph[point2VertexNum(p0)].remove(point2VertexNum(p1));
     graph[point2VertexNum(p1)].remove(point2VertexNum(p0));
 
-    historyX.remove(((direction == Direction.right) ? p0.x > p1.x : p0.x < p1.x) ? point2VertexNum(p0) : point2VertexNum(p1));
-    historyY.remove((direction == Direction.down ? p0.y > p1.y : p0.y < p1.y) ? point2VertexNum(p0) : point2VertexNum(p1));
+
+    historyX.remove(p0.x < p1.x ? point2VertexNum(p0) : point2VertexNum(p1));
+    historyY.remove(p0.y < p1.y ? point2VertexNum(p0) : point2VertexNum(p1));
   }
 
   clear() {

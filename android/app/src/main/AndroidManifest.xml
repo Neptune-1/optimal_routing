@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.alex_osh.optimal_routing">
+    package="com.alexosh.optimal_routing">
    <application
         android:label="Optimal Routes"
         android:name="${applicationName}"
