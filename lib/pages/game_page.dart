@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -27,8 +28,7 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
   final StreamController<bool> isGameOver = StreamController();
   final StreamController<bool> showAnswer = StreamController();
   late final Stream<bool> showAnswerStream;
-
-  // late Timer timer;
+  int direction = Random().nextInt(4);
   late int gameNum;
   final int answerShowTime = 5;
 
@@ -37,10 +37,6 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
     gameNum = Prefs.getInt(widget.level.toString()) ?? 0;
     if (gameNum != 0) gameNum -= 1;
     showAnswerStream = showAnswer.stream.asBroadcastStream();
-    // timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-    //   timerStream.add(timer.tick);
-    // });
-
     super.initState();
 
     controller = AnimationController(
@@ -51,10 +47,7 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
   }
 
   void startNewGame() {
-    // timer.cancel();
-    // timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-    //   timerStream.add(timer.tick);
-    // });
+    direction = Random().nextInt(4);
     currentNumOfLines.add(0);
     gameNum != trees[widget.level].length - 1 ? gameNum++ : null;
     isGameOver.add(false);
@@ -63,7 +56,6 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
 
   ifGameIsOver() {
     Prefs.setInt(widget.level.toString(), gameNum + 1);
-    // timer.cancel();
   }
 
   showAnswerAndHide() {
@@ -90,6 +82,7 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                 padding: EdgeInsets.symmetric(horizontal: Style.blockM * 0.5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
                       width: Style.blockM * 3,
@@ -103,19 +96,34 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                         ),
                       ),
                     ),
-                    StreamBuilder<int>(
-                        stream: currentNumOfLines.stream,
-                        builder: (context, snapshot) {
-                          return SizedBox(
-                            width: Style.blockM * 3,
-                            child: Text(
-                              "${(snapshot.data ?? 0)}/${trees[widget.level][gameNum][1]}",
-                              style: GoogleFonts.quicksand(
-                                  fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
-                              textAlign: TextAlign.center,
-                            ),
-                          );
-                        }),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+
+                      children: [
+                        StreamBuilder<int>(
+                            stream: currentNumOfLines.stream,
+                            builder: (context, snapshot) {
+                              return SizedBox(
+                                width: Style.blockM * 3,
+                                child: Text(
+                                  "${(snapshot.data ?? 0)}/${trees[widget.level][gameNum][1]}",
+                                  style: GoogleFonts.quicksand(
+                                      fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
+                                  textAlign: TextAlign.center,
+                                ),
+                              );
+                            }),
+                        SizedBox(height: widget.level == 2 ?Style.blockM*2 : 0,),
+                        widget.level == 2 ? Transform.rotate(
+                          angle: [0, pi, -pi/2, pi/2][direction].toDouble(),
+                          child: Icon(
+                            Icons.arrow_right,
+                            size: Style.blockM * 3,
+                            color: Style.accentColor,
+                          ),
+                        ) : Container()
+                      ],
+                    ),
                     SizedBox(
                       width: Style.blockM * 3,
                       height: Style.blockM * 1.5,
@@ -147,33 +155,6 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                         ],
                       ),
                     ),
-
-                    // StreamBuilder<int>(
-                    //     stream: timerStream.stream,
-                    //     builder: (context, snapshot) {
-                    //       String time = "00:00";
-                    //
-                    //       if (snapshot.hasData) {
-                    //         String minutes = ((snapshot.data as int) ~/ 60).toString();
-                    //         String seconds = ((snapshot.data as int) % 60).toString();
-                    //         if (minutes.length == 1) minutes = '0' + minutes;
-                    //         if (seconds.length == 1) seconds = '0' + seconds;
-                    //         time = "$minutes:$seconds";
-                    //         if ((snapshot.data as int) ~/ 60 > 60) {
-                    //           time = "Reeally long";
-                    //         }
-                    //       }
-                    //
-                    //       return SizedBox(
-                    //         width: Style.blockM * 3,
-                    //         child: Text(
-                    //           time,
-                    //           style: GoogleFonts.quicksand(
-                    //               fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
-                    //           textAlign: TextAlign.right,
-                    //         ),
-                    //       );
-                    //     }),
                   ],
                 ),
               )),
@@ -187,6 +168,7 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                 isGameOver: isGameOver,
                 showAnswer: showAnswerStream,
                 oneTouchMode: widget.level == 1,
+                direction: widget.level == 2 ? direction : null,
               ),
             ),
           ),

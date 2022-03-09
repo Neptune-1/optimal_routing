@@ -30,34 +30,38 @@ class _LevelPageState extends State<LevelPage> {
             Align(
               alignment: const Alignment(0, -0.2),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children:
-                  List.generate(2, (index) => GestureDetector(
-                    onTap: () => choseLevel(index),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(
-                          width: Style.blockM,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 100),
-                            width: level == index ? Style.blockM * 0.5 : 0,
-                            height: level == index ? Style.blockM * 0.5 : 0,
-                            decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.amber.shade500),
-                          ),
-                        ),
-                        Text(["Classical", "Just one touch"][index],
-                            style: GoogleFonts.quicksand(
-                                fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: Style.primaryColor)),
-                        SizedBox(
-                          width: Style.blockM,
-                        ),
-                      ],
-                    ),
-                  ))
-
-              ),
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: List.generate(
+                      3,
+                      (index) => GestureDetector(
+                            onTap: () => choseLevel(index),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: Style.blockM * 0.3),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    width: Style.blockM,
+                                    child: AnimatedContainer(
+                                      duration: const Duration(milliseconds: 100),
+                                      width: level == index ? Style.blockM * 0.5 : 0,
+                                      height: level == index ? Style.blockM * 0.5 : 0,
+                                      decoration: BoxDecoration(shape: BoxShape.circle, color: Style.accentColor),
+                                    ),
+                                  ),
+                                  Text(["Classical", "Just one touch", "One direction"][index],
+                                      style: GoogleFonts.quicksand(
+                                          fontSize: Style.blockM * 1.5,
+                                          fontWeight: FontWeight.w800,
+                                          color: Style.primaryColor)),
+                                  SizedBox(
+                                    width: Style.blockM,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ))),
             ),
             Align(
               alignment: const Alignment(0, 0.8),

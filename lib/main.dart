@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:optimal_routing/consts/styles.dart';
 import 'package:optimal_routing/pages/explain_page.dart';
@@ -17,7 +16,7 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   Future<void> initializeDefault() async {
-    if(!Platform.isIOS) {
+    if (kIsWeb) {
       await Firebase.initializeApp(
         options: const FirebaseOptions(
             apiKey: "AIzaSyAbn5MA2ZVal35qZBO0pvZRWCFj4X2K1kw",
@@ -40,7 +39,7 @@ class MyApp extends StatelessWidget {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String version = packageInfo.version;
 
-    await Prefs.clear();
+    //await Prefs.clear();
 
     if (Prefs.getString("version") != version) {
       Prefs.clear();
@@ -53,6 +52,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //Style.toPallet1();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Routes',
@@ -63,7 +64,6 @@ class MyApp extends StatelessWidget {
           future: init(context),
           builder: (context, snapshot) {
             Style.init(context);
-            //Style.toPallet1();
 
             return snapshot.hasData
                 ? (Prefs.getBool("new") ?? true)

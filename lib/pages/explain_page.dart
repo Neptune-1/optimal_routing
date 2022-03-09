@@ -64,7 +64,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
   late final Stream<bool> showAnswerStream;
   int explainStep = 0;
   List<String> explainTexts = [
-    "Try to connect the neighboring point",//your finger should constantly be on the screen
+    "Try to connect the neighboring point", //your finger should constantly be on the screen
     "To complete the level, connect all the marked points with a certain number of lines (Tap on the 'eye' to see the answer, if you need help)",
   ];
 
@@ -187,7 +187,9 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                               Text(
                                 "${(snapshot.data ?? 0)}/${tree[1]}",
                                 style: GoogleFonts.quicksand(
-                                    fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
+                                    fontSize: Style.blockM * 0.7,
+                                    fontWeight: FontWeight.w800,
+                                    color: Style.primaryColor),
                                 textAlign: TextAlign.center,
                               ),
                               explainStep == 1);
@@ -218,7 +220,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                                 child: GestureDetector(
                                   behavior: HitTestBehavior.translucent,
                                   onTap: () => showAnswerAndHide(),
-                                  child: Icon(Icons.remove_red_eye, size: Style.blockM * 1,color: Style.primaryColor),
+                                  child: Icon(Icons.remove_red_eye, size: Style.blockM * 1, color: Style.primaryColor),
                                 ),
                               ),
                             ],
@@ -255,18 +257,18 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                   ],
                 ),
               )),
-
           Center(
             child: getSelection(
                 SizedBox(
-                  width: Style.blockM * 10,
-                  height: Style.blockM * 10,
+                  width: Style.blockM * 15,
+                  height: Style.blockM * 15,
                   child: Field(
-                      currentNumOfLines: currentNumOfLines,
-                      tree: tree,
-                      isGameOver: isGameOver,
-                      showAnswer: showAnswerStream,
+                    currentNumOfLines: currentNumOfLines,
+                    tree: tree,
+                    isGameOver: isGameOver,
+                    showAnswer: showAnswerStream,
                     oneTouchMode: false,
+                    direction: null,
                   ),
                 ),
                 explainStep == 0),

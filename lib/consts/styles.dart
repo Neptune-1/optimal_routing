@@ -15,10 +15,10 @@ class Style {
   static Color accentColor = Colors.amber[500]!;
 
   static toPallet1() {
-    backgroundColor = Colors.grey.shade900;
     primaryColor = Colors.white;
-    secondaryColor = Colors.black;
-    accentColor = Colors.amber[500]!;
+    secondaryColor = Colors.grey.shade900;
+    accentColor = Colors.cyanAccent.shade200;
+    backgroundColor = secondaryColor;
   }
 
   static getTextStyle_1() {
