@@ -34,7 +34,7 @@ class Field extends StatefulWidget {
 class _FieldState extends State<Field> {
   late final int fieldSize;
   double spacePointPoint = kIsWeb ? Style.blockM * 1.4 : Style.blockM * 1;
-  double pointDiameter = kIsWeb ? Style.blockM * 1.2 : Style.blockM * 1;
+  double pointDiameter = kIsWeb ? Style.blockM * 1.2 : Style.blockM * 1.1;
   late final double showedPointDiameter;
   final double spaceLinePoint = Style.blockM * 0;
   final double lineThick = Style.blockM * 0.1;

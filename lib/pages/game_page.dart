@@ -118,7 +118,7 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                           angle: [0, pi, -pi/2, pi/2][direction].toDouble(),
                           child: Icon(
                             Icons.arrow_right,
-                            size: Style.blockM * 3,
+                            size: Style.blockM * 4,
                             color: Style.accentColor,
                           ),
                         ) : Container()

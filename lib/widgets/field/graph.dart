@@ -18,8 +18,14 @@ class Graph {
     //int dopX = type == "h" ? 1 : 0;
     //int dopY = type == "v" ? 1 : 0;
     print("${p0.x} ${p1.x}");
-    historyX.add(p0.x < p1.x ? point2VertexNum(p0) : point2VertexNum(p1));
-    historyY.add(p0.y < p1.y ? point2VertexNum(p0) : point2VertexNum(p1));
+    bool dopCase = true;
+    if(historyX.isNotEmpty) dopCase = (historyX[historyX.length-1]>((p0.x + p1.x )/ 2)); // for this case
+
+    historyX.add((p0.x < p1.x) ? point2VertexNum(p0) : point2VertexNum(p1));
+
+    dopCase = true;
+    if(historyY.isNotEmpty) dopCase = (historyY[historyY.length-1]>((p0.y + p1.y )/ 2)); // for this case
+    historyY.add((p0.y < p1.y) ? point2VertexNum(p0) : point2VertexNum(p1));
   }
 
   removeConnection(Point p0, Point p1) {
