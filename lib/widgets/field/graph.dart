@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-
 class Graph {
   HashMap graph = HashMap<int, HashSet<int>>();
   List historyX = [];
@@ -18,19 +17,18 @@ class Graph {
     //int dopX = type == "h" ? 1 : 0;
     //int dopY = type == "v" ? 1 : 0;
     bool dopCase = true;
-    if(historyX.isNotEmpty) dopCase = (historyX[historyX.length-1]>((p0.x + p1.x )/ 2)); // for this case
+    if (historyX.isNotEmpty) dopCase = (historyX[historyX.length - 1] > ((p0.x + p1.x) / 2)); // for this case
 
     historyX.add((p0.x < p1.x) ? point2VertexNum(p0) : point2VertexNum(p1));
 
     dopCase = true;
-    if(historyY.isNotEmpty) dopCase = (historyY[historyY.length-1]>((p0.y + p1.y )/ 2)); // for this case
+    if (historyY.isNotEmpty) dopCase = (historyY[historyY.length - 1] > ((p0.y + p1.y) / 2)); // for this case
     historyY.add((p0.y < p1.y) ? point2VertexNum(p0) : point2VertexNum(p1));
   }
 
   removeConnection(Point p0, Point p1) {
     graph[point2VertexNum(p0)].remove(point2VertexNum(p1));
     graph[point2VertexNum(p1)].remove(point2VertexNum(p0));
-
 
     historyX.remove(p0.x < p1.x ? point2VertexNum(p0) : point2VertexNum(p1));
     historyY.remove(p0.y < p1.y ? point2VertexNum(p0) : point2VertexNum(p1));
@@ -65,20 +63,25 @@ class Graph {
 
   bool checkDirection() {
     bool rightDirection = true;
-    List<int> xx = historyX.map((p) => p%fieldSize).toList().cast<int>();
-    List<int> yy = historyY.map((p) => p~/fieldSize).toList().cast<int>();
+    List<int> xx = historyX.map((p) => p % fieldSize).toList().cast<int>();
+    List<int> yy = historyY.map((p) => p ~/ fieldSize).toList().cast<int>();
 
-    if(direction == Direction.right){
-      xx.asMap().forEach((i, e) { if(i!=0) if(e<xx[i-1]) rightDirection = false;});
-    }
-    else if(direction == Direction.left){
-      xx.asMap().forEach((i, e) { if(i!=0) if(e>xx[i-1]) rightDirection = false;});
-    }
-    else if(direction == Direction.up){
-      yy.asMap().forEach((i, e) { if(i!=0) if(e>yy[i-1]) rightDirection = false;});
-    }
-    else if(direction == Direction.down){
-      yy.asMap().forEach((i, e) { if(i!=0) if(e<yy[i-1]) rightDirection = false;});
+    if (direction == Direction.right) {
+      xx.asMap().forEach((i, e) {
+        if (i != 0) if (e < xx[i - 1]) rightDirection = false;
+      });
+    } else if (direction == Direction.left) {
+      xx.asMap().forEach((i, e) {
+        if (i != 0) if (e > xx[i - 1]) rightDirection = false;
+      });
+    } else if (direction == Direction.up) {
+      yy.asMap().forEach((i, e) {
+        if (i != 0) if (e > yy[i - 1]) rightDirection = false;
+      });
+    } else if (direction == Direction.down) {
+      yy.asMap().forEach((i, e) {
+        if (i != 0) if (e < yy[i - 1]) rightDirection = false;
+      });
     }
     return rightDirection;
   }

@@ -64,20 +64,19 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
         toNight.add(timer.tick % 2 == 0);
       });
       toNightStream.listen((event) {
-
-          if (event ?? true) {
-            if (dayNightController.value == 0) {
-              dayNightController.forward(from: 0);
-              Style.toPallet1();
-              setState(() { });
-            }
-          } else {
-            if (dayNightController.value == 1) {
-              dayNightController.reverse(from: 1);
-              Style.toPallet0();
-              setState(() { });
-            }
+        if (event ?? true) {
+          if (dayNightController.value == 0) {
+            dayNightController.forward(from: 0);
+            Style.toPallet1();
+            setState(() {});
           }
+        } else {
+          if (dayNightController.value == 1) {
+            dayNightController.reverse(from: 1);
+            Style.toPallet0();
+            setState(() {});
+          }
+        }
       });
     }
   }
@@ -108,13 +107,13 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     controller.dispose();
     dayNightController.dispose();
     isGameOver.close();
     showAnswer.close();
     toNight.close();
-    if(widget.level ==3) dayNightTimer.cancel();
+    if (widget.level == 3) dayNightTimer.cancel();
 
     super.dispose();
   }
@@ -187,20 +186,23 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                       SizedBox(
                         height: widget.level == 3 ? Style.blockM * 1 : 0,
                       ),
-                      widget.level == 3 ? StreamBuilder<bool?>(
-                          stream: toNightStream,
-                          builder: (context, snapshot) {
-                            return AnimatedContainer(
-                              duration: Duration(seconds: dayNightTime),
-                              width: (snapshot.data ?? true) ? Style.blockM * 2 : Style.blockM * 0.2,
-                              height: Style.blockM * 0.2,
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 500),
-                                decoration: BoxDecoration(
-                                    color: Style.accentColor, borderRadius: BorderRadius.circular(Style.blockM * 0.1)),
-                              ),
-                            );
-                          }) : Container()
+                      widget.level == 3
+                          ? StreamBuilder<bool?>(
+                              stream: toNightStream,
+                              builder: (context, snapshot) {
+                                return AnimatedContainer(
+                                  duration: Duration(seconds: dayNightTime),
+                                  width: (snapshot.data ?? true) ? Style.blockM * 2 : Style.blockM * 0.2,
+                                  height: Style.blockM * 0.2,
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 500),
+                                    decoration: BoxDecoration(
+                                        color: Style.accentColor,
+                                        borderRadius: BorderRadius.circular(Style.blockM * 0.1)),
+                                  ),
+                                );
+                              })
+                          : Container()
                     ],
                   ),
                   SizedBox(

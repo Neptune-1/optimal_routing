@@ -31,7 +31,7 @@ class _LevelPageState extends State<LevelPage> {
               alignment: const Alignment(0, -0.2),
               child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: List.generate(
                       4,
                       (index) => GestureDetector(
@@ -41,22 +41,40 @@ class _LevelPageState extends State<LevelPage> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  SizedBox(
-                                    width: Style.blockM,
-                                    child: AnimatedContainer(
-                                      duration: const Duration(milliseconds: 100),
-                                      width: level == index ? Style.blockM * 0.5 : 0,
-                                      height: level == index ? Style.blockM * 0.5 : 0,
-                                      decoration: BoxDecoration(shape: BoxShape.circle, color: Style.accentColor),
+                                  AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    padding: EdgeInsets.symmetric(horizontal: Style.blockM * 0.3),
+                                    decoration: BoxDecoration(
+                                        color: Style.accentColor.withOpacity(level == index ? 0.7 : 0),
+                                        borderRadius: BorderRadius.circular(Style.blockM * 0.2)),
+                                    height: level == index ? Style.blockM * 3 : Style.blockM * 2,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment: CrossAxisAlignment.center,mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(["Classical", "Just one touch", "One direction", "Day-Night"][index],
+                                            style: GoogleFonts.quicksand(
+                                                fontSize: Style.blockM * 1.5,
+                                                fontWeight: FontWeight.w800,
+                                                color: Style.primaryColor)),
+                                        level == index
+                                            ? Flexible(
+                                                child: Text(
+                                                    [
+                                                      "Just connect all targets",
+                                                      "Don't take your finger off the screen",
+                                                      "Connect targets according to showed direction",
+                                                      "Connect ALL targets (you'll see them with 5s delay)"
+                                                    ][index],
+                                                    overflow: TextOverflow.fade,
+                                                    style: GoogleFonts.quicksand(
+                                                        fontSize: Style.blockM * 0.7,
+                                                        fontWeight: FontWeight.w800,
+                                                        color: Style.primaryColor.withOpacity(0.7))),
+                                              )
+                                            : Container(),
+                                      ],
                                     ),
-                                  ),
-                                  Text(["Classical", "Just one touch", "One direction", "Day-Night"][index],
-                                      style: GoogleFonts.quicksand(
-                                          fontSize: Style.blockM * 1.5,
-                                          fontWeight: FontWeight.w800,
-                                          color: Style.primaryColor)),
-                                  SizedBox(
-                                    width: Style.blockM,
                                   ),
                                 ],
                               ),

@@ -54,7 +54,6 @@ class _FieldState extends State<Field> {
   List<Point> dayPoints = [];
   List<Point> nightPoints = [];
 
-
   @override
   void initState() {
     super.initState();
@@ -68,17 +67,14 @@ class _FieldState extends State<Field> {
 
     chosenPoints = (widget.tree[0] as List).map((e) => Point(e[0], e[1])).toList().cast<Point>();
 
-    if(widget.toNightStream!=null) {
+    if (widget.toNightStream != null) {
       List chosenPointsShuffle = [...chosenPoints];
       chosenPointsShuffle.shuffle();
       dayPoints = chosenPointsShuffle.sublist(0, chosenPointsShuffle.length ~/ 2).cast<Point>();
       nightPoints = chosenPointsShuffle.sublist(chosenPointsShuffle.length ~/ 2).cast<Point>();
     }
 
-    points = List.generate(
-        fieldSize,
-        (x) => List.generate(fieldSize,
-            (y) => false));
+    points = List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false));
   }
 
   void chooseRout(int x, int y, String type, {state}) {
@@ -138,7 +134,6 @@ class _FieldState extends State<Field> {
     int r4 = (x != 0 ? routesH[x - 1][y] : false) ? 1 : 0;
     bool res = (r1 + r2 + r3 + r4) > 0;
 
-
     return res;
   }
 
@@ -168,6 +163,7 @@ class _FieldState extends State<Field> {
   }
 
   Point? firstPoint;
+
   getFieldV2() {
     return Center(
       child: GestureDetector(
@@ -417,132 +413,141 @@ class _FieldState extends State<Field> {
 
   getFieldV4() {
     return StreamBuilder<bool?>(
-      stream: widget.toNightStream!,
-      builder: (context, snapshot) {
-        bool isNight = snapshot.data ?? false;
-        return Center(
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onPanStart: (details) {
-              firstPoint = null;
-            },
-            onPanUpdate: (details) {
-              // print("Update");
-              Point? currentPoint;
-              int y = (details.localPosition.dy) ~/ (pointDiameter + spacePointPoint);
-              int x = (details.localPosition.dx) ~/ (pointDiameter + spacePointPoint);
-              if (sqrt(pow(details.localPosition.dy % (pointDiameter + spacePointPoint), 2) +
-                  pow(details.localPosition.dx % (pointDiameter + spacePointPoint), 2)) <
-                  pointDiameter * 2) {
-                currentPoint = Point(x, y);
-              }
+        stream: widget.toNightStream!,
+        builder: (context, snapshot) {
+          bool isNight = snapshot.data ?? false;
+          return Center(
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onPanStart: (details) {
+                firstPoint = null;
+              },
+              onPanUpdate: (details) {
+                // print("Update");
+                Point? currentPoint;
+                int y = (details.localPosition.dy) ~/ (pointDiameter + spacePointPoint);
+                int x = (details.localPosition.dx) ~/ (pointDiameter + spacePointPoint);
+                if (sqrt(pow(details.localPosition.dy % (pointDiameter + spacePointPoint), 2) +
+                        pow(details.localPosition.dx % (pointDiameter + spacePointPoint), 2)) <
+                    pointDiameter * 2) {
+                  currentPoint = Point(x, y);
+                }
 
-              firstPoint ??= currentPoint;
+                firstPoint ??= currentPoint;
 
-              if (currentPoint != null && !firstPoint!.samePoint(currentPoint)) {
-                chooseRout(min(currentPoint.x, firstPoint!.x), min(currentPoint.y, firstPoint!.y),
-                    currentPoint.x == firstPoint!.x ? "v" : "h");
+                if (currentPoint != null && !firstPoint!.samePoint(currentPoint)) {
+                  chooseRout(min(currentPoint.x, firstPoint!.x), min(currentPoint.y, firstPoint!.y),
+                      currentPoint.x == firstPoint!.x ? "v" : "h");
 
-                firstPoint = Point(currentPoint.x, currentPoint.y);
-              }
-            },
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(
-                  fieldSize * 2 - 1,
-                      (y) => y % 2 == 1
-                      ? Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: List.generate(
-                        fieldSize * 2 - 1,
-                            (x) => x % 2 == 1
-                            ? SizedBox(
-                          width: spacePointPoint,
-                        )
-                            : GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () => chooseRout(x ~/ 2, y ~/ 2, "v"),
-                          child: SizedBox(
-                            height: spacePointPoint,
-                            width: pointDiameter,
-                            child: Center(
-                              child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  height: spacePointPoint - spaceLinePoint,
-                                  width: lineThick,
-                                  decoration: BoxDecoration(
-                                      color: routesV[x ~/ 2][y ~/ 2]
-                                          ? (routeIsConnected
-                                          ? Style.accentColor
-                                          : Style.primaryColor.withOpacity(1))
-                                          : (isGameOver
-                                          ? Colors.transparent
-                                          : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0)),
-                                      borderRadius: BorderRadius.circular(100))),
-                            ),
-                          ),
-                        ),
-                      ))
-                      : Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: List.generate(
-                        fieldSize * 2 - 1,
-                            (x) => x % 2 == 1
-                            ? GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () => chooseRout(x ~/ 2, y ~/ 2, "h"),
-                          child: SizedBox(
-                            width: spacePointPoint,
-                            height: pointDiameter,
-                            child: Center(
-                              child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  width: spacePointPoint - spaceLinePoint,
-                                  height: lineThick,
-                                  decoration: BoxDecoration(
-                                      color: routesH[x ~/ 2][y ~/ 2]
-                                          ? (routeIsConnected
-                                          ? Style.accentColor
-                                          : Style.primaryColor.withOpacity(1))
-                                          : (isGameOver
-                                          ? Colors.transparent
-                                          : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0)),
-                                      borderRadius: BorderRadius.circular(100))),
-                            ),
-                          ),
-                        )
-                            : SizedBox(
-                          width: pointDiameter,
-                          height: pointDiameter,
-                          child: Center(
-                            child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 200),
-                                width: showedPointDiameter *
-                                    (((isPointInList(Point(x ~/ 2, y ~/ 2), isNight ? nightPoints : dayPoints)) || points[x ~/ 2][y ~/ 2]) ? 3 : 1),
-                                height: showedPointDiameter *
-                                    (((isPointInList(Point(x ~/ 2, y ~/ 2), isNight ? nightPoints : dayPoints)) || points[x ~/ 2][y ~/ 2]) ? 3 : 1),
-                                decoration: BoxDecoration(
-                                    color: (isPointInList(Point(x ~/ 2, y ~/ 2), isNight ? nightPoints : dayPoints)
-                                        ? (routeIsConnected
-                                        ? (isGameOver ? Style.accentColor : Style.primaryColor)
-                                        : Style.accentColor)
-                                        : (((isPointInList(Point(x ~/ 2, y ~/ 2), isNight ? nightPoints : dayPoints)) || points[x ~/ 2][y ~/ 2])
-                                        ? (routeIsConnected
-                                        ? Style.accentColor
-                                        : (isGameOver ? Style.accentColor : Style.primaryColor))
-                                        : (isGameOver
-                                        ? Style.primaryColor.withOpacity(1)
-                                        : Style.primaryColor.withOpacity(0.5)))),
-                                    shape: BoxShape.circle)),
-                          ),
-                        ),
-                      ))),
+                  firstPoint = Point(currentPoint.x, currentPoint.y);
+                }
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(
+                    fieldSize * 2 - 1,
+                    (y) => y % 2 == 1
+                        ? Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: List.generate(
+                              fieldSize * 2 - 1,
+                              (x) => x % 2 == 1
+                                  ? SizedBox(
+                                      width: spacePointPoint,
+                                    )
+                                  : GestureDetector(
+                                      behavior: HitTestBehavior.translucent,
+                                      onTap: () => chooseRout(x ~/ 2, y ~/ 2, "v"),
+                                      child: SizedBox(
+                                        height: spacePointPoint,
+                                        width: pointDiameter,
+                                        child: Center(
+                                          child: AnimatedContainer(
+                                              duration: const Duration(milliseconds: 200),
+                                              height: spacePointPoint - spaceLinePoint,
+                                              width: lineThick,
+                                              decoration: BoxDecoration(
+                                                  color: routesV[x ~/ 2][y ~/ 2]
+                                                      ? (routeIsConnected
+                                                          ? Style.accentColor
+                                                          : Style.primaryColor.withOpacity(1))
+                                                      : (isGameOver
+                                                          ? Colors.transparent
+                                                          : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0)),
+                                                  borderRadius: BorderRadius.circular(100))),
+                                        ),
+                                      ),
+                                    ),
+                            ))
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: List.generate(
+                              fieldSize * 2 - 1,
+                              (x) => x % 2 == 1
+                                  ? GestureDetector(
+                                      behavior: HitTestBehavior.translucent,
+                                      onTap: () => chooseRout(x ~/ 2, y ~/ 2, "h"),
+                                      child: SizedBox(
+                                        width: spacePointPoint,
+                                        height: pointDiameter,
+                                        child: Center(
+                                          child: AnimatedContainer(
+                                              duration: const Duration(milliseconds: 200),
+                                              width: spacePointPoint - spaceLinePoint,
+                                              height: lineThick,
+                                              decoration: BoxDecoration(
+                                                  color: routesH[x ~/ 2][y ~/ 2]
+                                                      ? (routeIsConnected
+                                                          ? Style.accentColor
+                                                          : Style.primaryColor.withOpacity(1))
+                                                      : (isGameOver
+                                                          ? Colors.transparent
+                                                          : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0)),
+                                                  borderRadius: BorderRadius.circular(100))),
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox(
+                                      width: pointDiameter,
+                                      height: pointDiameter,
+                                      child: Center(
+                                        child: AnimatedContainer(
+                                            duration: const Duration(milliseconds: 200),
+                                            width: showedPointDiameter *
+                                                (((isPointInList(Point(x ~/ 2, y ~/ 2),
+                                                            isNight ? nightPoints : dayPoints)) ||
+                                                        points[x ~/ 2][y ~/ 2])
+                                                    ? 3
+                                                    : 1),
+                                            height: showedPointDiameter *
+                                                (((isPointInList(Point(x ~/ 2, y ~/ 2),
+                                                            isNight ? nightPoints : dayPoints)) ||
+                                                        points[x ~/ 2][y ~/ 2])
+                                                    ? 3
+                                                    : 1),
+                                            decoration: BoxDecoration(
+                                                color: (isPointInList(
+                                                        Point(x ~/ 2, y ~/ 2), isNight ? nightPoints : dayPoints)
+                                                    ? (routeIsConnected
+                                                        ? (isGameOver ? Style.accentColor : Style.primaryColor)
+                                                        : Style.accentColor)
+                                                    : (((isPointInList(Point(x ~/ 2, y ~/ 2),
+                                                                isNight ? nightPoints : dayPoints)) ||
+                                                            points[x ~/ 2][y ~/ 2])
+                                                        ? (routeIsConnected
+                                                            ? Style.accentColor
+                                                            : (isGameOver ? Style.accentColor : Style.primaryColor))
+                                                        : (isGameOver
+                                                            ? Style.primaryColor.withOpacity(1)
+                                                            : Style.primaryColor.withOpacity(0.5)))),
+                                                shape: BoxShape.circle)),
+                                      ),
+                                    ),
+                            ))),
+              ),
             ),
-          ),
-
-        );
-      }
-    );
+          );
+        });
   }
 
   @override
@@ -663,7 +668,9 @@ class _FieldState extends State<Field> {
                                         ))),
                           ),
                         )
-                      : (widget.oneTouchMode ? getFieldV3() : (widget.toNightStream ==null ? getFieldV2() : getFieldV4())),
+                      : (widget.oneTouchMode
+                          ? getFieldV3()
+                          : (widget.toNightStream == null ? getFieldV2() : getFieldV4())),
                 );
               }),
         ),
