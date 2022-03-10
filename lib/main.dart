@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
                     ? const ExplainPage()
                     : const LevelPage()
                 : Container(
-                    color: Style.accentColor,
+                    color: Style.backgroundColor,
                   );
           }),
     );

@@ -33,7 +33,7 @@ class _LevelPageState extends State<LevelPage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: List.generate(
-                      3,
+                      4,
                       (index) => GestureDetector(
                             onTap: () => choseLevel(index),
                             child: Padding(
@@ -50,7 +50,7 @@ class _LevelPageState extends State<LevelPage> {
                                       decoration: BoxDecoration(shape: BoxShape.circle, color: Style.accentColor),
                                     ),
                                   ),
-                                  Text(["Classical", "Just one touch", "One direction"][index],
+                                  Text(["Classical", "Just one touch", "One direction", "Day-Night"][index],
                                       style: GoogleFonts.quicksand(
                                           fontSize: Style.blockM * 1.5,
                                           fontWeight: FontWeight.w800,

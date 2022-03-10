@@ -21,6 +21,13 @@ class Style {
     backgroundColor = secondaryColor;
   }
 
+  static toPallet0() {
+    primaryColor = Colors.black;
+    secondaryColor = Colors.white;
+    accentColor = Colors.amber[500]!;
+    backgroundColor = secondaryColor;
+  }
+
   static getTextStyle_1() {
     return GoogleFonts.quicksand(fontSize: Style.blockM * 1, fontWeight: FontWeight.w800);
   }
