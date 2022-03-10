@@ -19,6 +19,7 @@ dependencies:
   universal_html: ^2.0.8
   shared_preferences: ^2.0.13
   package_info_plus: ^1.4.0
+  lottie: ^1.2.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -28,4 +29,5 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/
     - google_fonts/

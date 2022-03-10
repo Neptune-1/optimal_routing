@@ -17,7 +17,6 @@ class Graph {
     graph[point2VertexNum(p1)].add(point2VertexNum(p0));
     //int dopX = type == "h" ? 1 : 0;
     //int dopY = type == "v" ? 1 : 0;
-    print("${p0.x} ${p1.x}");
     bool dopCase = true;
     if(historyX.isNotEmpty) dopCase = (historyX[historyX.length-1]>((p0.x + p1.x )/ 2)); // for this case
 

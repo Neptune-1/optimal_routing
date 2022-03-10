@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 import '../consts/styles.dart';
 import '../data/trees.dart';
@@ -20,22 +21,26 @@ class GamePage extends StatefulWidget {
   State<GamePage> createState() => _GamePageState();
 }
 
-class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin {
+class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   late final AnimationController controller;
   int currentLinesNumber = 0;
   final StreamController<int> currentNumOfLines = StreamController();
-  final StreamController<int> timerStream = StreamController();
   final StreamController<bool> isGameOver = StreamController();
   final StreamController<bool> showAnswer = StreamController();
   final StreamController<bool> toNight = StreamController();
   late final Stream<bool> showAnswerStream;
   late final Stream<bool?> toNightStream;
+  late final AnimationController dayNightController;
+  late final Timer dayNightTimer;
+
   int direction = Random().nextInt(4);
   late int gameNum;
   final int answerShowTime = 5;
+  final int dayNightTime = 5;
 
   @override
   void initState() {
+    Style.toPallet0();
     gameNum = Prefs.getInt(widget.level.toString()) ?? 0;
     if (gameNum != 0) gameNum -= 1;
     showAnswerStream = showAnswer.stream.asBroadcastStream();
@@ -47,22 +52,38 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
       vsync: this,
       duration: Duration(seconds: answerShowTime),
     );
+
+    dayNightController = AnimationController(
+      value: 0,
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    );
+
     if (widget.level == 3) {
-      Timer.periodic(Duration(seconds: 5), (timer) {
+      dayNightTimer = Timer.periodic(Duration(seconds: dayNightTime), (timer) {
         toNight.add(timer.tick % 2 == 0);
       });
       toNightStream.listen((event) {
-        setState(() {
-          if (event ?? false)
-            Style.toPallet1();
-          else
-            Style.toPallet0();
-        });
+
+          if (event ?? true) {
+            if (dayNightController.value == 0) {
+              dayNightController.forward(from: 0);
+              Style.toPallet1();
+              setState(() { });
+            }
+          } else {
+            if (dayNightController.value == 1) {
+              dayNightController.reverse(from: 1);
+              Style.toPallet0();
+              setState(() { });
+            }
+          }
       });
     }
   }
 
   void startNewGame() {
+    toNight.add(false);
     direction = Random().nextInt(4);
     currentNumOfLines.add(0);
     gameNum != trees[widget.level].length - 1 ? gameNum++ : null;
@@ -87,6 +108,18 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
   }
 
   @override
+  void dispose(){
+    controller.dispose();
+    dayNightController.dispose();
+    isGameOver.close();
+    showAnswer.close();
+    toNight.close();
+    if(widget.level ==3) dayNightTimer.cancel();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Style.init(context);
     return Scaffold(
@@ -106,7 +139,10 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                     width: Style.blockM * 3,
                     height: Style.blockM * 1.5,
                     child: GestureDetector(
-                      onTap: () => Navigator.pop(context),
+                      onTap: () {
+                        Style.toPallet0();
+                        Navigator.pop(context);
+                      },
                       child: Icon(
                         Icons.arrow_back_ios,
                         size: Style.blockM * 1.3,
@@ -133,7 +169,7 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                             );
                           }),
                       SizedBox(
-                        height: widget.level == 2 ? Style.blockM * 2 : 0,
+                        height: widget.level == 2 || widget.level == 3 ? Style.blockM * 2 : 0,
                       ),
                       widget.level == 2
                           ? Transform.rotate(
@@ -144,7 +180,27 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
                                 color: Style.accentColor,
                               ),
                             )
-                          : Container()
+                          : (widget.level == 3
+                              ? Lottie.asset('assets/sun_moon_animation.json',
+                                  width: Style.blockM * 4, height: Style.blockM * 4, controller: dayNightController)
+                              : Container()),
+                      SizedBox(
+                        height: widget.level == 3 ? Style.blockM * 1 : 0,
+                      ),
+                      widget.level == 3 ? StreamBuilder<bool?>(
+                          stream: toNightStream,
+                          builder: (context, snapshot) {
+                            return AnimatedContainer(
+                              duration: Duration(seconds: dayNightTime),
+                              width: (snapshot.data ?? true) ? Style.blockM * 2 : Style.blockM * 0.2,
+                              height: Style.blockM * 0.2,
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 500),
+                                decoration: BoxDecoration(
+                                    color: Style.accentColor, borderRadius: BorderRadius.circular(Style.blockM * 0.1)),
+                              ),
+                            );
+                          }) : Container()
                     ],
                   ),
                   SizedBox(
