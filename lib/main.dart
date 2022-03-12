@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:optimal_routing/consts/styles.dart';
 import 'package:optimal_routing/pages/explain_page.dart';
 import 'package:optimal_routing/utils/prefs.dart';
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
             measurementId: "G-5WDJ5DJHFX"),
       );
     } else {
+      MobileAds.instance.initialize();
       await Firebase.initializeApp();
     }
   }

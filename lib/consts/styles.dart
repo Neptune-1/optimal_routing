@@ -29,7 +29,14 @@ class Style {
   }
 
   static getTextStyle_1() {
-    return GoogleFonts.quicksand(fontSize: Style.blockM * 1, fontWeight: FontWeight.w800);
+    return GoogleFonts.quicksand(fontSize: Style.blockM * 1, fontWeight: FontWeight.w800, color: primaryColor);
+  }
+
+  static getTextStyle_2() {
+    return GoogleFonts.quicksand(fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: primaryColor, decoration: TextDecoration.none);
+  }
+  static getTextStyle_3({Color color = Colors.black}) {
+    return GoogleFonts.quicksand(fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: color, decoration: TextDecoration.none);
   }
 
   static init(BuildContext context) {

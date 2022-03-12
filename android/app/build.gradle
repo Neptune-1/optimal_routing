@@ -57,6 +57,7 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
 
 
@@ -89,6 +90,6 @@ dependencies {
     // Add the dependency for the Firebase SDK for Google Analytics
 
     // When using the BoM, don't specify versions in Firebase dependencies
-
+    implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.google.firebase:firebase-analytics-ktx'
 }

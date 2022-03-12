@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:optimal_routing/utils/ads.dart';
 
 import '../consts/styles.dart';
 import '../data/trees.dart';
@@ -37,10 +38,13 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   late int gameNum;
   final int answerShowTime = 5;
   final int dayNightTime = 5;
+  bool isAnsweredShowed = false;
 
   @override
   void initState() {
     Style.toPallet0();
+
+    if (!kIsWeb) Ads.createRewardedAd();
     gameNum = Prefs.getInt(widget.level.toString()) ?? 0;
     if (gameNum != 0) gameNum -= 1;
     showAnswerStream = showAnswer.stream.asBroadcastStream();
@@ -82,6 +86,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   }
 
   void startNewGame() {
+    isAnsweredShowed = false;
     toNight.add(false);
     direction = Random().nextInt(4);
     currentNumOfLines.add(0);
@@ -94,15 +99,26 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     Prefs.setInt(widget.level.toString(), gameNum + 1);
   }
 
-  showAnswerAndHide() {
-    if (!controller.isAnimating) {
-      controller.forward(from: 0);
-      showAnswer.add(true);
-      Future.delayed(Duration(seconds: answerShowTime), () {
-        showAnswer.add(false);
+  showAnswerAndHide({bool isAdsShowed = true}) {
+    if(isAdsShowed) isAnsweredShowed = true;
+    controller.forward(from: 0);
+    showAnswer.add(true);
+    Future.delayed(Duration(seconds: answerShowTime), () {
+      if(!showAnswer.isClosed) showAnswer.add(false);
+      if(!controller.isDismissed) {
         controller.value = 1;
         controller.stop(canceled: false);
-      });
+      }
+    });
+  }
+
+  onPressedEye(BuildContext context) {
+    if (!controller.isAnimating) {
+      if (!kIsWeb && !isAnsweredShowed) {
+        Ads.showPreAdDialog(context, showAnswerAndHide);
+      } else {
+        showAnswerAndHide();
+      }
     }
   }
 
@@ -229,7 +245,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                         Center(
                           child: GestureDetector(
                             behavior: HitTestBehavior.translucent,
-                            onTap: () => showAnswerAndHide(),
+                            onTap: () => onPressedEye(context),
                             child: Icon(Icons.remove_red_eye, size: Style.blockM * 1, color: Style.primaryColor),
                           ),
                         ),
