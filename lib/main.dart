@@ -29,8 +29,8 @@ class MyApp extends StatelessWidget {
             measurementId: "G-5WDJ5DJHFX"),
       );
     } else {
-      MobileAds.instance.initialize();
-      await Firebase.initializeApp();
+     await MobileAds.instance.initialize();
+     await Firebase.initializeApp();
     }
   }
 
