@@ -1,16 +1,28 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:optimal_routing/consts/styles.dart';
 import 'package:optimal_routing/pages/explain_page.dart';
 import 'package:optimal_routing/utils/prefs.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'pages/level_page.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  await SentryFlutter.init(
+        (options) {
+      options.dsn = 'https://a8c1056062c345239476ea6986608faf@o625447.ingest.sentry.io/6255950';
+      // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+      // We recommend adjusting this value in production.
+      options.tracesSampleRate = 1.0;
+    },
+    appRunner: () => runApp(const MyApp()),
+  );
+
+  // or define SENTRY_DSN via Dart environment variable (--dart-define)
 }
 
 class MyApp extends StatelessWidget {
@@ -29,32 +41,22 @@ class MyApp extends StatelessWidget {
             measurementId: "G-5WDJ5DJHFX"),
       );
     } else {
-     await MobileAds.instance.initialize();
-     await Firebase.initializeApp();
+     MobileAds.instance.initialize();
+     Firebase.initializeApp();
     }
   }
 
   Future<bool> init(context) async {
     await initializeDefault();
-    Prefs.init();
-
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    String version = packageInfo.version;
-
-    //await Prefs.clear();
-
-    if (Prefs.getString("version") != version) {
-      Prefs.clear();
-      Prefs.setString("version", version);
-    }
-    print(4);
+    await Prefs.init();
+    Style.init(context);
 
     return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    //Style.toPallet1();
+    precacheImage(const AssetImage('assets/icon.png'), context);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -65,14 +67,20 @@ class MyApp extends StatelessWidget {
       home: FutureBuilder(
           future: init(context),
           builder: (context, snapshot) {
-            Style.init(context);
 
             return snapshot.hasData
-                ? (Prefs.getBool("new") ?? true)
+                ? ((Prefs.getBool("new") ?? true)
                     ? const ExplainPage()
-                    : const LevelPage()
+                    : const LevelPage())
                 : Container(
                     color: Style.backgroundColor,
+                  child: Center(
+                    child: SizedBox(
+                      width: 150,
+                      height: 150,
+                      child: Image.asset("assets/icon.png"),
+                    ),
+                  ),
                   );
           }),
     );

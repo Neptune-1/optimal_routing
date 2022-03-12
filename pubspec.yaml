@@ -22,7 +22,7 @@ dependencies:
   lottie: ^1.2.2
   google_mobile_ads: ^1.1.0
   flutter_svg: ^1.0.3
-
+  sentry_flutter: ^6.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
