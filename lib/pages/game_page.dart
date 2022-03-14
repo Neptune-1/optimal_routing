@@ -40,6 +40,8 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   final int dayNightTime = 5;
   bool isAnsweredShowed = false;
 
+  late final List<Widget> dopWidgets;
+
   @override
   void initState() {
     Style.toPallet0();
@@ -83,6 +85,44 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
         }
       });
     }
+
+    dopWidgets = [
+      SizedBox(
+        height: widget.level == 2 || widget.level == 3 ? Style.blockM * 1.5 : 0,
+      ),
+      widget.level == 2
+          ? Transform.rotate(
+              angle: [0, pi, -pi / 2, pi / 2][direction].toDouble(),
+              child: Icon(
+                Icons.arrow_right,
+                size: Style.blockM * 4,
+                color: Style.accentColor,
+              ),
+            )
+          : (widget.level == 3
+              ? Lottie.asset('assets/sun_moon_animation.json',
+                  width: Style.blockM * 3.5, height: Style.blockM * 3.5, controller: dayNightController)
+              : Container()),
+      SizedBox(
+        height: widget.level == 3 ? Style.blockM * 0.7 : 0,
+      ),
+      widget.level == 3
+          ? StreamBuilder<bool?>(
+              stream: toNightStream,
+              builder: (context, snapshot) {
+                return AnimatedContainer(
+                  duration: Duration(seconds: dayNightTime),
+                  width: (snapshot.data ?? true) ? Style.blockM * 2 : Style.blockM * 0.2,
+                  height: Style.blockM * 0.2,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 500),
+                    decoration: BoxDecoration(
+                        color: Style.accentColor, borderRadius: BorderRadius.circular(Style.blockM * 0.1)),
+                  ),
+                );
+              })
+          : Container()
+    ];
   }
 
   void startNewGame() {
@@ -100,12 +140,12 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   }
 
   showAnswerAndHide({bool isAdsShowed = true}) {
-    if(isAdsShowed) isAnsweredShowed = true;
+    if (isAdsShowed) isAnsweredShowed = true;
     controller.forward(from: 0);
     showAnswer.add(true);
     Future.delayed(Duration(seconds: answerShowTime), () {
-      if(!showAnswer.isClosed) showAnswer.add(false);
-      if(!controller.isDismissed) {
+      if (!showAnswer.isClosed) showAnswer.add(false);
+      if (!controller.isDismissed) {
         controller.value = 1;
         controller.stop(canceled: false);
       }
@@ -143,7 +183,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 2000),
       child: Stack(children: [
         Align(
-            alignment: const Alignment(0, kIsWeb ? -0.95 : -0.9),
+            alignment: Alignment(0, Style.wideScreen ? -0.92 : -0.9),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: Style.blockM * 0.5),
               child: Row(
@@ -183,65 +223,28 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                               ),
                             );
                           }),
-                      SizedBox(
-                        height: widget.level == 2 || widget.level == 3 ? Style.blockM * 2 : 0,
-                      ),
-                      widget.level == 2
-                          ? Transform.rotate(
-                              angle: [0, pi, -pi / 2, pi / 2][direction].toDouble(),
-                              child: Icon(
-                                Icons.arrow_right,
-                                size: Style.blockM * 4,
-                                color: Style.accentColor,
-                              ),
-                            )
-                          : (widget.level == 3
-                              ? Lottie.asset('assets/sun_moon_animation.json',
-                                  width: Style.blockM * 4, height: Style.blockM * 4, controller: dayNightController)
-                              : Container()),
-                      SizedBox(
-                        height: widget.level == 3 ? Style.blockM * 1 : 0,
-                      ),
-                      widget.level == 3
-                          ? StreamBuilder<bool?>(
-                              stream: toNightStream,
-                              builder: (context, snapshot) {
-                                return AnimatedContainer(
-                                  duration: Duration(seconds: dayNightTime),
-                                  width: (snapshot.data ?? true) ? Style.blockM * 2 : Style.blockM * 0.2,
-                                  height: Style.blockM * 0.2,
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 500),
-                                    decoration: BoxDecoration(
-                                        color: Style.accentColor,
-                                        borderRadius: BorderRadius.circular(Style.blockM * 0.1)),
-                                  ),
-                                );
-                              })
-                          : Container()
+                      ...(!Style.wideScreen ? dopWidgets : []),
                     ],
                   ),
                   SizedBox(
                     width: Style.blockM * 3,
-                    height: Style.blockM * 1.5,
+                    height: Style.blockM * 1.4,
                     child: Stack(
                       children: [
-                        Center(
-                          child: SizedBox(
-                            width: Style.blockM * 1.5,
-                            height: Style.blockM * 1.5,
-                            child: AnimatedBuilder(
-                                animation: controller,
-                                builder: (context, w) {
-                                  return Center(
-                                      child: CircularProgressIndicator(
-                                    value: 1 - controller.value,
-                                    color: Style.primaryColor,
-                                    strokeWidth: Style.blockM * 0.1,
-                                  ));
-                                }),
-                          ),
-                        ),
+                        AnimatedBuilder(
+                            animation: controller,
+                            builder: (context, w) {
+                              return Center(
+                                  child: SizedBox(
+                                width: Style.blockM * 1.4,
+                                height: Style.blockM * 1.4,
+                                child: CircularProgressIndicator(
+                                  value: 1 - controller.value,
+                                  color: Style.primaryColor,
+                                  strokeWidth: Style.blockM * 0.1,
+                                ),
+                              ));
+                            }),
                         Center(
                           child: GestureDetector(
                             behavior: HitTestBehavior.translucent,
@@ -255,7 +258,8 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                 ],
               ),
             )),
-        Center(
+        Align(
+          alignment: Alignment(0, Style.wideScreen ? 0 : 0.2),
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
             child: Field(
@@ -277,7 +281,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                 duration: const Duration(milliseconds: 200),
                 child: snapshot.data == true && trees[widget.level].length > gameNum
                     ? Align(
-                        alignment: const Alignment(0, kIsWeb ? 0.9 : 0.8),
+                        alignment: Alignment(0, Style.wideScreen ? 0.9 : 0.8),
                         child: ElevatedButton(
                           style: ButtonStyle(
                               shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(

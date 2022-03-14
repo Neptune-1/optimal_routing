@@ -13,6 +13,7 @@ class Style {
   static Color primaryColor = Colors.black;
   static Color secondaryColor = Colors.white;
   static Color accentColor = Colors.amber[500]!;
+  static bool wideScreen = false;
 
   static toPallet1() {
     primaryColor = Colors.white;
@@ -49,6 +50,9 @@ class Style {
     block = MediaQuery.of(context).size.width / 20;
     blockH = MediaQuery.of(context).size.height / 20;
     blockM = block > blockH ? blockH : block;
-    if (kIsWeb) blockM /= 1.5;
+    if (blockH<block) {
+      wideScreen = true;
+      blockM /= 1.5;
+    }
   }
 }

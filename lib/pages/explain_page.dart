@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:optimal_routing/pages/level_page.dart';
@@ -65,7 +64,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
   int explainStep = 0;
   List<String> explainTexts = [
     "Try to connect the neighboring point", //your finger should constantly be on the screen
-    "To complete the level, connect all the marked points with a certain number of lines (Tap on the 'eye' to see the answer, if you need help)",
+    "To complete the level, connect all the marked points (horizontal or vertical) with a certain number of lines (Tap on the 'eye' to see the answer, if you need help)",
   ];
 
   // late Timer timer;
@@ -148,7 +147,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
         backgroundColor: Style.backgroundColor,
         body: Stack(children: [
           Align(
-              alignment: const Alignment(0, kIsWeb ? -0.95 : -0.9),
+              alignment: Alignment(0, Style.wideScreen ? -0.95 : -0.9),
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: Style.blockM * 0.2, vertical: Style.blockM * 0.1),
                 child: Row(
@@ -197,25 +196,23 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                     getSelection(
                         SizedBox(
                           width: Style.blockM * 3,
-                          height: Style.blockM * 1.5,
+                          height: Style.blockM * 1.4,
                           child: Stack(
                             children: [
-                              Center(
-                                child: SizedBox(
-                                  width: Style.blockM * 1.5,
-                                  height: Style.blockM * 1.5,
-                                  child: AnimatedBuilder(
-                                      animation: controller,
-                                      builder: (context, w) {
-                                        return Center(
-                                            child: CircularProgressIndicator(
-                                          value: 1 - controller.value,
-                                          color: Colors.black,
-                                          strokeWidth: Style.blockM * 0.1,
-                                        ));
-                                      }),
-                                ),
-                              ),
+                              AnimatedBuilder(
+                                  animation: controller,
+                                  builder: (context, w) {
+                                    return Center(
+                                        child: SizedBox(
+                                      width: Style.blockM * 1.4,
+                                      height: Style.blockM * 1.4,
+                                      child: CircularProgressIndicator(
+                                        value: 1 - controller.value,
+                                        color: Colors.black,
+                                        strokeWidth: Style.blockM * 0.1,
+                                      ),
+                                    ));
+                                  }),
                               Center(
                                 child: GestureDetector(
                                   behavior: HitTestBehavior.translucent,
@@ -257,18 +254,22 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                   ],
                 ),
               )),
-          Center(
+
+          Align(
+            alignment: Alignment(0, Style.wideScreen ? 0 : 0.2),
             child: getSelection(
                 SizedBox(
                   width: Style.blockM * 15,
                   height: Style.blockM * 15,
-                  child: Field(
-                    currentNumOfLines: currentNumOfLines,
-                    tree: tree,
-                    isGameOver: isGameOver,
-                    showAnswer: showAnswerStream,
-                    oneTouchMode: false,
-                    direction: null,
+                  child: Center(
+                    child: Field(
+                      currentNumOfLines: currentNumOfLines,
+                      tree: tree,
+                      isGameOver: isGameOver,
+                      showAnswer: showAnswerStream,
+                      oneTouchMode: false,
+                      direction: null,
+                    ),
                   ),
                 ),
                 explainStep == 0),
@@ -281,7 +282,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                   duration: const Duration(milliseconds: 200),
                   child: snapshot.data == true
                       ? Align(
-                          alignment: const Alignment(0, kIsWeb ? 0.9 : 0.8),
+                          alignment: Alignment(0, Style.wideScreen ? 0.9 : 0.8),
                           child: ElevatedButton(
                             style: ButtonStyle(
                                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
@@ -318,7 +319,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                 );
               }),
           Align(
-            alignment: const Alignment(0, -0.5),
+            alignment: Alignment(0, Style.wideScreen ? -0.7 : -0.6),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: Style.blockM * 2),
               child: Text(

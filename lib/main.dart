@@ -31,6 +31,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initFirebaseAdmob();
   await Prefs.init();
+  //Prefs.clear();// TODO remove
   await SentryFlutter.init(
     (options) {
       options.dsn = 'https://a8c1056062c345239476ea6986608faf@o625447.ingest.sentry.io/6255950';

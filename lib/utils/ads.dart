@@ -25,8 +25,8 @@ class Ads {
         builder: (BuildContext context) {
           return Center(
             child: Container(
-              height: Style.blockH * 4,
-              width: Style.block * 16,
+              height: Style.blockH * 5,
+              width: Style.blockM * 17,
               decoration: BoxDecoration(
                   color: Style.secondaryColor,
                   borderRadius: BorderRadius.circular(Style.blockM * 0.5)),
