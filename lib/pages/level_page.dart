@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:optimal_routing/pages/game_page.dart';
@@ -33,7 +34,7 @@ class _LevelPageState extends State<LevelPage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: List.generate(
-                      4,
+                      kIsWeb ? 2 : 4,
                       (index) => GestureDetector(
                             onTap: () => choseLevel(index),
                             child: Padding(

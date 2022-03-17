@@ -2,7 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:optimal_routing/data/trees.dart';
 import 'package:optimal_routing/pages/explain_page.dart';
+import 'package:optimal_routing/pages/webpage.dart';
 import 'package:optimal_routing/utils/prefs.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -11,6 +13,9 @@ import 'pages/level_page.dart';
 
 Future<void> initFirebaseAdmob() async {
   if (kIsWeb) {
+    trees.asMap().forEach((key, value) {
+      trees[key] = (trees[key] as List).sublist(0, 5);
+    });
     await Firebase.initializeApp(
       options: const FirebaseOptions(
           apiKey: "AIzaSyAbn5MA2ZVal35qZBO0pvZRWCFj4X2K1kw",
@@ -31,6 +36,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initFirebaseAdmob();
   await Prefs.init();
+  //Prefs.clear();// TODO remove
   await SentryFlutter.init(
     (options) {
       options.dsn = 'https://a8c1056062c345239476ea6986608faf@o625447.ingest.sentry.io/6255950';
@@ -57,7 +63,7 @@ class MyApp extends StatelessWidget {
       home: Builder(
         builder: (BuildContext context) {
           Style.init(context);
-          return (Prefs.getBool("new") ?? true) ? const ExplainPage() : const LevelPage();
+          return kIsWeb ? const Website() : ((Prefs.getBool("new") ?? true) ? const ExplainPage() : const LevelPage());
         },
       ),
     );
