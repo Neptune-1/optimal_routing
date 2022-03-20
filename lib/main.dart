@@ -9,7 +9,7 @@ import 'package:optimal_routing/utils/prefs.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'consts/styles.dart';
-import 'pages/level_page.dart';
+import 'pages/level_page_layers.dart';
 
 Future<void> initFirebaseAdmob() async {
   if (kIsWeb) {
@@ -36,7 +36,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initFirebaseAdmob();
   await Prefs.init();
-  //Prefs.clear();// TODO remove
+  Prefs.clear();// TODO remove
   await SentryFlutter.init(
     (options) {
       options.dsn = 'https://a8c1056062c345239476ea6986608faf@o625447.ingest.sentry.io/6255950';
