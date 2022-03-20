@@ -1,4 +1,5 @@
 import 'dart:collection';
+import '../../data_structures.dart';
 
 class Graph {
   HashMap graph = HashMap<int, HashSet<int>>();
@@ -52,24 +53,3 @@ class Graph {
   }
 }
 
-class Point {
-  late final int x;
-  late final int y;
-
-  Point(this.x, this.y);
-
-  bool samePoint(Point point) {
-    return point.x == x && point.y == y;
-  }
-
-  printPoint() {
-    print("$x $y");
-  }
-}
-
-class Direction {
-  static const int right = 0;
-  static const int left = 1;
-  static const int up = 2;
-  static const int down = 3;
-}

@@ -5,11 +5,14 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:optimal_routing/utils/ads.dart';
+import 'package:optimal_routing/widgets/field/field_projection.dart';
 
 import '../consts/styles.dart';
 import '../data/trees.dart';
+import '../data_structures.dart';
 import '../utils/prefs.dart';
 import '../widgets/field/field_layers.dart';
+import '../widgets/field/graph_layers.dart';
 
 class GamePage extends StatefulWidget {
   final int level;
@@ -30,6 +33,9 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   late final Stream<bool> showAnswerStream;
   late final Stream<int> layerNumStream;
 
+  late final Stream<FieldData> projectionDataStream;
+  final StreamController<FieldData> projectionData = StreamController();
+
   late int gameNum;
   final int answerShowTime = 5;
   bool isAnsweredShowed = false;
@@ -47,6 +53,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     if (gameNum != 0) gameNum -= 1;
     showAnswerStream = showAnswer.stream.asBroadcastStream();
     layerNumStream = layerNum.stream.asBroadcastStream();
+    projectionDataStream = projectionData.stream.asBroadcastStream();
 
     controller = AnimationController(
       value: 1,
@@ -150,31 +157,17 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                               ),
                             );
                           }),
-                      widget.level == 0 ? Container() :SizedBox(
-                        height: Style.blockM*2,
-                      ),
-                      widget.level == 0? Container() : Row(
-                          children: List.generate(
-                              widget.level + 1,
-                              (index) => Padding(
-                                    child: GestureDetector(
-                                      onTap: ()=>layerNum.add(index),
-                                      child: StreamBuilder<Object>(
-                                        stream: layerNumStream,
-                                        builder: (context, snapshot) {
-                                          return AnimatedContainer(
-                                            duration: const Duration(milliseconds: 200),
-                                            decoration: BoxDecoration(shape: BoxShape.circle, color: (snapshot.data ?? 0 )==index ? Style.accentColor : Colors.white),
-                                            width: Style.blockM*1.5,
-                                            height: Style.blockM*1.5,
-
-                                            child: Center(child: Text(index.toString(), style: Style.getTextStyle_1(),)),
-                                          );
-                                        }
-                                      ),
-                                    ),
-                                    padding: EdgeInsets.symmetric(horizontal: Style.blockM * 0.5),
-                                  ))),
+                      widget.level == 0
+                          ? Container()
+                          : SizedBox(
+                              height: Style.blockM * 2,
+                            ),
+                      widget.level == 0
+                          ? Container()
+                          : FieldProjection(
+                              layerNum: widget.level + 1,
+                              layerNumController: layerNum,
+                              projectionDataStream: projectionDataStream)
                     ],
                   ),
                   SizedBox(
@@ -214,14 +207,14 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
             child: Field(
-              key: Key("${widget.level} $gameNum"),
-              currentNumOfLines: currentNumOfLines,
-              tree: trees[widget.level][gameNum],
-              isGameOver: isGameOver,
-              showAnswer: showAnswerStream,
-              layerNumStream: layerNumStream,
-              layerFullNum: widget.level+1,
-            ),
+                key: Key("${widget.level} $gameNum"),
+                currentNumOfLines: currentNumOfLines,
+                tree: trees[widget.level][gameNum],
+                isGameOver: isGameOver,
+                showAnswer: showAnswerStream,
+                layerNumStream: layerNumStream,
+                layerFullNum: widget.level + 1,
+                projectionData: projectionData),
           ),
         ),
         StreamBuilder<bool>(
@@ -277,3 +270,5 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     ));
   }
 }
+
+
