@@ -163,8 +163,23 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                               context,
                               PageRouteBuilder(
                                 pageBuilder: (c, a1, a2) => const LevelPage(),
-                                transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                                transitionDuration: const Duration(milliseconds: 300),
+                                transitionsBuilder: (c, anim, a2, child) => ScaleTransition(
+                                    scale: Tween<double>(begin: 0.3, end: 1).animate(CurvedAnimation(
+                                      parent: anim,
+                                      curve: Curves.easeInOutExpo,
+                                      reverseCurve: Curves.easeInOutExpo,
+                                    )),
+                                    child: Opacity(
+                                      child: child,
+                                      opacity: Tween<double>(begin: 0, end: 1)
+                                          .animate(CurvedAnimation(
+                                            parent: anim,
+                                            curve: Curves.easeInOutExpo,
+                                            reverseCurve: Curves.easeInOutExpo,
+                                          ))
+                                          .value,
+                                    )),
+                                transitionDuration: const Duration(milliseconds: 400),
                               ));
                         },
                         child: Center(
@@ -254,7 +269,6 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                   ],
                 ),
               )),
-
           Align(
             alignment: Alignment(0, Style.wideScreen ? 0 : 0.2),
             child: getSelection(
@@ -299,8 +313,22 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                                   context,
                                   PageRouteBuilder(
                                     pageBuilder: (c, a1, a2) => const LevelPage(),
-                                    transitionsBuilder: (c, anim, a2, child) =>
-                                        FadeTransition(opacity: anim, child: child),
+                                    transitionsBuilder: (c, anim, a2, child) => ScaleTransition(
+                                        scale: Tween<double>(begin: 0.3, end: 1).animate(CurvedAnimation(
+                                          parent: anim,
+                                          curve: Curves.easeInOutExpo,
+                                          reverseCurve: Curves.easeInOutExpo,
+                                        )),
+                                        child: Opacity(
+                                          child: child,
+                                          opacity: Tween<double>(begin: 0, end: 1)
+                                              .animate(CurvedAnimation(
+                                                parent: anim,
+                                                curve: Curves.easeInOutExpo,
+                                                reverseCurve: Curves.easeInOutExpo,
+                                              ))
+                                              .value,
+                                        )),
                                     transitionDuration: const Duration(milliseconds: 300),
                                   ));
                             },

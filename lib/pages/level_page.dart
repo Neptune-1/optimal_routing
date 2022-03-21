@@ -51,7 +51,8 @@ class _LevelPageState extends State<LevelPage> {
                                     height: level == index ? Style.blockM * 3 : Style.blockM * 2,
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment: CrossAxisAlignment.center,mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(["Classical", "Just one touch", "One direction", "Day-Night"][index],
                                             style: GoogleFonts.quicksand(
@@ -98,7 +99,22 @@ class _LevelPageState extends State<LevelPage> {
                   context,
                   PageRouteBuilder(
                     pageBuilder: (c, a1, a2) => GamePage(level: level),
-                    transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                    transitionsBuilder: (c, anim, a2, child) => ScaleTransition(
+                        scale: Tween<double>(begin: 0.3, end: 1).animate(CurvedAnimation(
+                          parent: anim,
+                          curve: Curves.easeInOutExpo,
+                          reverseCurve: Curves.easeInOutExpo,
+                        )),
+                        child: Opacity(
+                          child: child,
+                          opacity: Tween<double>(begin: 0, end: 1)
+                              .animate(CurvedAnimation(
+                                parent: anim,
+                                curve: Curves.easeInOutExpo,
+                                reverseCurve: Curves.easeInOutExpo,
+                              ))
+                              .value,
+                        )),
                     transitionDuration: Duration(milliseconds: 300),
                   ),
                 ),

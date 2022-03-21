@@ -45,9 +45,20 @@ class Point {
     bool res = l.firstWhere((e) => (e.x == x && e.y == y), orElse: () => nullPoint) != nullPoint;
     return res;
   }
+
   printPoint() {
     print("$x $y");
   }
+}
+
+class LinesData {
+  late List<int> currentLinesNum;
+  late List<int> fullLinesNum;
+
+  LinesData({
+    required this.currentLinesNum,
+    required this.fullLinesNum,
+  });
 }
 
 class Direction {

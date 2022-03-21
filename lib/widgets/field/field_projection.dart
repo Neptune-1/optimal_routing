@@ -22,7 +22,7 @@ class FieldProjection extends StatefulWidget {
 }
 
 class _FieldProjectionState extends State<FieldProjection> {
-  late final double initialSize;
+  final double initialSize = Style.blockM * 7;
   double zAngle = -0.895;
   double yAngle = 0.296;
   int selectedLayer = 0;
@@ -30,7 +30,6 @@ class _FieldProjectionState extends State<FieldProjection> {
 
   @override
   void initState() {
-    initialSize = Style.blockM * 6;
     widget.projectionDataStream.listen((data) {
       setState(() {
         fieldData = data;
@@ -369,7 +368,7 @@ class _FieldProjectionState extends State<FieldProjection> {
       if (mainOrSupport[index]) mainIndex++;
 
       return Align(
-        alignment: Alignment(0, offsets[offsets.length-1-index]),
+        alignment: Alignment(0, offsets[offsets.length - 1 - index]),
         child: Transform(
           transform: Matrix4.identity()
             ..setEntry(3, 2, 0.001)

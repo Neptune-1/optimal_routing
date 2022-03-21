@@ -173,7 +173,8 @@ class _WebsiteState extends State<Website> {
                     onTap: () => Navigator.push(
                         context,
                         PageRouteBuilder(
-                          pageBuilder: (c, a1, a2) => ((Prefs.getBool("new") ?? true) ? const ExplainPage() : const LevelPage()),
+                          pageBuilder: (c, a1, a2) =>
+                              ((Prefs.getBool("new") ?? true) ? const ExplainPage() : const LevelPage()),
                           transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
                           transitionDuration: const Duration(milliseconds: 300),
                         )),

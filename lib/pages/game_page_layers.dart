@@ -12,7 +12,6 @@ import '../data/trees.dart';
 import '../data_structures.dart';
 import '../utils/prefs.dart';
 import '../widgets/field/field_layers.dart';
-import '../widgets/field/graph_layers.dart';
 
 class GamePage extends StatefulWidget {
   final int level;
@@ -26,7 +25,7 @@ class GamePage extends StatefulWidget {
 class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   late final AnimationController controller;
   int currentLinesNumber = 0;
-  final StreamController<int> currentNumOfLines = StreamController();
+  final StreamController<LinesData> currentNumOfLines = StreamController();
   final StreamController<bool> isGameOver = StreamController();
   final StreamController<bool> showAnswer = StreamController();
   final StreamController<int> layerNum = StreamController();
@@ -47,7 +46,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     super.initState();
 
     Style.toPallet0();
-
+    layerNum.add(0);
     if (!kIsWeb) Ads.createRewardedAd();
     gameNum = Prefs.getInt(widget.level.toString()) ?? 0;
     if (gameNum != 0) gameNum -= 1;
@@ -64,7 +63,6 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
 
   void startNewGame() {
     isAnsweredShowed = false;
-    currentNumOfLines.add(0);
     isGameOver.add(false);
     layerNum.add(0);
     gameNum != trees[widget.level].length - 1 ? gameNum++ : null;
@@ -116,11 +114,14 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
       color: Style.backgroundColor,
       duration: const Duration(milliseconds: 2000),
       child: Stack(children: [
-        Align(
-            alignment: Alignment(0, Style.wideScreen ? -0.92 : -0.9),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: Style.blockM * 0.5),
-              child: Row(
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: Style.blockM * 0.5),
+          child: Column(
+            children: [
+              SizedBox(
+                height: Style.blockH * 1,
+              ),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -142,32 +143,63 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      StreamBuilder<int>(
-                          stream: currentNumOfLines.stream,
-                          builder: (context, snapshot) {
-                            return SizedBox(
-                              width: Style.blockM * 3,
-                              child: Text(
-                                "${(snapshot.data ?? 0)}/${trees[widget.level][gameNum][1]}",
-                                style: GoogleFonts.quicksand(
-                                    fontSize: Style.blockM * 0.7,
-                                    fontWeight: FontWeight.w800,
-                                    color: Style.primaryColor),
-                                textAlign: TextAlign.center,
-                              ),
-                            );
-                          }),
-                      widget.level == 0
-                          ? Container()
-                          : SizedBox(
-                              height: Style.blockM * 2,
-                            ),
-                      widget.level == 0
-                          ? Container()
-                          : FieldProjection(
-                              layerNum: widget.level + 1,
-                              layerNumController: layerNum,
-                              projectionDataStream: projectionDataStream)
+                      Row(
+                        children: [
+                          StreamBuilder<LinesData>(
+                              stream: currentNumOfLines.stream,
+                              builder: (context, snapshot) {
+                                return !snapshot.hasData
+                                    ? Container()
+                                    : Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: List.generate(
+                                          widget.level + 1,
+                                          (layerNum) => SizedBox(
+                                            width: Style.blockM * 3,
+                                            height: Style.blockM * (widget.level == 0 ? 1.5 : 1),
+                                            child: Center(
+                                              child: Text(
+                                                "${(snapshot.data!.currentLinesNum[layerNum])}/${snapshot.data!.fullLinesNum[layerNum]}",
+                                                style: GoogleFonts.quicksand(
+                                                    fontSize: Style.blockM * 0.8,
+                                                    fontWeight: FontWeight.w800,
+                                                    color: Style.primaryColor),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ),
+                                        ));
+                              }),
+                          widget.level == 0
+                              ? Container()
+                              : StreamBuilder<int>(
+                                  stream: layerNumStream,
+                                  builder: (context, snapshot) {
+                                    return !snapshot.hasData
+                                        ? Container()
+                                        : Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: List.generate(
+                                              widget.level + 1,
+                                              (layerNum) => SizedBox(
+                                                  width: Style.blockM * 1.6,
+                                                  height: Style.blockM * (widget.level == 0 ? 1.5 : 1),
+                                                  child: Center(
+                                                    child: AnimatedContainer(
+                                                      duration: const Duration(milliseconds: 200),
+                                                      width: Style.blockM * 1.5,
+                                                      height: Style.blockM * 0.15,
+                                                      decoration: BoxDecoration(
+                                                          color: (snapshot.data ?? 0) == layerNum
+                                                              ? Style.accentColor
+                                                              : Style.primaryColor,
+                                                          borderRadius: BorderRadius.circular(Style.blockM * 0.1)),
+                                                    ),
+                                                  )),
+                                            ));
+                                  }),
+                        ],
+                      ),
                     ],
                   ),
                   SizedBox(
@@ -201,57 +233,85 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                   ),
                 ],
               ),
-            )),
-        Align(
-          alignment: Alignment(0, Style.wideScreen ? 0 : 0.2),
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
-            child: Field(
-                key: Key("${widget.level} $gameNum"),
-                currentNumOfLines: currentNumOfLines,
-                tree: trees[widget.level][gameNum],
-                isGameOver: isGameOver,
-                showAnswer: showAnswerStream,
-                layerNumStream: layerNumStream,
-                layerFullNum: widget.level + 1,
-                projectionData: projectionData),
+              widget.level == 0
+                  ? Container()
+                  : SizedBox(
+                      height: Style.blockM * 2,
+                    ),
+              widget.level == 0
+                  ? Container()
+                  : FieldProjection(
+                      layerNum: widget.level + 1,
+                      layerNumController: layerNum,
+                      projectionDataStream: projectionDataStream),
+              widget.level == 0
+                  ? Container()
+                  : SizedBox(
+                      height: Style.blockM * 3,
+                    ),
+              Flexible(
+                flex: 1,
+                child: Align(
+                  alignment: widget.level == 0 ? const Alignment(0, 0.3) : Alignment.topCenter,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 200),
+                    child: Field(
+                        key: Key("${widget.level} $gameNum"),
+                        currentNumOfLines: currentNumOfLines,
+                        tree: trees[widget.level][gameNum],
+                        isGameOver: isGameOver,
+                        showAnswer: showAnswerStream,
+                        layerNumStream: layerNumStream,
+                        layerFullNum: widget.level + 1,
+                        projectionData: projectionData),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: Style.blockM * 3,
+                child: StreamBuilder<bool>(
+                    stream: isGameOver.stream,
+                    builder: (context, snapshot) {
+                      ifGameIsOver();
+                      return AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 200),
+                        child: snapshot.data == true && trees[widget.level].length > gameNum
+                            ? Align(
+                                alignment: Alignment(0, Style.wideScreen ? 0.9 : 0.8),
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(Style.blockM * 0.2),
+                                      )),
+                                      minimumSize: MaterialStateProperty.all(Size.zero),
+                                      padding: MaterialStateProperty.all(EdgeInsets.zero),
+                                      backgroundColor: MaterialStateProperty.all(Style.primaryColor),
+                                      overlayColor: MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
+                                      elevation: MaterialStateProperty.all(0)),
+                                  onPressed: () {
+                                    trees[widget.level].length - 1 == gameNum ? Navigator.pop(context) : startNewGame();
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: Style.blockM * 0.5, horizontal: 2.5 * Style.blockM),
+                                    child: Text(trees[widget.level].length - 1 == gameNum ? "Back" : "Next",
+                                        style: GoogleFonts.quicksand(
+                                            fontSize: Style.blockM * 1.4,
+                                            fontWeight: FontWeight.w800,
+                                            color: Style.secondaryColor)),
+                                  ),
+                                ),
+                              )
+                            : Container(),
+                      );
+                    }),
+              ),
+              SizedBox(
+                height: Style.blockM * 3,
+              )
+            ],
           ),
         ),
-        StreamBuilder<bool>(
-            stream: isGameOver.stream,
-            builder: (context, snapshot) {
-              ifGameIsOver();
-              return AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: snapshot.data == true && trees[widget.level].length > gameNum
-                    ? Align(
-                        alignment: Alignment(0, Style.wideScreen ? 0.9 : 0.8),
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(Style.blockM * 0.2),
-                              )),
-                              minimumSize: MaterialStateProperty.all(Size.zero),
-                              padding: MaterialStateProperty.all(EdgeInsets.zero),
-                              backgroundColor: MaterialStateProperty.all(Style.primaryColor),
-                              overlayColor: MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
-                              elevation: MaterialStateProperty.all(0)),
-                          onPressed: () {
-                            trees[widget.level].length - 1 == gameNum ? Navigator.pop(context) : startNewGame();
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: Style.blockM * 0.5, horizontal: 2.5 * Style.blockM),
-                            child: Text(trees[widget.level].length - 1 == gameNum ? "Back" : "Next",
-                                style: GoogleFonts.quicksand(
-                                    fontSize: Style.blockM * 1.4,
-                                    fontWeight: FontWeight.w800,
-                                    color: Style.secondaryColor)),
-                          ),
-                        ),
-                      )
-                    : Container(),
-              );
-            }),
         Positioned(
             bottom: Style.blockM * 1,
             left: Style.block * 2.5,
@@ -270,5 +330,3 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     ));
   }
 }
-
-

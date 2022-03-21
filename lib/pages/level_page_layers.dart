@@ -51,7 +51,8 @@ class _LevelPageState extends State<LevelPage> {
                                     height: level == index ? Style.blockM * 3 : Style.blockM * 2,
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment: CrossAxisAlignment.center,mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(["Easy", "Middle", "Hard"][index],
                                             style: GoogleFonts.quicksand(
@@ -94,13 +95,27 @@ class _LevelPageState extends State<LevelPage> {
                     overlayColor: MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
                     elevation: MaterialStateProperty.all(0)),
                 onPressed: () => Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (c, a1, a2) => GamePage(level: level),
-                    transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-                    transitionDuration: Duration(milliseconds: 300),
-                  ),
-                ),
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (c, a1, a2) => GamePage(level: level),
+                      transitionsBuilder: (c, anim, a2, child) => ScaleTransition(
+                          scale: Tween<double>(begin: 0.3, end: 1).animate(CurvedAnimation(
+                            parent: anim,
+                            curve: Curves.easeInOutExpo,
+                            reverseCurve: Curves.easeInOutExpo,
+                          )),
+                          child: Opacity(
+                            child: child,
+                            opacity: Tween<double>(begin: 0, end: 1)
+                                .animate(CurvedAnimation(
+                                  parent: anim,
+                                  curve: Curves.easeInOutExpo,
+                                  reverseCurve: Curves.easeInOutExpo,
+                                ))
+                                .value,
+                          )),
+                      transitionDuration: const Duration(milliseconds: 400),
+                    )),
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: Style.blockM * 0.5, horizontal: 2.5 * Style.blockM),
                   child: Text("START",

@@ -341,9 +341,7 @@ class _FieldState extends State<Field> {
                                     width: lineThick,
                                     decoration: BoxDecoration(
                                         color: routesV[x ~/ 2][y ~/ 2]
-                                            ? (routeIsConnected
-                                                ? Style.accentColor
-                                                : Style.primaryColor.withOpacity(1))
+                                            ? (routeIsConnected ? Style.accentColor : Style.primaryColor.withOpacity(1))
                                             : (isGameOver
                                                 ? Colors.transparent
                                                 : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0)),
@@ -366,9 +364,7 @@ class _FieldState extends State<Field> {
                                     height: lineThick,
                                     decoration: BoxDecoration(
                                         color: routesH[x ~/ 2][y ~/ 2]
-                                            ? (routeIsConnected
-                                                ? Style.accentColor
-                                                : Style.primaryColor.withOpacity(1))
+                                            ? (routeIsConnected ? Style.accentColor : Style.primaryColor.withOpacity(1))
                                             : (isGameOver
                                                 ? Colors.transparent
                                                 : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0)),
@@ -509,14 +505,14 @@ class _FieldState extends State<Field> {
                                       child: AnimatedContainer(
                                           duration: const Duration(milliseconds: 200),
                                           width: showedPointDiameter *
-                                              (((isPointInList(Point(x ~/ 2, y ~/ 2),
-                                                          isNight ? nightPoints : dayPoints)) ||
+                                              (((isPointInList(
+                                                          Point(x ~/ 2, y ~/ 2), isNight ? nightPoints : dayPoints)) ||
                                                       points[x ~/ 2][y ~/ 2])
                                                   ? 3
                                                   : 1),
                                           height: showedPointDiameter *
-                                              (((isPointInList(Point(x ~/ 2, y ~/ 2),
-                                                          isNight ? nightPoints : dayPoints)) ||
+                                              (((isPointInList(
+                                                          Point(x ~/ 2, y ~/ 2), isNight ? nightPoints : dayPoints)) ||
                                                       points[x ~/ 2][y ~/ 2])
                                                   ? 3
                                                   : 1),
@@ -552,10 +548,8 @@ class _FieldState extends State<Field> {
             stream: widget.showAnswer,
             builder: (context, snapshot) {
               List<List<List<int>>> answer = widget.tree[2];
-              List<List<bool>> answerRoutesH =
-                  List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false));
-              List<List<bool>> answerRoutesV =
-                  List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false));
+              List<List<bool>> answerRoutesH = List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false));
+              List<List<bool>> answerRoutesV = List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false));
               List<List<bool>> points = List.generate(
                   fieldSize,
                   (x) => List.generate(

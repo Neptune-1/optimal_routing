@@ -1,4 +1,5 @@
 import 'dart:collection';
+
 import '../../data_structures.dart';
 
 class Graph {
@@ -44,12 +45,10 @@ class Graph {
   }
 
   point2VertexNum(Point p) => p.x + p.y * fieldSize;
-  
-  printGraph(){
+
+  printGraph() {
     print("START GRAPH #############################################");
     graph.forEach((key, value) => print("$key : $value"));
     print("END GRAPH ###############################################");
-
   }
 }
-

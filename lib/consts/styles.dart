@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -34,10 +33,16 @@ class Style {
   }
 
   static getTextStyle_2() {
-    return GoogleFonts.quicksand(fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: primaryColor, decoration: TextDecoration.none);
+    return GoogleFonts.quicksand(
+        fontSize: Style.blockM * 1.5,
+        fontWeight: FontWeight.w800,
+        color: primaryColor,
+        decoration: TextDecoration.none);
   }
+
   static getTextStyle_3({Color color = Colors.black}) {
-    return GoogleFonts.quicksand(fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: color, decoration: TextDecoration.none);
+    return GoogleFonts.quicksand(
+        fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: color, decoration: TextDecoration.none);
   }
 
   static init(BuildContext context) {
@@ -50,7 +55,7 @@ class Style {
     block = MediaQuery.of(context).size.width / 20;
     blockH = MediaQuery.of(context).size.height / 20;
     blockM = block > blockH ? blockH : block;
-    if (blockH<block) {
+    if (blockH < block) {
       wideScreen = true;
       blockM /= 1.5;
     }
