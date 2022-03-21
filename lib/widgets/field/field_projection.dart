@@ -23,8 +23,8 @@ class FieldProjection extends StatefulWidget {
 
 class _FieldProjectionState extends State<FieldProjection> {
   late final double initialSize;
-  double zAngle = -1;
-  double yAngle = 1;
+  double zAngle = -0.895;
+  double yAngle = 0.296;
   int selectedLayer = 0;
   FieldData? fieldData;
 
@@ -61,7 +61,7 @@ class _FieldProjectionState extends State<FieldProjection> {
     final points = fieldData.points;
     final chosenPoints = fieldData.targets;
 
-    double coef = initialSize/(fieldSize*pointDiameter + spacePointPoint* (fieldSize-1))*0.85;
+    double coef = initialSize / (fieldSize * pointDiameter + spacePointPoint * (fieldSize - 1)) * 0.85;
     spacePointPoint *= coef;
     pointDiameter *= coef;
     showedPointDiameter *= coef;
@@ -152,67 +152,237 @@ class _FieldProjectionState extends State<FieldProjection> {
     );
   }
 
+  getSupportFieldImg(FieldData fieldData) {
+    double spacePointPoint = Style.blockM * 1;
+    double pointDiameter = Style.blockM * 1.1;
+    double showedPointDiameter = pointDiameter * 0.3;
+
+    final int fieldSize = fieldData.fieldSize;
+    final points = fieldData.points;
+    final chosenPoints = fieldData.targets;
+    chosenPoints
+        .asMap()
+        .forEach((layerNum, layer) => (layer.forEach((point) => points[layerNum][point.x][point.y] = true)));
+    List<List<bool>> supportPoints = List.generate(
+        fieldSize,
+        (x) => List.generate(fieldSize, (y) {
+              int sum = 0;
+              points.forEach((layer) => sum += layer[x][y] ? 1 : 0);
+              return sum > 1;
+            }));
+
+    double coef = initialSize / (fieldSize * pointDiameter + spacePointPoint * (fieldSize - 1)) * 0.85;
+    spacePointPoint *= coef;
+    pointDiameter *= coef;
+    showedPointDiameter *= coef;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(
+          fieldSize * 2 - 1,
+          (y) => y % 2 == 1
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(
+                    fieldSize * 2 - 1,
+                    (x) => x % 2 == 1
+                        ? SizedBox(
+                            width: spacePointPoint,
+                          )
+                        : SizedBox(
+                            height: spacePointPoint,
+                            width: pointDiameter,
+                          ),
+                  ))
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(
+                    fieldSize * 2 - 1,
+                    (x) => x % 2 == 1
+                        ? SizedBox(
+                            width: spacePointPoint,
+                            height: pointDiameter,
+                          )
+                        : SizedBox(
+                            width: pointDiameter,
+                            height: pointDiameter,
+                            child: Center(
+                              child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  width: showedPointDiameter * (supportPoints[x ~/ 2][y ~/ 2] ? 1 : 0),
+                                  height: showedPointDiameter * (supportPoints[x ~/ 2][y ~/ 2] ? 1 : 0),
+                                  decoration: BoxDecoration(
+                                      color: Style.accentColor.withOpacity(supportPoints[x ~/ 2][y ~/ 2] ? 0.7 : 0),
+                                      shape: BoxShape.circle)),
+                            ),
+                          ),
+                  ))),
+    );
+  }
+
   Widget getPlane(bool viewFromBottom, bool selected, int num) {
     return GestureDetector(
       onTap: () => selectLayer(num),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: initialSize,
-        height: initialSize,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(Style.blockM * 0.5),
-          boxShadow: [
-            BoxShadow(
-                color: selected ? Style.accentColor.withOpacity(0.2) : Colors.black.withOpacity(0.08), blurRadius: Style.blockM * 0.5, blurStyle: BlurStyle.outer),
-          ],
-          color: viewFromBottom ? const Color(0xffeeeeee).withOpacity(0.8) : Colors.white.withOpacity(0.8),
-          border: Border.all(
-            width: Style.blockM * 0.1,
-            color: Style.accentColor.withOpacity(selected ? 1 : 0),
-            style: BorderStyle.solid,
+          duration: const Duration(milliseconds: 200),
+          width: initialSize,
+          height: initialSize,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(Style.blockM * 0.5),
+            boxShadow: [
+              BoxShadow(
+                  color: selected ? Style.accentColor.withOpacity(0.2) : Colors.black.withOpacity(0.08),
+                  blurRadius: Style.blockM * 0.5,
+                  blurStyle: BlurStyle.outer),
+            ],
+            color: viewFromBottom ? const Color(0xffeeeeee).withOpacity(0.8) : Colors.white.withOpacity(0.8),
+            border: Border.all(
+              width: Style.blockM * 0.1,
+              color: Style.accentColor.withOpacity(selected ? 1 : 0),
+              style: BorderStyle.solid,
+            ),
           ),
-        ),
-        child: fieldData == null
-            ? Container()
-            : Center(child: getFieldImg(num, fieldData!))),
-        // child: BackdropFilter(
-        //     filter: ImageFilter.blur(sigmaX: Style.blockM * 0.1, sigmaY: Style.blockM * 0.1),
-        //     child: SizedBox(
-        //       width: initialSize,
-        //       height: initialSize,
-        //       child: Center(
-        //         child: child,
-        //       ),
-        //     ))
+          child: fieldData == null ? Container() : Center(child: getFieldImg(num, fieldData!))),
+      // child: BackdropFilter(
+      //     filter: ImageFilter.blur(sigmaX: Style.blockM * 0.1, sigmaY: Style.blockM * 0.1),
+      //     child: SizedBox(
+      //       width: initialSize,
+      //       height: initialSize,
+      //       child: Center(
+      //         child: child,
+      //       ),
+      //     ))
       //),
     );
   }
 
+  Widget getSupportPlane(bool viewFromBottom) {
+    return SizedBox(
+        width: initialSize,
+        height: initialSize,
+        child: (fieldData == null ? Container() : Center(child: getSupportFieldImg(fieldData!))));
+  }
+
   List<Widget> getPlanes() {
     bool isReversed = zAngle % (2 * math.pi) < (math.pi * 1.5) && zAngle % (2 * math.pi) > (math.pi * 0.5);
+    List<bool> mainOrSupport = [true];
     List<double> offsets = [0];
     switch (widget.layerNum) {
       case 2:
-        offsets = [1, -1];
+        mainOrSupport = [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true
+        ];
+        offsets = [
+          1,
+          0.9,
+          0.8,
+          0.7,
+          0.6,
+          0.5,
+          0.4,
+          0.3,
+          0.2,
+          0.1,
+          0,
+          -0.1,
+          -0.2,
+          -0.3,
+          -0.4,
+          -0.5,
+          -0.6,
+          -0.7,
+          -0.8,
+          -0.9,
+          -1
+        ];
         break;
       case 3:
-        offsets = [1, 0, -1];
+        mainOrSupport = [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true
+        ];
+        offsets = [
+          1,
+          0.9,
+          0.8,
+          0.7,
+          0.6,
+          0.5,
+          0.4,
+          0.3,
+          0.2,
+          0.1,
+          0,
+          -0.1,
+          -0.2,
+          -0.3,
+          -0.4,
+          -0.5,
+          -0.6,
+          -0.7,
+          -0.8,
+          -0.9,
+          -1
+        ];
         break;
     }
-    List<Widget> planes = List.generate(
-        widget.layerNum,
-        (index) => Align(
-              alignment: Alignment(0, offsets[index]),
-              child: Transform(
-                transform: Matrix4.identity()
-                  ..setEntry(3, 2, 0.001)
-                  ..rotateX(zAngle)
-                  ..rotateZ(-yAngle),
-                alignment: Alignment.center,
-                child: getPlane(isReversed, index == selectedLayer, index),
-              ),
-            ));
-    if (isReversed) planes = planes.reversed.toList().cast<Widget>();
+    int mainIndex = -1;
+    List<Widget> planes = List.generate(offsets.length, (index) {
+      if (mainOrSupport[index]) mainIndex++;
+
+      return Align(
+        alignment: Alignment(0, offsets[offsets.length-1-index]),
+        child: Transform(
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.001)
+            ..rotateX(zAngle)
+            ..rotateZ(-yAngle),
+          alignment: Alignment.center,
+          child: mainOrSupport[index]
+              ? getPlane(isReversed, mainIndex == selectedLayer, mainIndex)
+              : getSupportPlane(isReversed),
+        ),
+      );
+    });
+    if (!isReversed) planes = planes.reversed.toList().cast<Widget>();
     return planes;
   }
 
@@ -227,9 +397,10 @@ class _FieldProjectionState extends State<FieldProjection> {
       }),
       child: Container(
         width: initialSize * 1.5,
-        height: initialSize * 1.5,
+        height: initialSize * (1 + widget.layerNum * 0.25),
         child: Stack(
-          children: getPlanes(),
+          children:
+              getPlanes(), // Text("z $zAngle"), Align(alignment: Alignment.bottomLeft, child: Text("y $yAngle"))],
         ),
       ),
     );
