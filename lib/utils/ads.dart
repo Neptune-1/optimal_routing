@@ -10,74 +10,84 @@ class Ads {
   static RewardedAd? _rewardedAd;
 
   static int _numRewardedLoadAttempts = 0;
-  static const int maxFailedLoadAttempts = 3;
+  static const int maxFailedLoadAttempts = 5;
 
   static const String _adUnitIdAndroid =
-      "ca-app-pub-6051303150575720/5425259488"; //'ca-app-pub-3940256099942544/5224354917'; //
+     "ca-app-pub-6051303150575720/5425259488"; //'ca-app-pub-3940256099942544/5224354917'; //
   static const String _adUnitIdIos =
       "ca-app-pub-6051303150575720/9525082753"; // 'ca-app-pub-3940256099942544/1712485313';//
 
   static bool isAddShowed = false;
 
   static void showPreAdDialog(BuildContext context, Function ifShowed) {
-    showDialog(
+
+      showDialog(
         context: context,
         builder: (BuildContext context) {
           return Center(
             child: Container(
               height: Style.blockH * 5,
-              width: Style.blockM * 17,
+              width: Style.blockM * 13,
               decoration:
                   BoxDecoration(color: Style.secondaryColor, borderRadius: BorderRadius.circular(Style.blockM * 0.5)),
-              child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                Container(
-                    padding: EdgeInsets.symmetric(horizontal: Style.block * 1.5),
-                    child: Text(
-                      "Get the Answer!",
-                      style: Style.getTextStyle_2(),
-                      textAlign: TextAlign.center,
-                    )),
+              child: Column(children: [
                 SizedBox(
-                  height: Style.blockM * 0.6,
+                  height: Style.blockH * 2.8,
+                  child: Center(
+                    child: _rewardedAd == null ? Text("Sure?", style: Style.getTextStyle_2(),) : SvgPicture.asset(
+                      "assets/ads_icon_1.svg",
+                      width: Style.blockH * 1.7,
+                      height: Style.blockH * 1.7,
+                    ),
+                  ),
                 ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      child: SvgPicture.asset(
-                        "assets/show_ads_icon.svg",
-                        width: Style.blockM * 2,
-                        height: Style.blockM * 2,
-                      ),
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        showRewardedAd(ifShowed);
-                      },
-                    ),
-                    SizedBox(
-                      height: Style.blockM * 0.2,
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: Style.blockH * 1 / 3.5, horizontal: Style.blockH * 1 / 5),
-                      height: Style.blockH,
-                      width: Style.block * 11,
-                      child: GestureDetector(
-                        onTap: () => Navigator.of(context).pop(),
-                        child: FittedBox(
-                          child: Text(
-                            "Cancel",
-                            style: Style.getTextStyle_3(color: Style.primaryColor.withOpacity(0.5)),
-                          ),
+                Container(
+                  height: Style.blockH * 2.2,
+                  width: Style.blockM * 13,
+                  decoration: BoxDecoration(
+                      color: Style.accentColor,
+                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(Style.blockM * 0.5))),
+                  child: Stack(
+                    children: [
+                      Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            GestureDetector(
+                              child: Icon(
+                                Icons.close,
+                                size: Style.blockM * 2.5,
+                              ),
+                              onTap: () => Navigator.of(context).pop(),
+                            ),
+                            GestureDetector(
+                              child: Icon(
+                                Icons.done,
+                                size: Style.blockM * 2.5,
+                              ),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                showRewardedAd(ifShowed);
+                              },
+                            ),
+                          ],
                         ),
                       ),
-                    )
-                  ],
+                      Center(
+                        child:  Container(
+                            height: Style.blockH * 2.2,
+                            width: Style.blockM * 0.1,
+                            decoration: BoxDecoration(
+                                color: Style.primaryColor.withOpacity(0.3),)),
+                      )
+                    ],
+                  ),
                 ),
               ]),
             ),
           );
         });
+
   }
 
   static void createRewardedAd() {

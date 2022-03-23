@@ -15,8 +15,9 @@ import '../widgets/field/field_layers.dart';
 
 class GamePage extends StatefulWidget {
   final int level;
+  final bool example;
 
-  const GamePage({Key? key, required this.level}) : super(key: key);
+  const GamePage({Key? key, required this.level, this.example = false}) : super(key: key);
 
   @override
   State<GamePage> createState() => _GamePageState();
@@ -44,8 +45,6 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-
-    Style.toPallet0();
     layerNum.add(0);
     if (!kIsWeb) Ads.createRewardedAd();
     gameNum = Prefs.getInt(widget.level.toString()) ?? 0;
@@ -89,7 +88,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
 
   onPressedEye(BuildContext context) {
     if (!controller.isAnimating) {
-      if (!kIsWeb && !isAnsweredShowed) {
+      if (!kIsWeb && !isAnsweredShowed && !widget.example) {
         Ads.showPreAdDialog(context, showAnswerAndHide);
       } else {
         showAnswerAndHide();
@@ -125,15 +124,16 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    width: Style.blockM * 3,
-                    height: Style.blockM * 1.5,
-                    child: GestureDetector(
-                      onTap: () {
-                        Style.toPallet0();
-                        Navigator.pop(context);
-                      },
-                      child: Icon(
+                  GestureDetector(
+                    onTap: () {
+                      Style.toPallet0();
+                      Navigator.pop(context);
+                    },
+                    behavior: HitTestBehavior.translucent,
+                    child: SizedBox(
+                      width: Style.blockM * 3,
+                      height: Style.blockM * 1.5,
+                      child: widget.example ? Container() : Icon(
                         Icons.arrow_back_ios,
                         size: Style.blockM * 1.3,
                         color: Style.primaryColor,
@@ -258,7 +258,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                     child: Field(
                         key: Key("${widget.level} $gameNum"),
                         currentNumOfLines: currentNumOfLines,
-                        tree: trees[widget.level][gameNum],
+                        tree: widget.example ? exampleTree : trees[widget.level][gameNum],
                         isGameOver: isGameOver,
                         showAnswer: showAnswerStream,
                         layerNumStream: layerNumStream,
@@ -267,7 +267,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-              SizedBox(
+              widget.example ? Container() : SizedBox(
                 height: Style.blockM * 3,
                 child: StreamBuilder<bool>(
                     stream: isGameOver.stream,
@@ -312,7 +312,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
             ],
           ),
         ),
-        Positioned(
+        widget.example ? Container() : Positioned(
             bottom: Style.blockM * 1,
             left: Style.block * 2.5,
             child: SizedBox(

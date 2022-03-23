@@ -28,8 +28,32 @@ class Style {
     backgroundColor = secondaryColor;
   }
 
-  static getTextStyle_1() {
-    return GoogleFonts.quicksand(fontSize: Style.blockM * 1, fontWeight: FontWeight.w800, color: primaryColor);
+  static pageRouteBuilder(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (c, a1, a2) => page,
+      transitionsBuilder: (c, anim, a2, child) => ScaleTransition(
+          scale: Tween<double>(begin: 1.5, end: 1).animate(CurvedAnimation(
+            parent: anim,
+            curve: Curves.easeInOutExpo,
+            reverseCurve: Curves.easeInOutExpo,
+          )),
+          child: Opacity(
+            child: child,
+            opacity: Tween<double>(begin: 0, end: 1)
+                .animate(CurvedAnimation(
+                  parent: anim,
+                  curve: Curves.easeInOutExpo,
+                  reverseCurve: Curves.easeInOutExpo,
+                ))
+                .value,
+          )),
+      transitionDuration: const Duration(milliseconds: 400),
+    );
+  }
+
+  static getTextStyle_1({Color? color}) {
+    color ??= primaryColor;
+    return GoogleFonts.quicksand(fontSize: Style.blockM * 1, fontWeight: FontWeight.w800, color: color);
   }
 
   static getTextStyle_2() {

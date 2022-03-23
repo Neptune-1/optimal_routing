@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -31,12 +32,14 @@ class _FieldProjectionState extends State<FieldProjection> {
   @override
   void initState() {
     widget.projectionDataStream.listen((data) {
+
       setState(() {
         fieldData = data;
       });
     });
     super.initState();
   }
+
 
   selectLayer(int num) {
     widget.layerNumController.add(num);
@@ -233,7 +236,7 @@ class _FieldProjectionState extends State<FieldProjection> {
                   blurRadius: Style.blockM * 0.5,
                   blurStyle: BlurStyle.outer),
             ],
-            color: viewFromBottom ? const Color(0xffeeeeee).withOpacity(0.8) : Colors.white.withOpacity(0.8),
+            color: viewFromBottom ? const Color(0xffeeeeee).withOpacity(0.8) : Style.secondaryColor.withOpacity(0.8),
             border: Border.all(
               width: Style.blockM * 0.1,
               color: Style.accentColor.withOpacity(selected ? 1 : 0),
@@ -390,16 +393,17 @@ class _FieldProjectionState extends State<FieldProjection> {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onPanUpdate: (details) => setState(() {
-        //if((zAngle % (2 * math.pi) > 0 && details.delta.dy<0) || (zAngle % (2 * math.pi) < math.pi && details.delta.dy>0))
-        zAngle += details.delta.dy / initialSize * 2;
+        if((zAngle<0 || details.delta.dy<0) && (zAngle> -pi || details.delta.dy>0)) {
+          zAngle += details.delta.dy / initialSize * 2;
+        }
         yAngle += details.delta.dx / initialSize * 2;
       }),
       child: Container(
         width: initialSize * 1.5,
         height: initialSize * (1 + widget.layerNum * 0.25),
         child: Stack(
-          children:
-              getPlanes(), // Text("z $zAngle"), Align(alignment: Alignment.bottomLeft, child: Text("y $yAngle"))],
+          children: getPlanes(),
+        //Text("z $zAngle")], Align(alignment: Alignment.bottomLeft, child: Text("y $yAngle"))],
         ),
       ),
     );
