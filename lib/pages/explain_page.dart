@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,7 +19,7 @@ class ExplainPage extends StatefulWidget {
 }
 
 class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStateMixin {
-  final PageController _pageController = PageController(keepPage: false);
+  final PageController _pageController = PageController(keepPage: true);
   final StreamController<FieldData> fieldProjectionController = StreamController<FieldData>();
   late final Stream<FieldData> fieldProjectionStream;
 
@@ -112,28 +111,26 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
   }
 
   getSelection(Widget child, activate) {
-    return Container(
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(Style.blockM * 0.5),
-          color: Colors.white.withOpacity(0.1),
-          border: Border.all(
-            width: Style.blockM * 0.15,
-            color: Style.accentColor.withOpacity(activate ? 1 : 0),
-            style: BorderStyle.solid,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(Style.blockM * 0.5),
+        color: Colors.white.withOpacity(0.1),
+        border: Border.all(
+          width: Style.blockM * 0.15,
+          color: Style.accentColor.withOpacity(activate ? 1 : 0),
+          style: BorderStyle.solid,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: Style.blockM * 0.2, vertical: Style.blockM * 0.1),
+            child: child,
           ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: Style.blockM * 0.2, vertical: Style.blockM * 0.1),
-              child: child,
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -304,7 +301,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                 onPressed: () {
                   if ((_pageController.page)!.round() != 4) {
                     _pageController.animateToPage((_pageController.page)!.round() + 1,
-                        duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                        duration: const Duration(milliseconds: 300), curve: Curves.linearToEaseOut);
                   } else {
                     Prefs.setBool("new", false);
                     Navigator.pushAndRemoveUntil(
@@ -354,7 +351,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                               width: Style.blockM * 2.5,
                               child: GestureDetector(
                                 onTap: () => _pageController.animateToPage((_pageController.page)!.round() - 1,
-                                    duration: const Duration(milliseconds: 350), curve: Curves.easeInOut),
+                                    duration: const Duration(milliseconds: 300), curve: Curves.linearToEaseOut),
                                 child: Icon(
                                   Icons.arrow_back_ios,
                                   size: Style.blockM * 1.3,
@@ -376,10 +373,10 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
 
 
 class PageIndicator extends StatelessWidget {
-  late final int pagesNumber;
-  late final PageController controller;
+  final int pagesNumber;
+  final PageController controller;
 
-  PageIndicator({required this.pagesNumber, required this.controller});
+  const PageIndicator({Key? key, required this.pagesNumber, required this.controller}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -390,7 +387,7 @@ class PageIndicator extends StatelessWidget {
         double indicatorDiameter = diameter * 1;
         double spacer = diameter * 0.7;
         double pageNumDouble = controller.page ?? 0.0;
-        return Container(
+        return SizedBox(
           height: indicatorDiameter,
           width: pagesNumber * (diameter + spacer) - spacer + indicatorDiameter - diameter,
           child: Stack(

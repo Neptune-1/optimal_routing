@@ -68,15 +68,39 @@ class _FieldState extends State<Field> {
         widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
 
     int fullNumLinesSum = widget.tree[1];
+
     for (int i = 0; i < widget.layerFullNum; i++) {
       int thisLayerLinesNum =
-          ((widget.layerFullNum - 1 == i)
-              ? fullNumLinesSum
-              : Random().nextInt(fullNumLinesSum ~/ (widget.layerFullNum - i)));
-      fullNumLinesSum -= thisLayerLinesNum;
+      ((widget.layerFullNum - 1 <= i)
+          ? ((fullNumLinesSum ~/ (widget.layerFullNum))+(fullNumLinesSum % (widget.layerFullNum)))
+          : fullNumLinesSum ~/ (widget.layerFullNum));
       fullLinesNum.add(thisLayerLinesNum);
       currentNumOfLines.add(0);
     }
+
+
+    // int fullNumLinesSum = widget.tree[1];
+    //
+    // for (int i = 0; i < widget.layerFullNum; i++) {
+    //   int thisLayerLinesNum =
+    //   ((widget.layerFullNum - 1 == i)
+    //       ? fullNumLinesSum
+    //       : Random().nextInt(fullNumLinesSum ~/ (widget.layerFullNum - i)));
+    //   fullNumLinesSum -= thisLayerLinesNum;
+    //   fullLinesNum.add(thisLayerLinesNum);
+    //   currentNumOfLines.add(0);
+    // }
+
+    // int fullNumLinesSum = widget.tree[1];
+    // var nums = List.generate(fullNumLinesSum-1, (index) => index+1);
+    // nums.shuffle();
+    // nums = nums.sublist(0, widget.layerFullNum-1);
+    // nums.sort();
+    //
+    // for (int i = 0; i < widget.layerFullNum; i++) {
+    //   fullLinesNum.add(thisLayerLinesNum);
+    //   currentNumOfLines.add(0);
+    // }
     widget.currentNumOfLines.add(LinesData(currentLinesNum: currentNumOfLines, fullLinesNum: fullLinesNum));
 
     List chosenPointsShuffle = (widget.tree[0] as List).map((e) => Point(e[0], e[1])).toList().cast<Point>();
@@ -92,7 +116,7 @@ class _FieldState extends State<Field> {
     points = List.generate(
         widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
 
-    widget.layerNumStream.listen((n) => setState(() => currentLayer = n));
+    widget.layerNumStream.listen((n) => mounted  ? setState(() => currentLayer = n) : null);
     widget.projectionData.add(FieldData(
         routesH: routesH,
         routesV: routesV,

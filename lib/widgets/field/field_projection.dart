@@ -22,24 +22,23 @@ class FieldProjection extends StatefulWidget {
   State<FieldProjection> createState() => _FieldProjectionState();
 }
 
-class _FieldProjectionState extends State<FieldProjection> {
+class _FieldProjectionState extends State<FieldProjection> with SingleTickerProviderStateMixin{
   final double initialSize = Style.blockM * 7;
-  double zAngle = -0.895;
-  double yAngle = 0.296;
+  static const double initZAngle = -0.895;
+  static const double initYAngle = 0.296;
+  double zAngle = initZAngle;
+  double yAngle = initYAngle;
   int selectedLayer = 0;
   FieldData? fieldData;
+
 
   @override
   void initState() {
     widget.projectionDataStream.listen((data) {
-
-      setState(() {
-        fieldData = data;
-      });
+      if(mounted) setState(() => fieldData = data);
     });
     super.initState();
   }
-
 
   selectLayer(int num) {
     widget.layerNumController.add(num);
@@ -63,7 +62,7 @@ class _FieldProjectionState extends State<FieldProjection> {
     final points = fieldData.points;
     final chosenPoints = fieldData.targets;
 
-    double coef = initialSize / (fieldSize * pointDiameter + spacePointPoint * (fieldSize - 1)) * 0.85;
+    final double coef = initialSize / (fieldSize * pointDiameter + spacePointPoint * (fieldSize - 1)) * 0.85;
     spacePointPoint *= coef;
     pointDiameter *= coef;
     showedPointDiameter *= coef;
@@ -165,7 +164,7 @@ class _FieldProjectionState extends State<FieldProjection> {
     chosenPoints
         .asMap()
         .forEach((layerNum, layer) => (layer.forEach((point) => points[layerNum][point.x][point.y] = true)));
-    List<List<bool>> supportPoints = List.generate(
+    final List<List<bool>> supportPoints = List.generate(
         fieldSize,
         (x) => List.generate(fieldSize, (y) {
               int sum = 0;
@@ -173,7 +172,7 @@ class _FieldProjectionState extends State<FieldProjection> {
               return sum > 1;
             }));
 
-    double coef = initialSize / (fieldSize * pointDiameter + spacePointPoint * (fieldSize - 1)) * 0.85;
+    final double coef = initialSize / (fieldSize * pointDiameter + spacePointPoint * (fieldSize - 1)) * 0.85;
     spacePointPoint *= coef;
     pointDiameter *= coef;
     showedPointDiameter *= coef;
@@ -367,6 +366,7 @@ class _FieldProjectionState extends State<FieldProjection> {
         break;
     }
     int mainIndex = -1;
+    Widget supportPlane = getSupportPlane(isReversed);
     List<Widget> planes = List.generate(offsets.length, (index) {
       if (mainOrSupport[index]) mainIndex++;
 
@@ -380,8 +380,8 @@ class _FieldProjectionState extends State<FieldProjection> {
           alignment: Alignment.center,
           child: mainOrSupport[index]
               ? getPlane(isReversed, mainIndex == selectedLayer, mainIndex)
-              : getSupportPlane(isReversed),
-        ),
+              : supportPlane,
+        )
       );
     });
     if (!isReversed) planes = planes.reversed.toList().cast<Widget>();
