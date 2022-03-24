@@ -23,7 +23,7 @@ class FieldProjection extends StatefulWidget {
 }
 
 class _FieldProjectionState extends State<FieldProjection> with SingleTickerProviderStateMixin{
-  final double initialSize = Style.blockM * 7;
+  final double initialSize = Style.blockM * 6;
   static const double initZAngle = -0.895;
   static const double initYAngle = 0.296;
   double zAngle = initZAngle;

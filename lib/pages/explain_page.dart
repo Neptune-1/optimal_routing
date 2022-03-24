@@ -275,7 +275,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                       level: 1,
                     ),
                     Align(
-                      alignment: const Alignment(0, 0.5),
+                      alignment: const Alignment(0, 0.65),
                       child: Text(
                         "Tip: tap on layer on\n3D-projection for selection",
                         style: Style.getTextStyle_1(),
