@@ -1,19 +1,22 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import '../../consts/styles.dart';
+import '../../data_structures.dart';
 import 'graph_layers.dart';
 
 class Field extends StatefulWidget {
-  final StreamController<int> currentNumOfLines;
+  final StreamController<LinesData> currentNumOfLines;
   final List tree;
   final StreamController<bool> isGameOver;
   final Stream<bool> showAnswer;
   final bool showLines;
   final int layerFullNum;
   final Stream<int> layerNumStream;
+  final StreamController<FieldData> projectionData;
 
   const Field(
       {Key? key,
@@ -23,6 +26,7 @@ class Field extends StatefulWidget {
       required this.showAnswer,
       required this.layerFullNum,
       required this.layerNumStream,
+      required this.projectionData,
       this.showLines = false})
       : super(key: key);
 
@@ -42,11 +46,11 @@ class _FieldState extends State<Field> {
   late List<List<List<bool>>> routesV;
   late List<List<List<bool>>> points;
   List<List<Point>> chosenPoints = [];
-  int currentNumOfLines = 0;
+  List<int> currentNumOfLines = [];
+  List<int> fullLinesNum = [];
   bool routeIsConnected = false;
   bool isGameOver = false;
   late final Graph graph;
-  Point nullPoint = Point(100, 100);
 
   int currentLayer = 0;
 
@@ -63,21 +67,64 @@ class _FieldState extends State<Field> {
     routesV = List.generate(
         widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
 
+    int fullNumLinesSum = widget.tree[1];
+
+    for (int i = 0; i < widget.layerFullNum; i++) {
+      int thisLayerLinesNum =
+      ((widget.layerFullNum - 1 <= i)
+          ? ((fullNumLinesSum ~/ (widget.layerFullNum))+(fullNumLinesSum % (widget.layerFullNum)))
+          : fullNumLinesSum ~/ (widget.layerFullNum));
+      fullLinesNum.add(thisLayerLinesNum);
+      currentNumOfLines.add(0);
+    }
+
+
+    // int fullNumLinesSum = widget.tree[1];
+    //
+    // for (int i = 0; i < widget.layerFullNum; i++) {
+    //   int thisLayerLinesNum =
+    //   ((widget.layerFullNum - 1 == i)
+    //       ? fullNumLinesSum
+    //       : Random().nextInt(fullNumLinesSum ~/ (widget.layerFullNum - i)));
+    //   fullNumLinesSum -= thisLayerLinesNum;
+    //   fullLinesNum.add(thisLayerLinesNum);
+    //   currentNumOfLines.add(0);
+    // }
+
+    // int fullNumLinesSum = widget.tree[1];
+    // var nums = List.generate(fullNumLinesSum-1, (index) => index+1);
+    // nums.shuffle();
+    // nums = nums.sublist(0, widget.layerFullNum-1);
+    // nums.sort();
+    //
+    // for (int i = 0; i < widget.layerFullNum; i++) {
+    //   fullLinesNum.add(thisLayerLinesNum);
+    //   currentNumOfLines.add(0);
+    // }
+    widget.currentNumOfLines.add(LinesData(currentLinesNum: currentNumOfLines, fullLinesNum: fullLinesNum));
+
     List chosenPointsShuffle = (widget.tree[0] as List).map((e) => Point(e[0], e[1])).toList().cast<Point>();
     chosenPointsShuffle.shuffle();
     int step = chosenPointsShuffle.length ~/ widget.layerFullNum;
-    for (int i = 0; i < widget.layerFullNum; i ++) {
+    for (int i = 0; i < widget.layerFullNum; i++) {
       chosenPoints.add(chosenPointsShuffle
-          .sublist(i*step, i+1!=widget.layerFullNum ? (i+1)*step : chosenPointsShuffle.length)
+          .sublist(i * step, i + 1 != widget.layerFullNum ? (i + 1) * step : chosenPointsShuffle.length)
           .cast<Point>());
     }
     print(chosenPoints);
 
-
     points = List.generate(
         widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
 
-    widget.layerNumStream.listen((n) => setState(() => currentLayer = n));
+    widget.layerNumStream.listen((n) => mounted  ? setState(() => currentLayer = n) : null);
+    widget.projectionData.add(FieldData(
+        routesH: routesH,
+        routesV: routesV,
+        points: points,
+        targets: chosenPoints,
+        routeIsConnected: routeIsConnected,
+        isGameOver: isGameOver,
+        fieldSize: fieldSize));
   }
 
   void chooseRout(int x, int y, String type, {state}) {
@@ -88,12 +135,12 @@ class _FieldState extends State<Field> {
           currentState = routesV[currentLayer][x][y];
           if (state ?? !currentState) {
             int s = 0;
-            routesV.forEach((e) => s+= e[x][y] ? 1 : 0);
-            if(s==0) graph.addConnection(Point(x, y), Point(x, y + 1));
+            routesV.forEach((e) => s += e[x][y] ? 1 : 0);
+            if (s == 0) graph.addConnection(Point(x, y), Point(x, y + 1));
           } else {
             int s = 0;
-            routesV.forEach((e) => s+= e[x][y] ? 1 : 0);
-            if(s==1) graph.removeConnection(Point(x, y), Point(x, y + 1));
+            routesV.forEach((e) => s += e[x][y] ? 1 : 0);
+            if (s == 1) graph.removeConnection(Point(x, y), Point(x, y + 1));
           }
           routesV[currentLayer][x][y] = state ?? !currentState;
           points[currentLayer][x][y] = connectedPoint(x, y);
@@ -104,12 +151,12 @@ class _FieldState extends State<Field> {
           currentState = routesH[currentLayer][x][y];
           if (state ?? !currentState) {
             int s = 0;
-            routesH.forEach((e) => s+= e[x][y] ? 1 : 0);
-            if(s==0) graph.addConnection(Point(x, y), Point(x + 1, y));
+            routesH.forEach((e) => s += e[x][y] ? 1 : 0);
+            if (s == 0) graph.addConnection(Point(x, y), Point(x + 1, y));
           } else {
             int s = 0;
-            routesH.forEach((e) => s+= e[x][y] ? 1 : 0);
-            if(s==1) graph.removeConnection(Point(x, y), Point(x + 1, y));
+            routesH.forEach((e) => s += e[x][y] ? 1 : 0);
+            if (s == 1) graph.removeConnection(Point(x, y), Point(x + 1, y));
           }
           routesH[currentLayer][x][y] = state ?? !currentState;
           points[currentLayer][x][y] = connectedPoint(x, y);
@@ -120,20 +167,28 @@ class _FieldState extends State<Field> {
         routeIsConnected = graph.areTargetsConnected(chosenPoints.expand((i) => i).toList());
         // print(routeIsConnected);
         if (state == null) {
-          currentNumOfLines += currentState ? -1 : 1;
+          currentNumOfLines[currentLayer] += currentState ? -1 : 1;
         } else if (state) {
-          currentNumOfLines += currentState ? 0 : 1;
+          currentNumOfLines[currentLayer] += currentState ? 0 : 1;
         } else if (!state) {
-          currentNumOfLines += currentState ? -1 : 0;
+          currentNumOfLines[currentLayer] += currentState ? -1 : 0;
         }
-        widget.currentNumOfLines.add(currentNumOfLines);
+        widget.currentNumOfLines.add(LinesData(currentLinesNum: currentNumOfLines, fullLinesNum: fullLinesNum));
 
-        if (routeIsConnected && widget.tree[1] == currentNumOfLines) {
+        if (routeIsConnected && const DeepCollectionEquality().equals(currentNumOfLines, fullLinesNum)) {
           widget.isGameOver.add(true);
           isGameOver = true;
         }
       });
     }
+    widget.projectionData.add(FieldData(
+        routesH: routesH,
+        routesV: routesV,
+        points: points,
+        targets: chosenPoints,
+        routeIsConnected: routeIsConnected,
+        isGameOver: isGameOver,
+        fieldSize: fieldSize));
   }
 
   bool connectedPoint(x, y) {
@@ -147,12 +202,7 @@ class _FieldState extends State<Field> {
   }
 
   bool isInTargets(x, y) {
-    return isPointInList(Point(x, y), chosenPoints[currentLayer]);
-  }
-
-  bool isPointInList(Point point, List<Point> l) {
-    bool res = l.firstWhere((e) => (e.x == point.x && e.y == point.y), orElse: () => nullPoint) != nullPoint;
-    return res;
+    return Point(x, y).isPointInList(chosenPoints[currentLayer]);
   }
 
   Point? firstPoint;
@@ -255,21 +305,21 @@ class _FieldState extends State<Field> {
                                 child: AnimatedContainer(
                                     duration: const Duration(milliseconds: 200),
                                     width: showedPointDiameter *
-                                        (((isPointInList(Point(x ~/ 2, y ~/ 2), chosenPoints[currentLayer])) ||
+                                        (((Point(x ~/ 2, y ~/ 2).isPointInList(chosenPoints[currentLayer])) ||
                                                 points[currentLayer][x ~/ 2][y ~/ 2])
                                             ? 3
                                             : 1),
                                     height: showedPointDiameter *
-                                        (((isPointInList(Point(x ~/ 2, y ~/ 2), chosenPoints[currentLayer])) ||
+                                        (((Point(x ~/ 2, y ~/ 2).isPointInList(chosenPoints[currentLayer])) ||
                                                 points[currentLayer][x ~/ 2][y ~/ 2])
                                             ? 3
                                             : 1),
                                     decoration: BoxDecoration(
-                                        color: (isPointInList(Point(x ~/ 2, y ~/ 2), chosenPoints[currentLayer])
+                                        color: (Point(x ~/ 2, y ~/ 2).isPointInList(chosenPoints[currentLayer])
                                             ? (routeIsConnected
                                                 ? (isGameOver ? Style.accentColor : Style.primaryColor)
                                                 : Style.accentColor)
-                                            : (((isPointInList(Point(x ~/ 2, y ~/ 2), chosenPoints[currentLayer])) ||
+                                            : (((Point(x ~/ 2, y ~/ 2).isPointInList(chosenPoints[currentLayer])) ||
                                                     points[currentLayer][x ~/ 2][y ~/ 2])
                                                 ? (routeIsConnected
                                                     ? Style.accentColor
@@ -392,16 +442,5 @@ class _FieldState extends State<Field> {
             }),
       ],
     );
-  }
-}
-
-class Line {
-  late final Point start;
-  late final Point end;
-
-  Line(this.start, this.end);
-
-  printLine() {
-    print("${start.x} ${start.y} | ${end.x} ${end.y}");
   }
 }
