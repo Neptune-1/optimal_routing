@@ -13,16 +13,21 @@ class FieldProjection extends StatefulWidget {
   final int layerNum;
   final StreamController<int> layerNumController;
   final Stream<FieldData> projectionDataStream;
+  final Stream<int>? layerNumStream;
 
   const FieldProjection(
-      {Key? key, required this.layerNum, required this.layerNumController, required this.projectionDataStream})
+      {Key? key,
+      required this.layerNum,
+      required this.layerNumController,
+      required this.projectionDataStream,
+      this.layerNumStream})
       : super(key: key);
 
   @override
   State<FieldProjection> createState() => _FieldProjectionState();
 }
 
-class _FieldProjectionState extends State<FieldProjection> with SingleTickerProviderStateMixin{
+class _FieldProjectionState extends State<FieldProjection> with SingleTickerProviderStateMixin {
   final double initialSize = Style.blockM * 6;
   static const double initZAngle = -0.895;
   static const double initYAngle = 0.296;
@@ -31,20 +36,14 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
   int selectedLayer = 0;
   FieldData? fieldData;
 
-
   @override
   void initState() {
     widget.projectionDataStream.listen((data) {
-      if(mounted) setState(() => fieldData = data);
+      if (mounted) setState(() => fieldData = data);
     });
-    super.initState();
-  }
 
-  selectLayer(int num) {
-    widget.layerNumController.add(num);
-    setState(() {
-      selectedLayer = num;
-    });
+    if (widget.layerNumStream != null) widget.layerNumStream!.listen((layerNum) => setState(() => selectedLayer = layerNum));
+    super.initState();
   }
 
   getFieldImg(int thisLayerNum, FieldData fieldData) {
@@ -222,7 +221,7 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
 
   Widget getPlane(bool viewFromBottom, bool selected, int num) {
     return GestureDetector(
-      onTap: () => selectLayer(num),
+      onTap: () => widget.layerNumController.add(num),
       child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           width: initialSize,
@@ -371,18 +370,15 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
       if (mainOrSupport[index]) mainIndex++;
 
       return Align(
-        alignment: Alignment(0, offsets[offsets.length - 1 - index]),
-        child: Transform(
-          transform: Matrix4.identity()
-            ..setEntry(3, 2, 0.001)
-            ..rotateX(zAngle)
-            ..rotateZ(-yAngle),
-          alignment: Alignment.center,
-          child: mainOrSupport[index]
-              ? getPlane(isReversed, mainIndex == selectedLayer, mainIndex)
-              : supportPlane,
-        )
-      );
+          alignment: Alignment(0, offsets[offsets.length - 1 - index]),
+          child: Transform(
+            transform: Matrix4.identity()
+              ..setEntry(3, 2, 0.001)
+              ..rotateX(zAngle)
+              ..rotateZ(-yAngle),
+            alignment: Alignment.center,
+            child: mainOrSupport[index] ? getPlane(isReversed, mainIndex == selectedLayer, mainIndex) : supportPlane,
+          ));
     });
     if (!isReversed) planes = planes.reversed.toList().cast<Widget>();
     return planes;
@@ -393,7 +389,7 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onPanUpdate: (details) => setState(() {
-        if((zAngle<0 || details.delta.dy<0) && (zAngle> -pi || details.delta.dy>0)) {
+        if ((zAngle < 0 || details.delta.dy < 0) && (zAngle > -pi || details.delta.dy > 0)) {
           zAngle += details.delta.dy / initialSize * 2;
         }
         yAngle += details.delta.dx / initialSize * 2;
@@ -403,7 +399,7 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
         height: initialSize * (1 + widget.layerNum * 0.25),
         child: Stack(
           children: getPlanes(),
-        //Text("z $zAngle")], Align(alignment: Alignment.bottomLeft, child: Text("y $yAngle"))],
+          //Text("z $zAngle")], Align(alignment: Alignment.bottomLeft, child: Text("y $yAngle"))],
         ),
       ),
     );

@@ -34,6 +34,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   late final Stream<int> layerNumStream;
 
   late final Stream<FieldData> projectionDataStream;
+  late final Stream<bool> isGameOverStream;
   final StreamController<FieldData> projectionData = StreamController();
 
   late int gameNum;
@@ -52,6 +53,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     showAnswerStream = showAnswer.stream.asBroadcastStream();
     layerNumStream = layerNum.stream.asBroadcastStream();
     projectionDataStream = projectionData.stream.asBroadcastStream();
+    isGameOverStream = isGameOver.stream.asBroadcastStream();
 
     controller = AnimationController(
       value: 1,
@@ -236,15 +238,22 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
               ),
               widget.level == 0
                   ? Container()
-                  : SizedBox(
-                      height: Style.blockM * 1.2,
-                    ),
+                  : StreamBuilder<bool>(
+                      stream: isGameOverStream,
+                      builder: (context, snapshot) {
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 600),
+                          curve: Curves.easeOutCubic,
+                          height: (snapshot.data == true && widget.level != 0 ? Style.blockH * 5 : Style.blockM * 1.2),
+                        );
+                      }),
               widget.level == 0
                   ? Container()
                   : FieldProjection(
                       layerNum: widget.level + 1,
                       layerNumController: layerNum,
-                      projectionDataStream: projectionDataStream),
+                      projectionDataStream: projectionDataStream,
+                      layerNumStream: layerNumStream),
               widget.level == 0
                   ? Container()
                   : SizedBox(
@@ -252,72 +261,80 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                     ),
               Flexible(
                 flex: 1,
-                child: Align(
-                  alignment: widget.level == 0 ? const Alignment(0, 0.3) : Alignment.topCenter,
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 200),
-                      child: Field(
-                          key: Key("${widget.level} $gameNum"),
-                          currentNumOfLines: currentNumOfLines,
-                          tree: widget.example ? exampleTree : trees[widget.level][gameNum],
-                          isGameOver: isGameOver,
-                          showAnswer: showAnswerStream,
-                          layerNumStream: layerNumStream,
-                          layerFullNum: widget.level + 1,
-                          projectionData: projectionData),
-                  ),
-                ),
+                child: StreamBuilder<bool>(
+                    stream: isGameOverStream,
+                    builder: (context, snapshot) {
+                      return snapshot.data == true && widget.level != 0
+                          ? Container()
+                          : Align(
+                              alignment: widget.level == 0 ? const Alignment(0, 0.3) : Alignment.topCenter,
+                              child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 400),
+                                child: Field(
+                                    key: Key("${widget.level} $gameNum"),
+                                    currentNumOfLines: currentNumOfLines,
+                                    tree: widget.example ? exampleTree : trees[widget.level][gameNum],
+                                    isGameOver: isGameOver,
+                                    showAnswer: showAnswerStream,
+                                    layerNumStream: layerNumStream,
+                                    layerFullNum: widget.level + 1,
+                                    projectionData: projectionData),
+                              ),
+                            );
+                    }),
               ),
-              widget.example
-                  ? Container()
-                  : SizedBox(
-                      height: Style.blockM * 2.5,
-                      child: StreamBuilder<bool>(
-                          stream: isGameOver.stream,
-                          builder: (context, snapshot) {
-                            ifGameIsOver();
-                            return AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 200),
-                                child: Align(
-                                  alignment: Alignment(0, Style.wideScreen ? 0.9 : 0.8),
-                                  child: snapshot.data == true && trees[widget.level].length > gameNum
-                                      ? ElevatedButton(
-                                          style: ButtonStyle(
-                                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                                  RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(Style.blockM * 0.2),
-                                              )),
-                                              minimumSize: MaterialStateProperty.all(Size.zero),
-                                              padding: MaterialStateProperty.all(EdgeInsets.zero),
-                                              backgroundColor: MaterialStateProperty.all(Style.primaryColor),
-                                              overlayColor:
-                                                  MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
-                                              elevation: MaterialStateProperty.all(0)),
-                                          onPressed: () {
-                                            trees[widget.level].length - 1 == gameNum
-                                                ? Navigator.pop(context)
-                                                : startNewGame();
-                                          },
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: Style.blockM * 0.3, horizontal: 2.5 * Style.blockM),
-                                            child: Text(trees[widget.level].length - 1 == gameNum ? "Back" : "Next",
-                                                style: GoogleFonts.quicksand(
-                                                    fontSize: Style.blockM * 1.4,
-                                                    fontWeight: FontWeight.w800,
-                                                    color: Style.secondaryColor)),
-                                          ),
-                                        )
-                                      : Container(),
-                                ));
-                          }),
-                    ),
               SizedBox(
-                height: Style.blockM * 2.5,
-              )
+                height: Style.blockM * 2,
+              ),
             ],
           ),
         ),
+        widget.example
+            ? Container()
+            : Positioned(
+                bottom: Style.blockM * 2,
+                child: SizedBox(
+                  width: 20 * Style.block,
+                  child: Center(
+                    child: StreamBuilder<bool>(
+                        stream: isGameOverStream,
+                        builder: (context, snapshot) {
+                          ifGameIsOver();
+                          return AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 200),
+                              child: snapshot.data == true && trees[widget.level].length > gameNum
+                                  ? ElevatedButton(
+                                      style: ButtonStyle(
+                                          shape:
+                                              MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(Style.blockM * 0.2),
+                                          )),
+                                          minimumSize: MaterialStateProperty.all(Size.zero),
+                                          padding: MaterialStateProperty.all(EdgeInsets.zero),
+                                          backgroundColor: MaterialStateProperty.all(Style.primaryColor),
+                                          overlayColor:
+                                              MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
+                                          elevation: MaterialStateProperty.all(0)),
+                                      onPressed: () {
+                                        trees[widget.level].length - 1 == gameNum
+                                            ? Navigator.pop(context)
+                                            : startNewGame();
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: Style.blockM * 0.3, horizontal: 2.5 * Style.blockM),
+                                        child: Text(trees[widget.level].length - 1 == gameNum ? "Back" : "Next",
+                                            style: GoogleFonts.quicksand(
+                                                fontSize: Style.blockM * 1.4,
+                                                fontWeight: FontWeight.w800,
+                                                color: Style.secondaryColor)),
+                                      ),
+                                    )
+                                  : Container());
+                        }),
+                  ),
+                ),
+              ),
         widget.example
             ? Container()
             : Positioned(

@@ -383,7 +383,7 @@ class PageIndicator extends StatelessWidget {
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {
-        double diameter = Style.block * 0.55;
+        double diameter = Style.blockM * 0.55;
         double indicatorDiameter = diameter * 1;
         double spacer = diameter * 0.7;
         double pageNumDouble = controller.page ?? 0.0;
