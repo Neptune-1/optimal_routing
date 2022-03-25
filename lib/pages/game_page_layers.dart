@@ -187,7 +187,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
           child: Column(
             children: [
               SizedBox(
-                height: Style.blockH * 1,
+                height: Style.blockH * 0.9,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -263,7 +263,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
               widget.level == 0
                   ? Container()
                   : SizedBox(
-                      height: Style.blockM * 3,
+                      height: Style.blockM * 2.5,
                     ),
               Flexible(
                 flex: 1,
@@ -297,7 +297,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
         ),
         Positioned(
           right: Style.blockM * 1,
-          top: Style.blockH+Style.blockM * 2,
+          top: Style.blockH*0.9+Style.blockM * 2,
           child: widget.level == 0 ? Container() : linesInfoWidget(),
         ),
         widget.example
@@ -349,7 +349,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
         widget.example
             ? Container()
             : Positioned(
-                bottom: Style.blockM * 1,
+                bottom: Style.blockM * 0.5,
                 left: Style.block * 2.5,
                 child: SizedBox(
                   width: Style.block * 15,
