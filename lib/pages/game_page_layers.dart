@@ -107,6 +107,73 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  linesInfoWidget() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+
+            widget.level == 0
+                ? Container()
+                : StreamBuilder<int>(
+                stream: layerNumStream,
+                builder: (context, snapshot) {
+                  return !snapshot.hasData
+                      ? Container()
+                      : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(
+                        widget.level + 1,
+                            (layerNum) => SizedBox(
+                            width: Style.blockM * 0.2,
+                            height: Style.blockM * (widget.level == 0 ? 1.5 : 1),
+                            child: Center(
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                width: Style.blockM * 0.2,
+                                height: Style.blockM * 0.6,
+                                decoration: BoxDecoration(
+                                    color: (snapshot.data ?? 0) == layerNum
+                                        ? Style.accentColor
+                                        : Style.primaryColor,
+                                    borderRadius: BorderRadius.circular(Style.blockM * 0.3)),
+                              ),
+                            )),
+                      ));
+                }),
+            StreamBuilder<LinesData>(
+                stream: currentNumOfLines.stream,
+                builder: (context, snapshot) {
+                  return !snapshot.hasData
+                      ? Container()
+                      : Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: List.generate(
+                            widget.level + 1,
+                            (layerNum) => SizedBox(
+                              width: Style.blockM * 2,
+                              height: Style.blockM * (widget.level == 0 ? 1.5 : 1),
+                              child: Center(
+                                child: Text(
+                                  "${(snapshot.data!.currentLinesNum[layerNum])}/${snapshot.data!.fullLinesNum[layerNum]}",
+                                  style: GoogleFonts.quicksand(
+                                      fontSize: Style.blockM * 0.8,
+                                      fontWeight: FontWeight.w800,
+                                      color: Style.primaryColor),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ));
+                }),
+          ],
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Style.init(context);
@@ -143,68 +210,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                             ),
                     ),
                   ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        children: [
-                          StreamBuilder<LinesData>(
-                              stream: currentNumOfLines.stream,
-                              builder: (context, snapshot) {
-                                return !snapshot.hasData
-                                    ? Container()
-                                    : Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: List.generate(
-                                          widget.level + 1,
-                                          (layerNum) => SizedBox(
-                                            width: Style.blockM * 3,
-                                            height: Style.blockM * (widget.level == 0 ? 1.5 : 1),
-                                            child: Center(
-                                              child: Text(
-                                                "${(snapshot.data!.currentLinesNum[layerNum])}/${snapshot.data!.fullLinesNum[layerNum]}",
-                                                style: GoogleFonts.quicksand(
-                                                    fontSize: Style.blockM * 0.8,
-                                                    fontWeight: FontWeight.w800,
-                                                    color: Style.primaryColor),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ),
-                                          ),
-                                        ));
-                              }),
-                          widget.level == 0
-                              ? Container()
-                              : StreamBuilder<int>(
-                                  stream: layerNumStream,
-                                  builder: (context, snapshot) {
-                                    return !snapshot.hasData
-                                        ? Container()
-                                        : Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: List.generate(
-                                              widget.level + 1,
-                                              (layerNum) => SizedBox(
-                                                  width: Style.blockM * 1.6,
-                                                  height: Style.blockM * (widget.level == 0 ? 1.5 : 1),
-                                                  child: Center(
-                                                    child: AnimatedContainer(
-                                                      duration: const Duration(milliseconds: 200),
-                                                      width: Style.blockM * 1.5,
-                                                      height: Style.blockM * 0.15,
-                                                      decoration: BoxDecoration(
-                                                          color: (snapshot.data ?? 0) == layerNum
-                                                              ? Style.accentColor
-                                                              : Style.primaryColor,
-                                                          borderRadius: BorderRadius.circular(Style.blockM * 0.1)),
-                                                    ),
-                                                  )),
-                                            ));
-                                  }),
-                        ],
-                      ),
-                    ],
-                  ),
+                  widget.level != 0 ? Container() : linesInfoWidget(),
                   SizedBox(
                     width: Style.blockM * 3,
                     height: Style.blockM * 1.4,
@@ -288,6 +294,11 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
               ),
             ],
           ),
+        ),
+        Positioned(
+          right: Style.blockM * 1,
+          top: Style.blockH+Style.blockM * 2,
+          child: widget.level == 0 ? Container() : linesInfoWidget(),
         ),
         widget.example
             ? Container()
