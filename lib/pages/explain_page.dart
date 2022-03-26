@@ -192,7 +192,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                       height: Style.blockH * 1,
                     ),
                     Text(
-                      "You can use only certain number of lines",
+                      "You can use only a definite number of lines",
                       style: Style.getTextStyle_1(),
                     ),
                     SizedBox(
@@ -221,7 +221,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                     Align(
                       alignment: const Alignment(0, -0.5),
                       child: Text(
-                        "Tip: Connect targets using swipes or taps,\nrepeat movement to remove the line",
+                        "Tip: Connect targets using swipes or taps,\nrepeat movement to remove the connection",
                         style: Style.getTextStyle_1(),
                         textAlign: TextAlign.center,
                       ),
@@ -277,7 +277,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                     Align(
                       alignment: const Alignment(0, 0.65),
                       child: Text(
-                        "Tip: tap on layer on\n3D-projection for selection",
+                        "Tip: for selection\ntap on a layer on the 3D projection",
                         style: Style.getTextStyle_1(),
                         textAlign: TextAlign.center,
                       ),
