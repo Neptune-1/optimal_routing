@@ -356,7 +356,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                   height: Style.blockM,
                   child: Center(
                     child: Text(
-                      "Level ${gameNum + 1} from ${trees[widget.level].length}",
+                      "Level ${gameNum + 1}",
                       style: GoogleFonts.quicksand(
                           fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
                     ),

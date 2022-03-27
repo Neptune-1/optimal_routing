@@ -1,10 +1,15 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:optimal_routing/pages/game_page_layers.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 import '../consts/styles.dart';
+import 'explain_page.dart';
 
 class LevelPage extends StatefulWidget {
   const LevelPage({Key? key}) : super(key: key);
@@ -15,6 +20,7 @@ class LevelPage extends StatefulWidget {
 
 class _LevelPageState extends State<LevelPage> with TickerProviderStateMixin {
   int level = 0;
+  final InAppReview inAppReview = InAppReview.instance;
 
   void choseLevel(int chosen) {
     setState(() {
@@ -30,7 +36,43 @@ class _LevelPageState extends State<LevelPage> with TickerProviderStateMixin {
         body: Stack(
           children: [
             Align(
-              alignment: const Alignment(0, -0.8),
+              alignment: const Alignment(-1, -0.92),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: Style.blockM * 0.2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    IconButton(
+                        onPressed: () async{
+
+                          if ((await inAppReview.isAvailable() )&& Platform.isIOS) inAppReview.requestReview();
+                          else inAppReview.openStoreListing();
+
+                        },
+                        icon: Icon(
+                          Icons.star,
+                          size: Style.blockM * 1.5,
+                          color: Style.primaryColor,
+                        ),
+                        splashRadius: Style.blockM * 1,
+                        splashColor: Style.accentColor.withOpacity(0.5)),
+                    IconButton(
+                      onPressed: () => Navigator.push(context, Style.pageRouteBuilder(const ExplainPage())),
+                      icon: Icon(
+                        Icons.info,
+                        size: Style.blockM * 1.3,
+                        color: Style.primaryColor,
+                      ),
+                      splashRadius: Style.blockM * 1,
+                      splashColor: Style.accentColor.withOpacity(0.5),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Align(
+              alignment: const Alignment(0.02, -0.75),
               child: SvgPicture.asset(
                 "assets/logo.svg",
                 height: Style.blockM * 1.7,
