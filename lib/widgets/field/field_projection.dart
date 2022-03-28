@@ -14,13 +14,15 @@ class FieldProjection extends StatefulWidget {
   final StreamController<int> layerNumController;
   final Stream<FieldData> projectionDataStream;
   final Stream<int>? layerNumStream;
+  final bool rotateAnimation;
 
   const FieldProjection(
       {Key? key,
       required this.layerNum,
       required this.layerNumController,
       required this.projectionDataStream,
-      this.layerNumStream})
+      this.layerNumStream,
+      this.rotateAnimation = false})
       : super(key: key);
 
   @override
@@ -35,6 +37,7 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
   double yAngle = initYAngle;
   int selectedLayer = 0;
   FieldData? fieldData;
+  late final Timer rotateAnimationTimer;
 
   @override
   void initState() {
@@ -42,8 +45,20 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
       if (mounted) setState(() => fieldData = data);
     });
 
-    if (widget.layerNumStream != null) widget.layerNumStream!.listen((layerNum) => setState(() => selectedLayer = layerNum));
+    if (widget.layerNumStream != null)
+      widget.layerNumStream!.listen((layerNum) => setState(() => selectedLayer = layerNum));
+
+    if (widget.rotateAnimation) {
+      rotateAnimationTimer =
+          Timer.periodic(const Duration(milliseconds: 20), (timer) => setState(() => yAngle += 0.015));
+    }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    if (rotateAnimationTimer.isActive) rotateAnimationTimer.cancel();
   }
 
   getFieldImg(int thisLayerNum, FieldData fieldData) {

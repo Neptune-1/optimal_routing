@@ -8,7 +8,9 @@ import 'package:optimal_routing/pages/game_page_layers.dart';
 import 'package:optimal_routing/widgets/field/field_projection.dart';
 
 import '../consts/styles.dart';
+import '../data/trees.dart';
 import '../utils/prefs.dart';
+import '../widgets/field/field_layers.dart';
 import 'level_page_layers.dart';
 
 class ExplainPage extends StatefulWidget {
@@ -171,11 +173,14 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                     SizedBox(
                       height: Style.blockH * 3,
                     ),
-                    SvgPicture.asset(
-                      "assets/explain_0_page_0.svg",
-                      width: Style.blockM * 6,
-                      height: Style.blockM * 6,
-                    )
+                    Field(
+                        currentNumOfLines: StreamController(),
+                        tree: exampleTree,
+                        isGameOver: StreamController(),
+                        showAnswer: StreamController<bool>().stream.asBroadcastStream(),
+                        layerNumStream: StreamController<int>().stream.asBroadcastStream(),
+                        layerFullNum: 1,
+                        projectionData: StreamController())
                   ],
                   crossAxisAlignment: CrossAxisAlignment.center,
                 ),
@@ -256,7 +261,8 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                     FieldProjection(
                         layerNum: 2,
                         layerNumController: StreamController(),
-                        projectionDataStream: fieldProjectionStream),
+                        projectionDataStream: fieldProjectionStream,
+                        rotateAnimation: true),
 
                     SizedBox(
                       height: Style.blockH * 0.5,
