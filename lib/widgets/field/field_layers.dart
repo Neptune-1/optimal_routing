@@ -37,7 +37,7 @@ class Field extends StatefulWidget {
 class _FieldState extends State<Field> {
   late final int fieldSize;
   double spacePointPoint = Style.wideScreen ? Style.blockM * 1.4 : Style.blockM * 1;
-  double pointDiameter = Style.wideScreen ? Style.blockM * 1.2 : Style.blockM * 1.3;
+  double pointDiameter = Style.wideScreen ? Style.blockM * 1.2 : Style.blockM * 1.25;
   late final double showedPointDiameter;
   final double spaceLinePoint = Style.blockM * 0;
   final double lineThick = Style.blockM * 0.1;
@@ -59,8 +59,8 @@ class _FieldState extends State<Field> {
     super.initState();
 
     fieldSize = widget.tree[3];
-    spacePointPoint *= 8 / fieldSize;
-    showedPointDiameter = pointDiameter * 0.2;
+    spacePointPoint *= 6.5 / fieldSize;
+    showedPointDiameter = pointDiameter * 0.15;
     graph = Graph(fieldSize);
     routesH = List.generate(
         widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
@@ -70,14 +70,12 @@ class _FieldState extends State<Field> {
     int fullNumLinesSum = widget.tree[1];
 
     for (int i = 0; i < widget.layerFullNum; i++) {
-      int thisLayerLinesNum =
-      ((widget.layerFullNum - 1 <= i)
-          ? ((fullNumLinesSum ~/ (widget.layerFullNum))+(fullNumLinesSum % (widget.layerFullNum)))
+      int thisLayerLinesNum = ((widget.layerFullNum - 1 <= i)
+          ? ((fullNumLinesSum ~/ (widget.layerFullNum)) + (fullNumLinesSum % (widget.layerFullNum)))
           : fullNumLinesSum ~/ (widget.layerFullNum));
       fullLinesNum.add(thisLayerLinesNum);
       currentNumOfLines.add(0);
     }
-
 
     // int fullNumLinesSum = widget.tree[1];
     //
@@ -116,7 +114,7 @@ class _FieldState extends State<Field> {
     points = List.generate(
         widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
 
-    widget.layerNumStream.listen((n) => mounted  ? setState(() => currentLayer = n) : null);
+    widget.layerNumStream.listen((n) => mounted ? setState(() => currentLayer = n) : null);
     widget.projectionData.add(FieldData(
         routesH: routesH,
         routesV: routesV,

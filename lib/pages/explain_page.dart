@@ -27,48 +27,48 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
 
   @override
   void initState() {
-
     fieldProjectionStream = fieldProjectionController.stream.asBroadcastStream();
     _pageController.addListener(() {
       if ((_pageController.page ?? 0).round() == 3) {
-        Future.delayed(const Duration(milliseconds: 10), ()=> fieldProjectionController.add(FieldData(routesH: [
-          [
-            [false, true, false],
-            [false, false, false],
-            [false, false, false],
-          ],
-          [
-            [false, false, false],
-            [false, true, false],
-            [false, false, false],
-          ],
-        ], routesV: [
-          [
-            [true, true, false],
-            [false, false, false],
-            [false, false, false],
-          ],
-          [
-            [false, false, false],
-            [false, false, false],
-            [true, true, false],
-          ],
-        ], points: [
-          [
-            [false, true, false],
-            [false, true, false],
-            [false, false, false],
-          ],
-          [
-            [false, false, false],
-            [false, true, false],
-            [false, true, false],
-          ],
-        ], targets: [
-          [const Point(0, 0), const Point(0, 2)],
-          [const Point(2, 2), const Point(2, 0)],
-        ], routeIsConnected: false, fieldSize: 3, isGameOver: false)));
-
+        Future.delayed(
+            const Duration(milliseconds: 10),
+            () => fieldProjectionController.add(FieldData(routesH: [
+                  [
+                    [false, true, false],
+                    [false, false, false],
+                    [false, false, false],
+                  ],
+                  [
+                    [false, false, false],
+                    [false, true, false],
+                    [false, false, false],
+                  ],
+                ], routesV: [
+                  [
+                    [true, true, false],
+                    [false, false, false],
+                    [false, false, false],
+                  ],
+                  [
+                    [false, false, false],
+                    [false, false, false],
+                    [true, true, false],
+                  ],
+                ], points: [
+                  [
+                    [false, true, false],
+                    [false, true, false],
+                    [false, false, false],
+                  ],
+                  [
+                    [false, false, false],
+                    [false, true, false],
+                    [false, true, false],
+                  ],
+                ], targets: [
+                  [const Point(0, 0), const Point(0, 2)],
+                  [const Point(2, 2), const Point(2, 0)],
+                ], routeIsConnected: false, fieldSize: 3, isGameOver: false)));
       }
     });
     fieldProjectionController.add(FieldData(routesH: [
@@ -217,22 +217,22 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                   ],
                   crossAxisAlignment: CrossAxisAlignment.center,
                 ),
-                Stack(
-                  children: [
-                    const GamePage(
-                      example: true,
-                      level: 0,
-                    ),
-                    Align(
-                      alignment: const Alignment(0, -0.5),
-                      child: Text(
-                        "Tip: Connect targets using swipes or taps,\nrepeat movement to remove the connection",
-                        style: Style.getTextStyle_1(),
-                        textAlign: TextAlign.center,
-                      ),
-                    )
-                  ],
-                ),
+                // Stack(
+                //   children: [
+                //     const GamePage(
+                //       example: true,
+                //       level: 0,
+                //     ),
+                //     Align(
+                //       alignment: const Alignment(0, -0.5),
+                //       child: Text(
+                //         "Tip: Connect targets using\nswipes or taps, repeat movement\nto remove the connection",
+                //         style: Style.getTextStyle_1(),
+                //         textAlign: TextAlign.center,
+                //       ),
+                //     )
+                //   ],
+                // ),
                 Column(
                   children: [
                     SizedBox(
@@ -253,8 +253,10 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                     SizedBox(
                       height: Style.blockH * 0.5,
                     ),
-
-                    Icon(Icons.swipe, size: Style.blockM,),
+                    Icon(
+                      Icons.swipe,
+                      size: Style.blockM,
+                    ),
                     SizedBox(
                       height: Style.blockH * 0.5,
                     ),
@@ -263,7 +265,6 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                         layerNumController: StreamController(),
                         projectionDataStream: fieldProjectionStream,
                         rotateAnimation: true),
-
                     SizedBox(
                       height: Style.blockH * 0.5,
                     ),
@@ -305,7 +306,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                     overlayColor: MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
                     elevation: MaterialStateProperty.all(0)),
                 onPressed: () {
-                  if ((_pageController.page)!.round() != 4) {
+                  if ((_pageController.page)!.round() != 3) {
                     _pageController.animateToPage((_pageController.page)!.round() + 1,
                         duration: const Duration(milliseconds: 300), curve: Curves.linearToEaseOut);
                   } else {
@@ -329,7 +330,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                                 ? "Next"
                                 : ([
                                     "Next",
-                                    "Try",
+                                    // "Try",
                                     "Next",
                                     "Try",
                                     "GO",
@@ -370,13 +371,11 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                   }),
             ),
             Align(
-                alignment: const Alignment(0, 0.965),
-                child: PageIndicator(pagesNumber: 5, controller: _pageController))
+                alignment: const Alignment(0, 0.965), child: PageIndicator(pagesNumber: 4, controller: _pageController))
           ],
         ));
   }
 }
-
 
 class PageIndicator extends StatelessWidget {
   final int pagesNumber;
@@ -401,30 +400,30 @@ class PageIndicator extends StatelessWidget {
               Row(
                 children: List.generate(
                     pagesNumber,
-                        (index) => Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(
-                          height: diameter,
-                          width: diameter,
-                          child: Center(
-                            child: Container(
-                              height: diameter*0.5,
-                              width: diameter*0.5,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Style.primaryColor,
+                    (index) => Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              height: diameter,
+                              width: diameter,
+                              child: Center(
+                                child: Container(
+                                  height: diameter * 0.5,
+                                  width: diameter * 0.5,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Style.primaryColor,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        index != (pagesNumber - 1)
-                            ? SizedBox(
-                          width: spacer,
-                        )
-                            : Container()
-                      ],
-                    )),
+                            index != (pagesNumber - 1)
+                                ? SizedBox(
+                                    width: spacer,
+                                  )
+                                : Container()
+                          ],
+                        )),
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
               ),

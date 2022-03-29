@@ -13,15 +13,14 @@ class Ads {
   static const int maxFailedLoadAttempts = 5;
 
   static const String _adUnitIdAndroid =
-     "ca-app-pub-6051303150575720/5425259488"; //'ca-app-pub-3940256099942544/5224354917'; //
+      "ca-app-pub-6051303150575720/5425259488"; //'ca-app-pub-3940256099942544/5224354917'; //
   static const String _adUnitIdIos =
       "ca-app-pub-6051303150575720/9525082753"; // 'ca-app-pub-3940256099942544/1712485313';//
 
   static bool isAddShowed = false;
 
   static void showPreAdDialog(BuildContext context, Function ifShowed) {
-
-      showDialog(
+    showDialog(
         context: context,
         builder: (BuildContext context) {
           return Center(
@@ -34,11 +33,16 @@ class Ads {
                 SizedBox(
                   height: Style.blockH * 2.8,
                   child: Center(
-                    child: _rewardedAd == null ? Text("Sure?", style: Style.getTextStyle_2(),) : SvgPicture.asset(
-                      "assets/ads_icon_1.svg",
-                      width: Style.blockH * 1.7,
-                      height: Style.blockH * 1.7,
-                    ),
+                    child: _rewardedAd == null
+                        ? Text(
+                            "Sure?",
+                            style: Style.getTextStyle_2(),
+                          )
+                        : SvgPicture.asset(
+                            "assets/ads_icon_1.svg",
+                            width: Style.blockH * 1.7,
+                            height: Style.blockH * 1.7,
+                          ),
                   ),
                 ),
                 Container(
@@ -74,11 +78,12 @@ class Ads {
                         ),
                       ),
                       Center(
-                        child:  Container(
+                        child: Container(
                             height: Style.blockH * 2.2,
                             width: Style.blockM * 0.1,
                             decoration: BoxDecoration(
-                                color: Style.primaryColor.withOpacity(0.3),)),
+                              color: Style.primaryColor.withOpacity(0.3),
+                            )),
                       )
                     ],
                   ),
@@ -87,7 +92,6 @@ class Ads {
             ),
           );
         });
-
   }
 
   static void createRewardedAd() {

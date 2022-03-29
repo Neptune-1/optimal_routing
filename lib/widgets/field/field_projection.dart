@@ -50,7 +50,7 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
 
     if (widget.rotateAnimation) {
       rotateAnimationTimer =
-          Timer.periodic(const Duration(milliseconds: 20), (timer) => setState(() => yAngle += 0.015));
+          Timer.periodic(const Duration(milliseconds: 20), (timer) => setState(() => yAngle += 0.005));
     }
     super.initState();
   }

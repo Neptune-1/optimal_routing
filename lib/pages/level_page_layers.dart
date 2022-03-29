@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:optimal_routing/pages/game_page_layers.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:optimal_routing/pages/game_page_layers.dart';
 
 import '../consts/styles.dart';
 import 'explain_page.dart';
@@ -44,11 +44,11 @@ class _LevelPageState extends State<LevelPage> with TickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     IconButton(
-                        onPressed: () async{
-
-                          if ((await inAppReview.isAvailable() )&& Platform.isIOS) inAppReview.requestReview();
-                          else inAppReview.openStoreListing();
-
+                        onPressed: () async {
+                          if ((await inAppReview.isAvailable()) && Platform.isIOS)
+                            inAppReview.requestReview();
+                          else
+                            inAppReview.openStoreListing();
                         },
                         icon: Icon(
                           Icons.star,

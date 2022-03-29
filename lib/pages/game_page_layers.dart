@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -25,7 +26,11 @@ class GamePage extends StatefulWidget {
 
 class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   late final AnimationController controller;
+  late final AnimationController restartAnimationController;
+  late final Animation restartAnimation;
+
   int currentLinesNumber = 0;
+  int restartedTime = 0;
   final StreamController<LinesData> currentNumOfLines = StreamController();
   final StreamController<bool> isGameOver = StreamController();
   final StreamController<bool> showAnswer = StreamController();
@@ -60,13 +65,23 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
       vsync: this,
       duration: Duration(seconds: answerShowTime),
     );
+    restartAnimationController = AnimationController(
+      value: 0,
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+
+    restartAnimation = Tween(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: restartAnimationController, curve: Curves.easeOutCubic));
   }
 
-  void startNewGame() {
+  void startNewGame({restart = false}) {
     isAnsweredShowed = false;
     isGameOver.add(false);
     layerNum.add(0);
-    gameNum != trees[widget.level].length - 1 ? gameNum++ : null;
+    (gameNum != trees[widget.level].length - 1) && !restart ? gameNum++ : null;
 
     setState(() {});
   }
@@ -101,6 +116,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   @override
   void dispose() {
     controller.dispose();
+    restartAnimationController.dispose();
     isGameOver.close();
     showAnswer.close();
 
@@ -114,35 +130,34 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-
             widget.level == 0
                 ? Container()
                 : StreamBuilder<int>(
-                stream: layerNumStream,
-                builder: (context, snapshot) {
-                  return !snapshot.hasData
-                      ? Container()
-                      : Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: List.generate(
-                        widget.level + 1,
-                            (layerNum) => SizedBox(
-                            width: Style.blockM * 0.2,
-                            height: Style.blockM * (widget.level == 0 ? 1.5 : 1),
-                            child: Center(
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 200),
-                                width: Style.blockM * 0.2,
-                                height: Style.blockM * 0.6,
-                                decoration: BoxDecoration(
-                                    color: (snapshot.data ?? 0) == layerNum
-                                        ? Style.accentColor
-                                        : Style.primaryColor,
-                                    borderRadius: BorderRadius.circular(Style.blockM * 0.3)),
-                              ),
-                            )),
-                      ));
-                }),
+                    stream: layerNumStream,
+                    builder: (context, snapshot) {
+                      return !snapshot.hasData
+                          ? Container()
+                          : Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: List.generate(
+                                widget.level + 1,
+                                (layerNum) => SizedBox(
+                                    width: Style.blockM * 0.2,
+                                    height: Style.blockM * (widget.level == 0 ? 1.5 : 1),
+                                    child: Center(
+                                      child: AnimatedContainer(
+                                        duration: const Duration(milliseconds: 200),
+                                        width: Style.blockM * 0.2,
+                                        height: Style.blockM * 0.6,
+                                        decoration: BoxDecoration(
+                                            color: (snapshot.data ?? 0) == layerNum
+                                                ? Style.accentColor
+                                                : Style.primaryColor,
+                                            borderRadius: BorderRadius.circular(Style.blockM * 0.3)),
+                                      ),
+                                    )),
+                              ));
+                    }),
             StreamBuilder<LinesData>(
                 stream: currentNumOfLines.stream,
                 builder: (context, snapshot) {
@@ -211,34 +226,68 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                     ),
                   ),
                   widget.level != 0 ? Container() : linesInfoWidget(),
-                  SizedBox(
-                    width: Style.blockM * 3,
-                    height: Style.blockM * 1.4,
-                    child: Stack(
-                      children: [
-                        AnimatedBuilder(
-                            animation: controller,
-                            builder: (context, w) {
-                              return Center(
-                                  child: SizedBox(
-                                width: Style.blockM * 1.4,
-                                height: Style.blockM * 1.4,
-                                child: CircularProgressIndicator(
-                                  value: 1 - controller.value,
-                                  color: Style.primaryColor,
-                                  strokeWidth: Style.blockM * 0.1,
-                                ),
-                              ));
-                            }),
-                        Center(
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: Style.blockM * 1.4,
+                        height: Style.blockM * 1.4,
+                        child: Center(
                           child: GestureDetector(
                             behavior: HitTestBehavior.translucent,
-                            onTap: () => onPressedEye(context),
-                            child: Icon(Icons.remove_red_eye, size: Style.blockM * 1, color: Style.primaryColor),
+                            onTap: () {
+                              if (!restartAnimationController.isAnimating) {
+                                restartAnimationController.reset();
+                                restartAnimationController.forward();
+                              }
+                              restartedTime++;
+                              startNewGame(restart: true);
+                            },
+                            child: AnimatedBuilder(
+                                animation: restartAnimationController,
+                                builder: (context, snapshot) {
+                                  return Transform.rotate(
+                                    angle: -pi * restartAnimation.value,
+                                    child: Icon(
+                                      Icons.cached,
+                                      size: Style.blockM * 1.2,
+                                      color: Style.primaryColor,
+                                    ),
+                                  );
+                                }),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(
+                        width: Style.blockM * 3,
+                        height: Style.blockM * 1.4,
+                        child: Stack(
+                          children: [
+                            AnimatedBuilder(
+                                animation: controller,
+                                builder: (context, w) {
+                                  return Center(
+                                      child: SizedBox(
+                                    width: Style.blockM * 1.4,
+                                    height: Style.blockM * 1.4,
+                                    child: CircularProgressIndicator(
+                                      value: 1 - controller.value,
+                                      color: Style.primaryColor,
+                                      strokeWidth: Style.blockM * 0.1,
+                                    ),
+                                  ));
+                                }),
+                            Center(
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onTap: () => onPressedEye(context),
+                                child: Icon(Icons.remove_red_eye, size: Style.blockM * 1.1, color: Style.primaryColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -277,7 +326,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                               child: AnimatedSwitcher(
                                 duration: const Duration(milliseconds: 400),
                                 child: Field(
-                                    key: Key("${widget.level} $gameNum"),
+                                    key: Key("${widget.level} $gameNum $restartedTime"),
                                     currentNumOfLines: currentNumOfLines,
                                     tree: widget.example ? exampleTree : trees[widget.level][gameNum],
                                     isGameOver: isGameOver,
@@ -297,7 +346,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
         ),
         Positioned(
           right: Style.blockM * 1,
-          top: Style.blockH*0.9+Style.blockM * 2,
+          top: Style.blockH * 0.9 + Style.blockM * 2,
           child: widget.level == 0 ? Container() : linesInfoWidget(),
         ),
         widget.example
