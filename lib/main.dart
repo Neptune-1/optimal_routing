@@ -36,6 +36,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initFirebaseAdmob();
   await Prefs.init();
+  //if(Prefs.getInt("lamps") == null)
+    Prefs.setInt("lamps", 20);
   //Prefs.clear();// TODO remove
   await SentryFlutter.init(
     (options) {

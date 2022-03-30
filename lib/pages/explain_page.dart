@@ -177,7 +177,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                         currentNumOfLines: StreamController(),
                         tree: exampleTree,
                         isGameOver: StreamController(),
-                        showAnswer: StreamController<bool>().stream.asBroadcastStream(),
+                        showTip: StreamController<int>().stream.asBroadcastStream(),
                         layerNumStream: StreamController<int>().stream.asBroadcastStream(),
                         layerFullNum: 1,
                         projectionData: StreamController())

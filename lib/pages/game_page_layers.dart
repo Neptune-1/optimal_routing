@@ -11,6 +11,7 @@ import 'package:optimal_routing/widgets/field/field_projection.dart';
 import '../consts/styles.dart';
 import '../data/trees.dart';
 import '../data_structures.dart';
+import '../utils/lamps.dart';
 import '../utils/prefs.dart';
 import '../widgets/field/field_layers.dart';
 
@@ -33,9 +34,9 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   int restartedTime = 0;
   final StreamController<LinesData> currentNumOfLines = StreamController();
   final StreamController<bool> isGameOver = StreamController();
-  final StreamController<bool> showAnswer = StreamController();
+  final StreamController<int> showTip = StreamController();
   final StreamController<int> layerNum = StreamController();
-  late final Stream<bool> showAnswerStream;
+  late final Stream<int> showTipStream;
   late final Stream<int> layerNumStream;
 
   late final Stream<FieldData> projectionDataStream;
@@ -55,10 +56,12 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     if (!kIsWeb) Ads.createRewardedAd();
     gameNum = Prefs.getInt(widget.level.toString()) ?? 0;
     if (gameNum != 0) gameNum -= 1;
-    showAnswerStream = showAnswer.stream.asBroadcastStream();
+    showTipStream = showTip.stream.asBroadcastStream();
     layerNumStream = layerNum.stream.asBroadcastStream();
     projectionDataStream = projectionData.stream.asBroadcastStream();
     isGameOverStream = isGameOver.stream.asBroadcastStream();
+
+    Lamps();
 
     controller = AnimationController(
       value: 1,
@@ -75,6 +78,8 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(parent: restartAnimationController, curve: Curves.easeOutCubic));
+
+    showTipStream.listen((event) => (event == 2) ? startNewGame() : null);
   }
 
   void startNewGame({restart = false}) {
@@ -90,35 +95,35 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     Prefs.setInt(widget.level.toString(), gameNum + 1);
   }
 
-  showAnswerAndHide({bool isAdsShowed = true}) {
-    if (isAdsShowed) isAnsweredShowed = true;
-    controller.forward(from: 0);
-    showAnswer.add(true);
-    Future.delayed(Duration(seconds: answerShowTime), () {
-      if (!showAnswer.isClosed) showAnswer.add(false);
-      if (!controller.isDismissed) {
-        controller.value = 1;
-        controller.stop(canceled: false);
-      }
-    });
-  }
+  // showAnswerAndHide({bool isAdsShowed = true}) {
+  //   if (isAdsShowed) isAnsweredShowed = true;
+  //   controller.forward(from: 0);
+  //   showAnswer.add(true);
+  //   Future.delayed(Duration(seconds: answerShowTime), () {
+  //     if (!showAnswer.isClosed) showAnswer.add(false);
+  //     if (!controller.isDismissed) {
+  //       controller.value = 1;
+  //       controller.stop(canceled: false);
+  //     }
+  //   });
+  // }
 
-  onPressedEye(BuildContext context) {
-    if (!controller.isAnimating) {
-      if (!kIsWeb && !isAnsweredShowed && !widget.example) {
-        Ads.showPreAdDialog(context, showAnswerAndHide);
-      } else {
-        showAnswerAndHide();
-      }
-    }
-  }
+  // onPressedEye(BuildContext context) {
+  //   if (!controller.isAnimating) {
+  //     if (!kIsWeb && !isAnsweredShowed && !widget.example) {
+  //       Ads.showPreAdDialog(context, showAnswerAndHide);
+  //     } else {
+  //       showAnswerAndHide();
+  //     }
+  //   }
+  // }
 
   @override
   void dispose() {
     controller.dispose();
     restartAnimationController.dispose();
     isGameOver.close();
-    showAnswer.close();
+    showTip.close();
 
     super.dispose();
   }
@@ -213,14 +218,15 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                       Navigator.pop(context);
                     },
                     behavior: HitTestBehavior.translucent,
-                    child: SizedBox(
-                      width: Style.blockM * 3,
+                    child: Container(
+                      width: Style.blockM * 4.4,
                       height: Style.blockM * 1.5,
+                      padding: EdgeInsets.only(right: Style.blockM * 1.4),
                       child: widget.example
                           ? Container()
                           : Icon(
                               Icons.arrow_back_ios,
-                              size: Style.blockM * 1.3,
+                              size: Style.blockM * 1.2,
                               color: Style.primaryColor,
                             ),
                     ),
@@ -280,8 +286,8 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                             Center(
                               child: GestureDetector(
                                 behavior: HitTestBehavior.translucent,
-                                onTap: () => onPressedEye(context),
-                                child: Icon(Icons.remove_red_eye, size: Style.blockM * 1.1, color: Style.primaryColor),
+                                onTap: () => Lamps.showBottomSheet(context, showTip),
+                                child: Icon(Icons.lightbulb, size: Style.blockM * 1.1, color: Style.primaryColor),
                               ),
                             ),
                           ],
@@ -330,7 +336,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                                     currentNumOfLines: currentNumOfLines,
                                     tree: widget.example ? exampleTree : trees[widget.level][gameNum],
                                     isGameOver: isGameOver,
-                                    showAnswer: showAnswerStream,
+                                    showTip: showTipStream,
                                     layerNumStream: layerNumStream,
                                     layerFullNum: widget.level + 1,
                                     projectionData: projectionData),

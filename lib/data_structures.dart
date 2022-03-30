@@ -8,6 +8,14 @@ class Line {
     print("${start.x} ${start.y} | ${end.x} ${end.y}");
   }
 }
+class FieldRoute {
+  late final int x;
+  late final int y;
+  late final String direction;
+
+  FieldRoute(this.x, this.y, this.direction);
+
+}
 
 class FieldData {
   late List<List<List<bool>>> routesH;

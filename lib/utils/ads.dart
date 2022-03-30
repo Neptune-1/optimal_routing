@@ -13,9 +13,9 @@ class Ads {
   static const int maxFailedLoadAttempts = 5;
 
   static const String _adUnitIdAndroid =
-      "ca-app-pub-6051303150575720/5425259488"; //'ca-app-pub-3940256099942544/5224354917'; //
+  "ca-app-pub-1093240985145070/8865142162"; //  'ca-app-pub-3940256099942544/5224354917'; //
   static const String _adUnitIdIos =
-      "ca-app-pub-6051303150575720/9525082753"; // 'ca-app-pub-3940256099942544/1712485313';//
+      "ca-app-pub-1093240985145070/3269216464"; // 'ca-app-pub-3940256099942544/1712485313';//
 
   static bool isAddShowed = false;
 

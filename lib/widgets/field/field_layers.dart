@@ -12,7 +12,7 @@ class Field extends StatefulWidget {
   final StreamController<LinesData> currentNumOfLines;
   final List tree;
   final StreamController<bool> isGameOver;
-  final Stream<bool> showAnswer;
+  final Stream<int> showTip;
   final bool showLines;
   final int layerFullNum;
   final Stream<int> layerNumStream;
@@ -23,7 +23,7 @@ class Field extends StatefulWidget {
       required this.currentNumOfLines,
       required this.tree,
       required this.isGameOver,
-      required this.showAnswer,
+      required this.showTip,
       required this.layerFullNum,
       required this.layerNumStream,
       required this.projectionData,
@@ -52,7 +52,12 @@ class _FieldState extends State<Field> {
   bool isGameOver = false;
   late final Graph graph;
 
+  late List<List<List<bool>>> showedRoutesH;
+  late List<List<List<bool>>> showedRoutesV;
+
   int currentLayer = 0;
+  final List<FieldRoute> answerRoutes = [];
+  final List<List<FieldRoute>> answerRoutesByLayer = [];
 
   @override
   void initState() {
@@ -67,6 +72,11 @@ class _FieldState extends State<Field> {
     routesV = List.generate(
         widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
 
+    showedRoutesH = List.generate(
+        widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
+    showedRoutesV = List.generate(
+        widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
+
     int fullNumLinesSum = widget.tree[1];
 
     for (int i = 0; i < widget.layerFullNum; i++) {
@@ -77,28 +87,6 @@ class _FieldState extends State<Field> {
       currentNumOfLines.add(0);
     }
 
-    // int fullNumLinesSum = widget.tree[1];
-    //
-    // for (int i = 0; i < widget.layerFullNum; i++) {
-    //   int thisLayerLinesNum =
-    //   ((widget.layerFullNum - 1 == i)
-    //       ? fullNumLinesSum
-    //       : Random().nextInt(fullNumLinesSum ~/ (widget.layerFullNum - i)));
-    //   fullNumLinesSum -= thisLayerLinesNum;
-    //   fullLinesNum.add(thisLayerLinesNum);
-    //   currentNumOfLines.add(0);
-    // }
-
-    // int fullNumLinesSum = widget.tree[1];
-    // var nums = List.generate(fullNumLinesSum-1, (index) => index+1);
-    // nums.shuffle();
-    // nums = nums.sublist(0, widget.layerFullNum-1);
-    // nums.sort();
-    //
-    // for (int i = 0; i < widget.layerFullNum; i++) {
-    //   fullLinesNum.add(thisLayerLinesNum);
-    //   currentNumOfLines.add(0);
-    // }
     widget.currentNumOfLines.add(LinesData(currentLinesNum: currentNumOfLines, fullLinesNum: fullLinesNum));
 
     List chosenPointsShuffle = (widget.tree[0] as List).map((e) => Point(e[0], e[1])).toList().cast<Point>();
@@ -123,61 +111,92 @@ class _FieldState extends State<Field> {
         routeIsConnected: routeIsConnected,
         isGameOver: isGameOver,
         fieldSize: fieldSize));
+
+    List<List<List<int>>> answer = widget.tree[2];
+
+    //List<List<bool>> answerPoints = List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => isInTargets(x, y)));
+
+    for (var line in answer) {
+      Point p1 = Point(line[0][0], line[0][1]);
+      Point p2 = Point(line[1][0], line[1][1]);
+      if (p1.x == p2.x && p1.y != p2.y) {
+        answerRoutes.add(FieldRoute(min(p1.x, p2.x), min(p2.y, p1.y), "v"));
+      } else if (p1.y == p2.y && p1.x != p2.x) {
+        answerRoutes.add(FieldRoute(min(p1.x, p2.x), min(p2.y, p1.y), "h"));
+      }
+    }
+    int start = 0;
+    fullLinesNum.forEach((element) {
+      answerRoutesByLayer.add(answerRoutes.sublist(start, start + element));
+      start = element;
+    });
+
+    widget.showTip.listen((event) {
+      switch (event) {
+        case 0:
+          showLine();
+          break;
+        case 1:
+          showAnswer();
+          break;
+        default:
+          break;
+      }
+    });
   }
 
-  void chooseRout(int x, int y, String type, {state}) {
-    if ((type == "h" && x >= 0 && x < fieldSize - 1 && y >= 0) || (type == "v" && y >= 0 && y < fieldSize - 1)) {
-      setState(() {
-        late bool currentState;
-        if (type == "v") {
-          currentState = routesV[currentLayer][x][y];
-          if (state ?? !currentState) {
-            int s = 0;
-            routesV.forEach((e) => s += e[x][y] ? 1 : 0);
-            if (s == 0) graph.addConnection(Point(x, y), Point(x, y + 1));
-          } else {
-            int s = 0;
-            routesV.forEach((e) => s += e[x][y] ? 1 : 0);
-            if (s == 1) graph.removeConnection(Point(x, y), Point(x, y + 1));
-          }
-          routesV[currentLayer][x][y] = state ?? !currentState;
-          points[currentLayer][x][y] = connectedPoint(x, y);
-          if (y != fieldSize - 1) {
-            points[currentLayer][x][y + 1] = connectedPoint(x, y + 1);
-          }
+  void chooseRout(int x, int y, String type, {state, bool refresh = true}) {
+    if (((type == "h" && x >= 0 && x < fieldSize - 1 && y >= 0) || (type == "v" && y >= 0 && y < fieldSize - 1)) && ((type == "h" && !showedRoutesH[currentLayer][x][y]) || (type == "v" && !showedRoutesV[currentLayer][x][y]))) {
+      late bool currentState;
+      if (type == "v") {
+        currentState = routesV[currentLayer][x][y];
+        if (state ?? !currentState) {
+          int s = 0;
+          routesV.forEach((e) => s += e[x][y] ? 1 : 0);
+          if (s == 0) graph.addConnection(Point(x, y), Point(x, y + 1));
         } else {
-          currentState = routesH[currentLayer][x][y];
-          if (state ?? !currentState) {
-            int s = 0;
-            routesH.forEach((e) => s += e[x][y] ? 1 : 0);
-            if (s == 0) graph.addConnection(Point(x, y), Point(x + 1, y));
-          } else {
-            int s = 0;
-            routesH.forEach((e) => s += e[x][y] ? 1 : 0);
-            if (s == 1) graph.removeConnection(Point(x, y), Point(x + 1, y));
-          }
-          routesH[currentLayer][x][y] = state ?? !currentState;
-          points[currentLayer][x][y] = connectedPoint(x, y);
-          if (x != fieldSize - 1) {
-            points[currentLayer][x + 1][y] = connectedPoint(x + 1, y);
-          }
+          int s = 0;
+          routesV.forEach((e) => s += e[x][y] ? 1 : 0);
+          if (s == 1) graph.removeConnection(Point(x, y), Point(x, y + 1));
         }
-        routeIsConnected = graph.areTargetsConnected(chosenPoints.expand((i) => i).toList());
-        // print(routeIsConnected);
-        if (state == null) {
-          currentNumOfLines[currentLayer] += currentState ? -1 : 1;
-        } else if (state) {
-          currentNumOfLines[currentLayer] += currentState ? 0 : 1;
-        } else if (!state) {
-          currentNumOfLines[currentLayer] += currentState ? -1 : 0;
+        routesV[currentLayer][x][y] = state ?? !currentState;
+        points[currentLayer][x][y] = connectedPoint(x, y);
+        if (y != fieldSize - 1) {
+          points[currentLayer][x][y + 1] = connectedPoint(x, y + 1);
         }
-        widget.currentNumOfLines.add(LinesData(currentLinesNum: currentNumOfLines, fullLinesNum: fullLinesNum));
+      } else {
+        currentState = routesH[currentLayer][x][y];
+        if (state ?? !currentState) {
+          int s = 0;
+          routesH.forEach((e) => s += e[x][y] ? 1 : 0);
+          if (s == 0) graph.addConnection(Point(x, y), Point(x + 1, y));
+        } else {
+          int s = 0;
+          routesH.forEach((e) => s += e[x][y] ? 1 : 0);
+          if (s == 1) graph.removeConnection(Point(x, y), Point(x + 1, y));
+        }
+        routesH[currentLayer][x][y] = state ?? !currentState;
+        points[currentLayer][x][y] = connectedPoint(x, y);
+        if (x != fieldSize - 1) {
+          points[currentLayer][x + 1][y] = connectedPoint(x + 1, y);
+        }
+      }
+      routeIsConnected = graph.areTargetsConnected(chosenPoints.expand((i) => i).toList());
+      // print(routeIsConnected);
+      if (state == null) {
+        currentNumOfLines[currentLayer] += currentState ? -1 : 1;
+      } else if (state) {
+        currentNumOfLines[currentLayer] += currentState ? 0 : 1;
+      } else if (!state) {
+        currentNumOfLines[currentLayer] += currentState ? -1 : 0;
+      }
+      widget.currentNumOfLines.add(LinesData(currentLinesNum: currentNumOfLines, fullLinesNum: fullLinesNum));
 
-        if (routeIsConnected && const DeepCollectionEquality().equals(currentNumOfLines, fullLinesNum)) {
-          widget.isGameOver.add(true);
-          isGameOver = true;
-        }
-      });
+      if (routeIsConnected && const DeepCollectionEquality().equals(currentNumOfLines, fullLinesNum)) {
+        widget.isGameOver.add(true);
+        isGameOver = true;
+      }
+      if (refresh) setState(() {});
     }
     widget.projectionData.add(FieldData(
         routesH: routesH,
@@ -205,7 +224,62 @@ class _FieldState extends State<Field> {
 
   Point? firstPoint;
 
-  getField() {
+  clearField() {
+    graph.clear();
+    routesH = List.generate(
+        widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
+    routesV = List.generate(
+        widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
+
+    points = List.generate(
+        widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
+
+    currentNumOfLines = List.generate(widget.layerFullNum, (index) => 0);
+
+    widget.currentNumOfLines.add(LinesData(currentLinesNum: currentNumOfLines, fullLinesNum: fullLinesNum));
+  }
+
+  showAnswer() {
+    clearField();
+    int currentLayerTmp = currentLayer;
+    for (int layer = 0; layer < widget.layerFullNum; layer++) {
+      currentLayer = layer;
+      answerRoutesByLayer[layer]
+          .forEach((element) => chooseRout(element.x, element.y, element.direction, refresh: false));
+    }
+    currentLayer = currentLayerTmp;
+    setState(() {});
+  }
+
+  showLine() {
+    // int h = 0;
+    // int v = 0;
+    // int showedH = 0;
+    // int showedV = 0;
+    // showedRoutesH.forEach((layerH) => layerH.forEach((xx) => xx.forEach((val) => showedH += (val ? 1 : 0))));
+    // showedRoutesV.forEach((layerV) => layerV.forEach((xx) => xx.forEach((val) => showedV += (val ? 1 : 0))));
+    for (int layer = 0; layer < widget.layerFullNum; layer++) {
+      currentLayer = layer;
+      for (var element in answerRoutesByLayer[layer]) {
+        if (element.direction == "v") {
+          if (!showedRoutesV[layer][element.x][element.y] && !routesV[layer][element.x][element.y]) {
+            chooseRout(element.x, element.y, element.direction, state: true);
+            showedRoutesV[layer][element.x][element.y] = true;
+            return;
+          }
+        } else if (element.direction == "h") {
+          if (!showedRoutesH[layer][element.x][element.y] && !routesH[layer][element.x][element.y]) {
+            chooseRout(element.x, element.y, element.direction, state: true);
+            showedRoutesH[layer][element.x][element.y] = true;
+            return;
+          }
+        }
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onPanStart: (details) {
@@ -256,13 +330,13 @@ class _FieldState extends State<Field> {
                                       height: spacePointPoint - spaceLinePoint,
                                       width: lineThick,
                                       decoration: BoxDecoration(
-                                          color: routesV[currentLayer][x ~/ 2][y ~/ 2]
+                                          color: showedRoutesV[currentLayer][x ~/ 2][y ~/ 2] ? Style.accentColor : (routesV[currentLayer][x ~/ 2][y ~/ 2]
                                               ? (routeIsConnected
                                                   ? Style.accentColor
                                                   : Style.primaryColor.withOpacity(1))
                                               : (isGameOver
                                                   ? Colors.transparent
-                                                  : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0)),
+                                                  : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0))),
                                           borderRadius: BorderRadius.circular(100))),
                                 ),
                               ),
@@ -285,13 +359,13 @@ class _FieldState extends State<Field> {
                                       width: spacePointPoint - spaceLinePoint,
                                       height: lineThick,
                                       decoration: BoxDecoration(
-                                          color: routesH[currentLayer][x ~/ 2][y ~/ 2]
+                                          color: showedRoutesH[currentLayer][x ~/ 2][y ~/ 2] ? Style.accentColor : (routesH[currentLayer][x ~/ 2][y ~/ 2]
                                               ? (routeIsConnected
                                                   ? Style.accentColor
                                                   : Style.primaryColor.withOpacity(1))
                                               : (isGameOver
                                                   ? Colors.transparent
-                                                  : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0)),
+                                                  : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0))),
                                           borderRadius: BorderRadius.circular(100))),
                                 ),
                               ),
@@ -330,115 +404,6 @@ class _FieldState extends State<Field> {
                             ),
                     ))),
       ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        StreamBuilder<bool>(
-            stream: widget.showAnswer,
-            builder: (context, snapshot) {
-              List<List<List<int>>> answer = widget.tree[2];
-              List<List<bool>> answerRoutesH = List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false));
-              List<List<bool>> answerRoutesV = List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false));
-              List<List<bool>> points =
-                  List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => isInTargets(x, y)));
-
-              for (var line in answer) {
-                Point p1 = Point(line[0][0], line[0][1]);
-                Point p2 = Point(line[1][0], line[1][1]);
-                if (p1.x == p2.x && p1.y != p2.y) {
-                  answerRoutesH[min(p1.x, p2.x)][min(p2.y, p1.y)] = true;
-                  points[min(p1.x, p2.x)][min(p2.y, p1.y)] = true;
-                  if (min(p1.y, p2.y) != fieldSize - 1) {
-                    points[min(p1.x, p2.x)][min(p2.y, p1.y) + 1] = true;
-                  }
-                } else if (p1.y == p2.y && p1.x != p2.x) {
-                  answerRoutesV[min(p1.x, p2.x)][min(p2.y, p1.y)] = true;
-                  points[min(p1.x, p2.x)][min(p2.y, p1.y)] = true;
-                  if (min(p1.x, p2.x) != fieldSize - 1) {
-                    points[min(p1.x, p2.x) + 1][min(p2.y, p1.y)] = true;
-                  }
-                }
-              }
-              return AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: snapshot.data == true
-                    ? Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: List.generate(
-                            fieldSize * 2 - 1,
-                            (y) => y % 2 == 1
-                                ? Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: List.generate(
-                                      fieldSize * 2 - 1,
-                                      (x) => x % 2 == 1
-                                          ? SizedBox(
-                                              width: spacePointPoint,
-                                            )
-                                          : SizedBox(
-                                              height: spacePointPoint,
-                                              width: pointDiameter,
-                                              child: Center(
-                                                child: Container(
-                                                    height: spacePointPoint - spaceLinePoint,
-                                                    width: lineThick,
-                                                    decoration: BoxDecoration(
-                                                        color: answerRoutesH[x ~/ 2][y ~/ 2]
-                                                            ? Style.accentColor
-                                                            : Style.primaryColor
-                                                                .withOpacity(widget.showLines ? 0.2 : 0),
-                                                        borderRadius: BorderRadius.circular(100))),
-                                              ),
-                                            ),
-                                    ))
-                                : Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: List.generate(
-                                      fieldSize * 2 - 1,
-                                      (x) => x % 2 == 1
-                                          ? SizedBox(
-                                              width: spacePointPoint,
-                                              height: pointDiameter,
-                                              child: Center(
-                                                child: Container(
-                                                    width: spacePointPoint - spaceLinePoint,
-                                                    height: lineThick,
-                                                    decoration: BoxDecoration(
-                                                        color: answerRoutesV[x ~/ 2][y ~/ 2]
-                                                            ? Style.accentColor
-                                                            : Style.primaryColor
-                                                                .withOpacity(widget.showLines ? 0.1 : 0),
-                                                        borderRadius: BorderRadius.circular(100))),
-                                              ),
-                                            )
-                                          : SizedBox(
-                                              width: pointDiameter,
-                                              height: pointDiameter,
-                                              child: Center(
-                                                child: Container(
-                                                    width: showedPointDiameter *
-                                                        (isInTargets(x ~/ 2, y ~/ 2) || points[x ~/ 2][y ~/ 2] ? 3 : 1),
-                                                    height: showedPointDiameter *
-                                                        (isInTargets(x ~/ 2, y ~/ 2) || points[x ~/ 2][y ~/ 2] ? 3 : 1),
-                                                    decoration: BoxDecoration(
-                                                        color: isInTargets(x ~/ 2, y ~/ 2)
-                                                            ? Style.primaryColor.withOpacity(1)
-                                                            : (points[x ~/ 2][y ~/ 2]
-                                                                ? Style.accentColor
-                                                                : Style.primaryColor.withOpacity(0.5)),
-                                                        shape: BoxShape.circle)),
-                                              ),
-                                            ),
-                                    ))),
-                      )
-                    : getField(),
-              );
-            }),
-      ],
     );
   }
 }

@@ -58,7 +58,7 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
   @override
   void dispose() {
     super.dispose();
-    if (rotateAnimationTimer.isActive) rotateAnimationTimer.cancel();
+    if (widget.rotateAnimation) rotateAnimationTimer.cancel();
   }
 
   getFieldImg(int thisLayerNum, FieldData fieldData) {
