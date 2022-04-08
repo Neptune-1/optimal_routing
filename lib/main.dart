@@ -40,7 +40,7 @@ void main() async {
   await initFirebaseAdmob();
   await Prefs.init();
   //if(Prefs.getInt("lamps") == null)
-    Prefs.setInt("lamps", 20);
+  //Prefs.setInt("lamps", 20);
   //Prefs.clear();// TODO remove
   await SentryFlutter.init(
     (options) {
@@ -48,6 +48,7 @@ void main() async {
     },
     appRunner: () => runApp(const MyApp()),
   );
+  Style.changeStatusBarColor();
 }
 
 class MyApp extends StatelessWidget {

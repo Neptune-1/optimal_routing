@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 //import 'dart:html' as html;
@@ -68,6 +71,19 @@ class Style {
     return GoogleFonts.quicksand(
         fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: color, decoration: TextDecoration.none);
   }
+
+  static changeStatusBarColor() {
+    bool dark = true;
+
+    if (Platform.isIOS) dark = !dark;
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarBrightness: dark ? Brightness.dark : Brightness.light,
+      statusBarIconBrightness: dark ? Brightness.dark : Brightness.light,
+    ));
+  }
+
 
   static init(BuildContext context) {
     //if(kIsWeb){

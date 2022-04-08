@@ -44,12 +44,12 @@ class _LevelPageState extends State<LevelPage> with TickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     IconButton(
-                        onPressed: () async {
-                          if ((await inAppReview.isAvailable()) && Platform.isIOS)
-                            inAppReview.requestReview();
-                          else
-                            inAppReview.openStoreListing();
-                        },
+                        onPressed: () => inAppReview.openStoreListing()//async {
+                          //if ((await inAppReview.isAvailable()) && Platform.isIOS)
+                          //  inAppReview.requestReview();
+                          //else
+                        //}
+                        ,
                         icon: Icon(
                           Icons.star_outline,
                           size: Style.blockM * 1.5,
