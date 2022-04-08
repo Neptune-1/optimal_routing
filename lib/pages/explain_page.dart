@@ -199,6 +199,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                     Text(
                       "You can use only a definite number of lines",
                       style: Style.getTextStyle_1(),
+                      textAlign: TextAlign.center,
                     ),
                     SizedBox(
                       height: Style.blockH * 2,
