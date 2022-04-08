@@ -7,13 +7,13 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../consts/styles.dart';
 
 class Ads {
-  static RewardedAd? _rewardedAd;
+  static RewardedAd? rewardedAd;
 
   static int _numRewardedLoadAttempts = 0;
   static const int maxFailedLoadAttempts = 5;
 
   static const String _adUnitIdAndroid =
-  "ca-app-pub-1093240985145070/8865142162"; //  'ca-app-pub-3940256099942544/5224354917'; //
+      "ca-app-pub-1093240985145070/8865142162"; //  'ca-app-pub-3940256099942544/5224354917'; //
   static const String _adUnitIdIos =
       "ca-app-pub-1093240985145070/3269216464"; // 'ca-app-pub-3940256099942544/1712485313';//
 
@@ -33,7 +33,7 @@ class Ads {
                 SizedBox(
                   height: Style.blockH * 2.8,
                   child: Center(
-                    child: _rewardedAd == null
+                    child: rewardedAd == null
                         ? Text(
                             "Sure?",
                             style: Style.getTextStyle_2(),
@@ -102,12 +102,12 @@ class Ads {
         rewardedAdLoadCallback: RewardedAdLoadCallback(
           onAdLoaded: (RewardedAd ad) {
             print('$ad loaded.');
-            _rewardedAd = ad;
+            rewardedAd = ad;
             _numRewardedLoadAttempts = 0;
           },
           onAdFailedToLoad: (LoadAdError error) {
             print('RewardedAd failed to load: $error');
-            _rewardedAd = null;
+            rewardedAd = null;
             _numRewardedLoadAttempts += 1;
             if (_numRewardedLoadAttempts < maxFailedLoadAttempts) {
               createRewardedAd();
@@ -117,12 +117,12 @@ class Ads {
   }
 
   static void showRewardedAd(Function ifShowed) {
-    if (_rewardedAd == null) {
+    if (rewardedAd == null) {
       ifShowed(isAdsShowed: false);
       print('Warning: attempt to show rewarded before loaded.');
       return;
     }
-    _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
+    rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (RewardedAd ad) => print('ad onAdShowedFullScreenContent.'),
       onAdDismissedFullScreenContent: (RewardedAd ad) {
         if (isAddShowed) ifShowed();
@@ -137,11 +137,11 @@ class Ads {
       },
     );
 
-    _rewardedAd!.setImmersiveMode(true);
-    _rewardedAd!.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+    rewardedAd!.setImmersiveMode(true);
+    rewardedAd!.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
       isAddShowed = true;
       print('$ad with reward $RewardItem(${reward.amount}, ${reward.type})');
     });
-    _rewardedAd = null;
+    rewardedAd = null;
   }
 }

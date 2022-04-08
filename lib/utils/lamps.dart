@@ -24,6 +24,7 @@ class Lamps {
 
 class TipsBottomSheet extends StatefulWidget {
   final StreamController<int> showTip;
+
   const TipsBottomSheet({Key? key, required this.showTip}) : super(key: key);
 
   @override
@@ -121,7 +122,12 @@ class TipsBottomSheetState extends State<TipsBottomSheet> {
                   backgroundColor: MaterialStateProperty.all(Style.primaryColor),
                   overlayColor: MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
                   elevation: MaterialStateProperty.all(0)),
-              onPressed: () => Ads.showPreAdDialog(context, () => setState(() => Prefs.setInt("lamps", (Prefs.getInt("lamps") ?? 0)+2))),
+              onPressed: () => Ads.showPreAdDialog(
+                  context,
+                  () => setState(() {
+                        Prefs.setInt("lamps", (Prefs.getInt("lamps") ?? 0) + 2);
+                        Navigator.pop(context);
+                      })),
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: Style.blockM * 0.5, horizontal: 1.5 * Style.blockM),
                 child: Row(

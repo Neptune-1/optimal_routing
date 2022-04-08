@@ -51,7 +51,7 @@ class _LevelPageState extends State<LevelPage> with TickerProviderStateMixin {
                             inAppReview.openStoreListing();
                         },
                         icon: Icon(
-                          Icons.star,
+                          Icons.star_outline,
                           size: Style.blockM * 1.5,
                           color: Style.primaryColor,
                         ),
@@ -60,13 +60,14 @@ class _LevelPageState extends State<LevelPage> with TickerProviderStateMixin {
                     IconButton(
                       onPressed: () => Navigator.push(context, Style.pageRouteBuilder(const ExplainPage())),
                       icon: Icon(
-                        Icons.info,
+                        Icons.info_outline,
                         size: Style.blockM * 1.3,
                         color: Style.primaryColor,
                       ),
                       splashRadius: Style.blockM * 1,
                       splashColor: Style.accentColor.withOpacity(0.5),
                     ),
+
                   ],
                 ),
               ),

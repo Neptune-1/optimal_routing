@@ -53,7 +53,6 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     layerNum.add(0);
-    if (!kIsWeb) Ads.createRewardedAd();
     gameNum = Prefs.getInt(widget.level.toString()) ?? 0;
     if (gameNum != 0) gameNum -= 1;
     showTipStream = showTip.stream.asBroadcastStream();
@@ -129,42 +128,13 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   }
 
   linesInfoWidget() {
-    return Column(
+    return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            widget.level == 0
-                ? Container()
-                : StreamBuilder<int>(
-                    stream: layerNumStream,
-                    builder: (context, snapshot) {
-                      return !snapshot.hasData
-                          ? Container()
-                          : Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: List.generate(
-                                widget.level + 1,
-                                (layerNum) => SizedBox(
-                                    width: Style.blockM * 0.2,
-                                    height: Style.blockM * (widget.level == 0 ? 1.5 : 1),
-                                    child: Center(
-                                      child: AnimatedContainer(
-                                        duration: const Duration(milliseconds: 200),
-                                        width: Style.blockM * 0.2,
-                                        height: Style.blockM * 0.6,
-                                        decoration: BoxDecoration(
-                                            color: (snapshot.data ?? 0) == layerNum
-                                                ? Style.accentColor
-                                                : Style.primaryColor,
-                                            borderRadius: BorderRadius.circular(Style.blockM * 0.3)),
-                                      ),
-                                    )),
-                              ));
-                    }),
-            StreamBuilder<LinesData>(
-                stream: currentNumOfLines.stream,
+        widget.level == 0
+            ? Container()
+            : StreamBuilder<int>(
+                stream: layerNumStream,
                 builder: (context, snapshot) {
                   return !snapshot.hasData
                       ? Container()
@@ -173,23 +143,47 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                           children: List.generate(
                             widget.level + 1,
                             (layerNum) => SizedBox(
-                              width: Style.blockM * 2,
-                              height: Style.blockM * (widget.level == 0 ? 1.5 : 1),
-                              child: Center(
-                                child: Text(
-                                  "${(snapshot.data!.currentLinesNum[layerNum])}/${snapshot.data!.fullLinesNum[layerNum]}",
-                                  style: GoogleFonts.quicksand(
-                                      fontSize: Style.blockM * 0.8,
-                                      fontWeight: FontWeight.w800,
-                                      color: Style.primaryColor),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
+                                width: Style.blockM * 0.2,
+                                height: Style.blockM * (widget.level == 0 ? 1.5 : 1),
+                                child: Center(
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    width: Style.blockM * 0.2,
+                                    height: Style.blockM * 0.6,
+                                    decoration: BoxDecoration(
+                                        color: (snapshot.data ?? 0) == layerNum
+                                            ? Style.accentColor
+                                            : Style.primaryColor,
+                                        borderRadius: BorderRadius.circular(Style.blockM * 0.3)),
+                                  ),
+                                )),
                           ));
                 }),
-          ],
-        ),
+        StreamBuilder<LinesData>(
+            stream: currentNumOfLines.stream,
+            builder: (context, snapshot) {
+              return !snapshot.hasData
+                  ? Container()
+                  : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(
+                        widget.level + 1,
+                        (layerNum) => SizedBox(
+                          width: Style.blockM * (widget.level == 0 ? 4 : 2),
+                          height: Style.blockM * (widget.level == 0 ? 1.5 : 1),
+                          child: Center(
+                            child: Text(
+                              "${(snapshot.data!.currentLinesNum[layerNum])}/${snapshot.data!.fullLinesNum[layerNum]}",
+                              style: GoogleFonts.quicksand(
+                                  fontSize: Style.blockM * 0.8,
+                                  fontWeight: FontWeight.w800,
+                                  color: Style.primaryColor),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ));
+            }),
       ],
     );
   }
@@ -236,7 +230,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       SizedBox(
-                        width: Style.blockM * 1.4,
+                        width:  Style.blockM * (Ads.rewardedAd == null || widget.example  ? 3 : 1.4),
                         height: Style.blockM * 1.4,
                         child: Center(
                           child: GestureDetector(
@@ -264,7 +258,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                           ),
                         ),
                       ),
-                      SizedBox(
+                      Ads.rewardedAd == null || widget.example ? const SizedBox() : SizedBox(
                         width: Style.blockM * 3,
                         height: Style.blockM * 1.4,
                         child: Stack(
@@ -297,9 +291,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                   ),
                 ],
               ),
-              widget.level == 0
-                  ? Container()
-                  : StreamBuilder<bool>(
+              StreamBuilder<bool>(
                       stream: isGameOverStream,
                       builder: (context, snapshot) {
                         return AnimatedContainer(

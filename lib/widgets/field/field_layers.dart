@@ -146,7 +146,7 @@ class _FieldState extends State<Field> {
   }
 
   void chooseRout(int x, int y, String type, {state, bool refresh = true}) {
-    if (((type == "h" && x >= 0 && x < fieldSize - 1 && y >= 0) || (type == "v" && y >= 0 && y < fieldSize - 1)) && ((type == "h" && !showedRoutesH[currentLayer][x][y]) || (type == "v" && !showedRoutesV[currentLayer][x][y]))) {
+    if (((type == "h" && x >= 0 && x < fieldSize - 1 && y >= 0) || (type == "v" && y >= 0 && y < fieldSize - 1)) && ((type == "h" && !showedRoutesH[currentLayer][x][y]) || (type == "v" && !showedRoutesV[currentLayer][x][y])) && !isGameOver) {
       late bool currentState;
       if (type == "v") {
         currentState = routesV[currentLayer][x][y];
@@ -230,6 +230,10 @@ class _FieldState extends State<Field> {
         widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
     routesV = List.generate(
         widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
+    showedRoutesH = List.generate(
+        widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
+    showedRoutesV = List.generate(
+        widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
 
     points = List.generate(
         widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
@@ -292,7 +296,7 @@ class _FieldState extends State<Field> {
         int x = (details.localPosition.dx) ~/ (pointDiameter + spacePointPoint);
         if (sqrt(pow(details.localPosition.dy % (pointDiameter + spacePointPoint), 2) +
                 pow(details.localPosition.dx % (pointDiameter + spacePointPoint), 2)) <
-            pointDiameter * 2) {
+            pointDiameter * 2 && (y<fieldSize)) {
           currentPoint = Point(x, y);
         }
 

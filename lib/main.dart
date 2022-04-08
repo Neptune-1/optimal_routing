@@ -5,6 +5,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:optimal_routing/data/trees.dart';
 import 'package:optimal_routing/pages/explain_page.dart';
 import 'package:optimal_routing/pages/webpage.dart';
+import 'package:optimal_routing/utils/ads.dart';
 import 'package:optimal_routing/utils/prefs.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -29,6 +30,8 @@ Future<void> initFirebaseAdmob() async {
   } else {
     MobileAds.instance.initialize();
     Firebase.initializeApp();
+    if (!kIsWeb) Ads.createRewardedAd();
+
   }
 }
 
