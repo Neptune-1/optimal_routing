@@ -129,7 +129,8 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: Style.blockM * 0.2, vertical: Style.blockM * 0.1),
+            padding:
+                EdgeInsets.symmetric(horizontal: Style.blockM * 0.2, vertical: Style.blockM * 0.1),
             child: child,
           ),
         ],
@@ -164,7 +165,9 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                       text: TextSpan(
                         text: "Just connect the ",
                         children: [
-                          TextSpan(text: "yellow", style: Style.getTextStyle_1(color: Style.accentColor)),
+                          TextSpan(
+                              text: "yellow",
+                              style: Style.getTextStyle_1(color: Style.accentColor)),
                           const TextSpan(text: " dots")
                         ],
                         style: Style.getTextStyle_1(color: Style.primaryColor),
@@ -320,12 +323,14 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                   }
                 },
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: Style.blockM * 0.5, horizontal: 2.5 * Style.blockM),
+                  padding: EdgeInsets.symmetric(
+                      vertical: Style.blockM * 0.5, horizontal: 2.5 * Style.blockM),
                   child: AnimatedBuilder(
                       animation: _pageController,
                       builder: (context, child) {
                         int page = 0;
-                        if (_pageController.positions.isNotEmpty) page = (_pageController.page ?? 0).round();
+                        if (_pageController.positions.isNotEmpty)
+                          page = (_pageController.page ?? 0).round();
                         return Text(
                             _pageController.positions.isEmpty
                                 ? "Next"
@@ -351,15 +356,18 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                   animation: _pageController,
                   builder: (context, child) {
                     bool show = false;
-                    if (_pageController.positions.isNotEmpty) if ((_pageController.page ?? 0) != 0) show = true;
+                    if (_pageController.positions.isNotEmpty) if ((_pageController.page ?? 0) != 0)
+                      show = true;
                     return AnimatedSwitcher(
                       duration: const Duration(milliseconds: 200),
                       child: show
                           ? SizedBox(
                               width: Style.blockM * 2.5,
                               child: GestureDetector(
-                                onTap: () => _pageController.animateToPage((_pageController.page)!.round() - 1,
-                                    duration: const Duration(milliseconds: 300), curve: Curves.linearToEaseOut),
+                                onTap: () => _pageController.animateToPage(
+                                    (_pageController.page)!.round() - 1,
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.linearToEaseOut),
                                 child: Icon(
                                   Icons.arrow_back_ios,
                                   size: Style.blockM * 1.3,
@@ -372,7 +380,8 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                   }),
             ),
             Align(
-                alignment: const Alignment(0, 0.965), child: PageIndicator(pagesNumber: 4, controller: _pageController))
+                alignment: const Alignment(0, 0.965),
+                child: PageIndicator(pagesNumber: 4, controller: _pageController))
           ],
         ));
   }
@@ -382,7 +391,8 @@ class PageIndicator extends StatelessWidget {
   final int pagesNumber;
   final PageController controller;
 
-  const PageIndicator({Key? key, required this.pagesNumber, required this.controller}) : super(key: key);
+  const PageIndicator({Key? key, required this.pagesNumber, required this.controller})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

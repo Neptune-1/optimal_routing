@@ -2,9 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:optimal_routing/data/trees.dart';
 import 'package:optimal_routing/pages/explain_page.dart';
-import 'package:optimal_routing/pages/webpage.dart';
+import 'package:optimal_routing/pages/game_page_layers.dart';
 import 'package:optimal_routing/utils/ads.dart';
 import 'package:optimal_routing/utils/prefs.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -14,9 +13,6 @@ import 'pages/level_page_layers.dart';
 
 Future<void> initFirebaseAdmob() async {
   if (kIsWeb) {
-    trees.asMap().forEach((key, value) {
-      trees[key] = (trees[key] as List).sublist(0, 5);
-    });
     await Firebase.initializeApp(
       options: const FirebaseOptions(
           apiKey: "AIzaSyAbn5MA2ZVal35qZBO0pvZRWCFj4X2K1kw",
@@ -31,7 +27,6 @@ Future<void> initFirebaseAdmob() async {
     MobileAds.instance.initialize();
     Firebase.initializeApp();
     if (!kIsWeb) Ads.createRewardedAd();
-
   }
 }
 
@@ -39,6 +34,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initFirebaseAdmob();
   await Prefs.init();
+  if (Prefs.getInt('lamps') == null) Prefs.setInt('lamps', 1000000);
   //if(Prefs.getInt("lamps") == null)
   //Prefs.setInt("lamps", 20);
   //Prefs.clear();// TODO remove
@@ -48,7 +44,7 @@ void main() async {
     },
     appRunner: () => runApp(const MyApp()),
   );
-  Style.changeStatusBarColor();
+  if (!kIsWeb) Style.changeStatusBarColor();
 }
 
 class MyApp extends StatelessWidget {
@@ -69,7 +65,9 @@ class MyApp extends StatelessWidget {
       home: Builder(
         builder: (BuildContext context) {
           Style.init(context);
-          return kIsWeb ? const Website() : ((Prefs.getBool("new") ?? true) ? const ExplainPage() : const LevelPage());
+          return kIsWeb
+              ? const GamePage(level: 0)
+              : ((Prefs.getBool("new") ?? true) ? const ExplainPage() : const LevelPage());
         },
       ),
     );

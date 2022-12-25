@@ -13,7 +13,8 @@ class PrivacyPage extends StatelessWidget {
         child: SingleChildScrollView(
           child: Text(
             text,
-            style: GoogleFonts.sarala(fontSize: Style.blockM * 0.35, fontWeight: FontWeight.w500, color: Colors.black),
+            style: GoogleFonts.sarala(
+                fontSize: Style.blockM * 0.35, fontWeight: FontWeight.w500, color: Colors.black),
           ),
         ),
       ),

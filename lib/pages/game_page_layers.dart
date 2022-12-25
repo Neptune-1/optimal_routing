@@ -94,29 +94,6 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     Prefs.setInt(widget.level.toString(), gameNum + 1);
   }
 
-  // showAnswerAndHide({bool isAdsShowed = true}) {
-  //   if (isAdsShowed) isAnsweredShowed = true;
-  //   controller.forward(from: 0);
-  //   showAnswer.add(true);
-  //   Future.delayed(Duration(seconds: answerShowTime), () {
-  //     if (!showAnswer.isClosed) showAnswer.add(false);
-  //     if (!controller.isDismissed) {
-  //       controller.value = 1;
-  //       controller.stop(canceled: false);
-  //     }
-  //   });
-  // }
-
-  // onPressedEye(BuildContext context) {
-  //   if (!controller.isAnimating) {
-  //     if (!kIsWeb && !isAnsweredShowed && !widget.example) {
-  //       Ads.showPreAdDialog(context, showAnswerAndHide);
-  //     } else {
-  //       showAnswerAndHide();
-  //     }
-  //   }
-  // }
-
   @override
   void dispose() {
     controller.dispose();
@@ -191,225 +168,254 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     Style.init(context);
-    return Scaffold(
-        body: AnimatedContainer(
-      color: Style.backgroundColor,
-      duration: const Duration(milliseconds: 2000),
-      child: Stack(children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: Style.blockM * 0.5),
-          child: Column(
-            children: [
-              SizedBox(
-                height: Style.blockH * 0.9,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    behavior: HitTestBehavior.translucent,
-                    child: Container(
-                      width: Style.blockM * 4.4,
-                      height: Style.blockM * 1.5,
-                      padding: EdgeInsets.only(right: Style.blockM * 1.4),
-                      child: widget.example
-                          ? Container()
-                          : Icon(
-                              Icons.arrow_back_ios,
-                              size: Style.blockM * 1.2,
-                              color: Style.primaryColor,
-                            ),
-                    ),
-                  ),
-                  widget.level != 0 ? Container() : linesInfoWidget(),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(
-                        width:  Style.blockM * (Ads.rewardedAd == null || widget.example  ? 3 : 1.4),
-                        height: Style.blockM * 1.4,
-                        child: Center(
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.translucent,
-                            onTap: () {
-                              if (!restartAnimationController.isAnimating) {
-                                restartAnimationController.reset();
-                                restartAnimationController.forward();
-                              }
-                              restartedTime++;
-                              startNewGame(restart: true);
-                            },
-                            child: AnimatedBuilder(
-                                animation: restartAnimationController,
-                                builder: (context, snapshot) {
-                                  return Transform.rotate(
-                                    angle: -pi * restartAnimation.value,
-                                    child: Icon(
-                                      Icons.cached,
-                                      size: Style.blockM * 1.2,
-                                      color: Style.primaryColor,
-                                    ),
-                                  );
-                                }),
-                          ),
+    return SafeArea(
+      child: Scaffold(
+          body: AnimatedContainer(
+        color: Style.backgroundColor,
+        duration: const Duration(milliseconds: 2000),
+        child: Stack(children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: Style.blockM * 0.5),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: Style.blockH * 0.9,
+                ),
+                Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: GestureDetector(
+                        onTap: () {
+                          if (!kIsWeb) Navigator.pop(context);
+                        },
+                        behavior: HitTestBehavior.translucent,
+                        child: Container(
+                          width: Style.blockM * 4.4,
+                          height: Style.blockM * 1.5,
+                          padding: EdgeInsets.only(right: Style.blockM * 1.4),
+                          child: widget.example || kIsWeb
+                              ? Container()
+                              : Icon(
+                                  Icons.arrow_back_ios,
+                                  size: Style.blockM * 1.2,
+                                  color: Style.primaryColor,
+                                ),
                         ),
                       ),
-                      Ads.rewardedAd == null || widget.example ? const SizedBox() : SizedBox(
-                        width: Style.blockM * 3,
-                        height: Style.blockM * 1.4,
-                        child: Stack(
-                          children: [
-                            AnimatedBuilder(
-                                animation: controller,
-                                builder: (context, w) {
-                                  return Center(
-                                      child: SizedBox(
-                                    width: Style.blockM * 1.4,
-                                    height: Style.blockM * 1.4,
-                                    child: CircularProgressIndicator(
-                                      value: 1 - controller.value,
-                                      color: Style.primaryColor,
-                                      strokeWidth: Style.blockM * 0.1,
-                                    ),
-                                  ));
-                                }),
-                            Center(
+                    ),
+                    if (widget.level == 0)
+                      Align(
+                        alignment: Alignment.center,
+                        child: linesInfoWidget(),
+                      ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width:
+                                Style.blockM * (Ads.rewardedAd == null || widget.example ? 3 : 1.4),
+                            height: Style.blockM * 1.4,
+                            child: Center(
                               child: GestureDetector(
                                 behavior: HitTestBehavior.translucent,
-                                onTap: () => Lamps.showBottomSheet(context, showTip),
-                                child: Icon(Icons.lightbulb, size: Style.blockM * 1.1, color: Style.primaryColor),
+                                onTap: () {
+                                  if (!restartAnimationController.isAnimating) {
+                                    restartAnimationController.reset();
+                                    restartAnimationController.forward();
+                                  }
+                                  restartedTime++;
+                                  startNewGame(restart: true);
+                                },
+                                child: AnimatedBuilder(
+                                    animation: restartAnimationController,
+                                    builder: (context, snapshot) {
+                                      return Transform.rotate(
+                                        angle: -pi * restartAnimation.value,
+                                        child: Icon(
+                                          Icons.cached,
+                                          size: Style.blockM * 1.2,
+                                          color: Style.primaryColor,
+                                        ),
+                                      );
+                                    }),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                          (Ads.rewardedAd == null || widget.example) && !kIsWeb
+                              ? const SizedBox()
+                              : SizedBox(
+                                  width: Style.blockM * 3,
+                                  height: Style.blockM * 1.4,
+                                  child: Stack(
+                                    children: [
+                                      AnimatedBuilder(
+                                          animation: controller,
+                                          builder: (context, w) {
+                                            return Center(
+                                                child: SizedBox(
+                                              width: Style.blockM * 1.4,
+                                              height: Style.blockM * 1.4,
+                                              child: CircularProgressIndicator(
+                                                value: 1 - controller.value,
+                                                color: Style.primaryColor,
+                                                strokeWidth: Style.blockM * 0.1,
+                                              ),
+                                            ));
+                                          }),
+                                      Center(
+                                        child: GestureDetector(
+                                          behavior: HitTestBehavior.translucent,
+                                          onTap: () => Lamps.showBottomSheet(context, showTip),
+                                          child: Icon(Icons.lightbulb,
+                                              size: Style.blockM * 1.1, color: Style.primaryColor),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                        ],
                       ),
-                    ],
-                  ),
-                ],
-              ),
-              StreamBuilder<bool>(
-                      stream: isGameOverStream,
-                      builder: (context, snapshot) {
-                        return AnimatedContainer(
-                          duration: const Duration(milliseconds: 600),
-                          curve: Curves.easeOutCubic,
-                          height: (snapshot.data == true && widget.level != 0 ? Style.blockH * 5 : Style.blockM * 1.2),
-                        );
-                      }),
-              widget.level == 0
-                  ? Container()
-                  : FieldProjection(
-                      layerNum: widget.level + 1,
-                      layerNumController: layerNum,
-                      projectionDataStream: projectionDataStream,
-                      layerNumStream: layerNumStream),
-              widget.level == 0
-                  ? Container()
-                  : SizedBox(
-                      height: Style.blockM * 2.5,
                     ),
-              Flexible(
-                flex: 1,
-                child: StreamBuilder<bool>(
+                  ],
+                ),
+                StreamBuilder<bool>(
                     stream: isGameOverStream,
                     builder: (context, snapshot) {
-                      return snapshot.data == true && widget.level != 0
-                          ? Container()
-                          : Align(
-                              alignment: widget.level == 0 ? const Alignment(0, 0.3) : Alignment.topCenter,
-                              child: AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 400),
-                                child: Field(
-                                    key: Key("${widget.level} $gameNum $restartedTime"),
-                                    currentNumOfLines: currentNumOfLines,
-                                    tree: widget.example ? exampleTree : trees[widget.level][gameNum],
-                                    isGameOver: isGameOver,
-                                    showTip: showTipStream,
-                                    layerNumStream: layerNumStream,
-                                    layerFullNum: widget.level + 1,
-                                    projectionData: projectionData),
-                              ),
-                            );
+                      return AnimatedContainer(
+                        duration: const Duration(milliseconds: 600),
+                        curve: Curves.easeOutCubic,
+                        height: (snapshot.data == true && widget.level != 0
+                            ? Style.blockH * 5
+                            : Style.blockM * 1.2),
+                      );
                     }),
-              ),
-              SizedBox(
-                height: Style.blockM * 2,
-              ),
-            ],
-          ),
-        ),
-        Positioned(
-          right: Style.blockM * 1,
-          top: Style.blockH * 0.9 + Style.blockM * 2,
-          child: widget.level == 0 ? Container() : linesInfoWidget(),
-        ),
-        widget.example
-            ? Container()
-            : Positioned(
-                bottom: Style.blockM * 2,
-                child: SizedBox(
-                  width: 20 * Style.block,
-                  child: Center(
-                    child: StreamBuilder<bool>(
-                        stream: isGameOverStream,
-                        builder: (context, snapshot) {
-                          ifGameIsOver();
-                          return AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 200),
-                              child: snapshot.data == true && trees[widget.level].length > gameNum
-                                  ? ElevatedButton(
-                                      style: ButtonStyle(
-                                          shape:
-                                              MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(Style.blockM * 0.2),
-                                          )),
-                                          minimumSize: MaterialStateProperty.all(Size.zero),
-                                          padding: MaterialStateProperty.all(EdgeInsets.zero),
-                                          backgroundColor: MaterialStateProperty.all(Style.primaryColor),
-                                          overlayColor:
-                                              MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
-                                          elevation: MaterialStateProperty.all(0)),
-                                      onPressed: () {
-                                        trees[widget.level].length - 1 == gameNum
-                                            ? Navigator.pop(context)
-                                            : startNewGame();
-                                      },
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: Style.blockM * 0.3, horizontal: 2.5 * Style.blockM),
-                                        child: Text(trees[widget.level].length - 1 == gameNum ? "Back" : "Next",
-                                            style: GoogleFonts.quicksand(
-                                                fontSize: Style.blockM * 1.4,
-                                                fontWeight: FontWeight.w800,
-                                                color: Style.secondaryColor)),
-                                      ),
-                                    )
-                                  : Container());
-                        }),
-                  ),
+                widget.level == 0
+                    ? Container()
+                    : FieldProjection(
+                        layerNum: widget.level + 1,
+                        layerNumController: layerNum,
+                        projectionDataStream: projectionDataStream,
+                        layerNumStream: layerNumStream),
+                widget.level == 0
+                    ? Container()
+                    : SizedBox(
+                        height: Style.blockM * 2.5,
+                      ),
+                Flexible(
+                  flex: 1,
+                  child: StreamBuilder<bool>(
+                      stream: isGameOverStream,
+                      builder: (context, snapshot) {
+                        return snapshot.data == true && widget.level != 0
+                            ? Container()
+                            : Align(
+                                alignment: widget.level == 0
+                                    ? const Alignment(0, 0.3)
+                                    : Alignment.topCenter,
+                                child: AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 400),
+                                  child: Field(
+                                      key: Key("${widget.level} $gameNum $restartedTime"),
+                                      currentNumOfLines: currentNumOfLines,
+                                      tree: widget.example
+                                          ? exampleTree
+                                          : trees[widget.level][gameNum],
+                                      isGameOver: isGameOver,
+                                      showTip: showTipStream,
+                                      layerNumStream: layerNumStream,
+                                      layerFullNum: widget.level + 1,
+                                      projectionData: projectionData),
+                                ),
+                              );
+                      }),
                 ),
-              ),
-        widget.example
-            ? Container()
-            : Positioned(
-                bottom: Style.blockM * 0.5,
-                left: Style.block * 2.5,
-                child: SizedBox(
-                  width: Style.block * 15,
-                  height: Style.blockM,
-                  child: Center(
-                    child: Text(
-                      "Level ${gameNum + 1}",
-                      style: GoogleFonts.quicksand(
-                          fontSize: Style.blockM * 0.7, fontWeight: FontWeight.w800, color: Style.primaryColor),
+                SizedBox(
+                  height: Style.blockM * 2,
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            right: Style.blockM * 1,
+            top: Style.blockH * 0.9 + Style.blockM * 2,
+            child: widget.level == 0 ? Container() : linesInfoWidget(),
+          ),
+          widget.example
+              ? Container()
+              : Positioned(
+                  bottom: Style.blockM * 2,
+                  child: SizedBox(
+                    width: 20 * Style.block,
+                    child: Center(
+                      child: StreamBuilder<bool>(
+                          stream: isGameOverStream,
+                          builder: (context, snapshot) {
+                            ifGameIsOver();
+                            return AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 200),
+                                child: snapshot.data == true && trees[widget.level].length > gameNum
+                                    ? ElevatedButton(
+                                        style: ButtonStyle(
+                                            shape:
+                                                MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                    RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(Style.blockM * 0.2),
+                                            )),
+                                            minimumSize: MaterialStateProperty.all(Size.zero),
+                                            padding: MaterialStateProperty.all(EdgeInsets.zero),
+                                            backgroundColor:
+                                                MaterialStateProperty.all(Style.primaryColor),
+                                            overlayColor: MaterialStateProperty.all(
+                                                Style.secondaryColor.withOpacity(0.1)),
+                                            elevation: MaterialStateProperty.all(0)),
+                                        onPressed: () {
+                                          trees[widget.level].length - 1 == gameNum
+                                              ? Navigator.pop(context)
+                                              : startNewGame();
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: Style.blockM * 0.3,
+                                              horizontal: 2.5 * Style.blockM),
+                                          child: Text(
+                                              trees[widget.level].length - 1 == gameNum
+                                                  ? "Back"
+                                                  : "Next",
+                                              style: GoogleFonts.quicksand(
+                                                  fontSize: Style.blockM * 1.4,
+                                                  fontWeight: FontWeight.w800,
+                                                  color: Style.secondaryColor)),
+                                        ),
+                                      )
+                                    : Container());
+                          }),
                     ),
                   ),
-                ))
-      ]),
-    ));
+                ),
+          widget.example
+              ? Container()
+              : Positioned(
+                  bottom: Style.blockM * 0.5,
+                  left: Style.block * 2.5,
+                  child: SizedBox(
+                    width: Style.block * 15,
+                    height: Style.blockM,
+                    child: Center(
+                      child: Text(
+                        "Level ${gameNum + 1} / ${trees[widget.level].length}",
+                        style: GoogleFonts.quicksand(
+                            fontSize: Style.blockM * 0.7,
+                            fontWeight: FontWeight.w800,
+                            color: Style.primaryColor),
+                      ),
+                    ),
+                  ))
+        ]),
+      )),
+    );
   }
 }

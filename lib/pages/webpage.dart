@@ -29,7 +29,10 @@ class _WebsiteState extends State<Website> {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(Style.blockM * 0.5),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: Style.blockM * 0.5, blurStyle: BlurStyle.outer),
+            BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: Style.blockM * 0.5,
+                blurStyle: BlurStyle.outer),
           ],
           color: Colors.white.withOpacity(0.15)),
       child: ClipRRect(
@@ -75,7 +78,10 @@ class _WebsiteState extends State<Website> {
           height: block * 25,
           child: Stack(
             children: [
-              Positioned(left: block * 5, top: blockH * 5, child: Transform.scale(scale: 1, child: getPoint())),
+              Positioned(
+                  left: block * 5,
+                  top: blockH * 5,
+                  child: Transform.scale(scale: 1, child: getPoint())),
               Positioned(
                   left: block * 8.5 + blockM * 17,
                   top: blockH * 6,
@@ -89,19 +95,22 @@ class _WebsiteState extends State<Website> {
                   top: blockH * 3.5 + blockM * 10,
                   child: Transform.rotate(
                       angle: pi * 0.151,
-                      child: Container(color: Style.primaryColor, width: block * 19.5, height: block * 0.3))),
+                      child: Container(
+                          color: Style.primaryColor, width: block * 19.5, height: block * 0.3))),
               Positioned(
                   left: blockM * 23.5,
                   top: blockH * 4.5 + blockM * 10,
                   child: Transform.rotate(
                       angle: pi * 0.65,
-                      child: Container(color: Style.primaryColor, width: block * 8.5, height: block * 0.3))),
+                      child: Container(
+                          color: Style.primaryColor, width: block * 8.5, height: block * 0.3))),
               Positioned(
                   left: blockM * 8.6,
                   top: blockH + blockM * 9,
                   child: Transform.rotate(
                       angle: pi * 0.015,
-                      child: Container(color: Style.primaryColor, width: block * 22, height: block * 0.3))),
+                      child: Container(
+                          color: Style.primaryColor, width: block * 22, height: block * 0.3))),
               Center(
                   child: frostedContainer(
                       Size(
@@ -110,7 +119,8 @@ class _WebsiteState extends State<Website> {
                       ),
                       Text(
                         "Optimal Routes",
-                        style: GoogleFonts.sarala(fontSize: blockM * 1.2, fontWeight: FontWeight.bold),
+                        style:
+                            GoogleFonts.sarala(fontSize: blockM * 1.2, fontWeight: FontWeight.bold),
                       ))),
               Positioned(
                   left: 0,
@@ -126,14 +136,16 @@ class _WebsiteState extends State<Website> {
                           children: [
                             Text(
                               "Send me an E-Mail",
-                              style: GoogleFonts.sarala(fontSize: blockM * 0.55, fontWeight: FontWeight.bold),
+                              style: GoogleFonts.sarala(
+                                  fontSize: blockM * 0.55, fontWeight: FontWeight.bold),
                             ),
                             SizedBox(
                               height: block * 0.2,
                             ),
                             SelectableText(
                               "phobos2019@gmail.com",
-                              style: GoogleFonts.sarala(fontSize: blockM * 0.4, fontWeight: FontWeight.w900),
+                              style: GoogleFonts.sarala(
+                                  fontSize: blockM * 0.4, fontWeight: FontWeight.w900),
                             ),
                           ],
                         ),
@@ -146,7 +158,8 @@ class _WebsiteState extends State<Website> {
                         context,
                         PageRouteBuilder(
                           pageBuilder: (c, a1, a2) => const PrivacyPage(),
-                          transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                          transitionsBuilder: (c, anim, a2, child) =>
+                              FadeTransition(opacity: anim, child: child),
                           transitionDuration: const Duration(milliseconds: 300),
                         )),
                     child: frostedContainer(
@@ -160,7 +173,8 @@ class _WebsiteState extends State<Website> {
                             children: [
                               Text(
                                 "Privacy Policy",
-                                style: GoogleFonts.sarala(fontSize: blockM * 0.55, fontWeight: FontWeight.bold),
+                                style: GoogleFonts.sarala(
+                                    fontSize: blockM * 0.55, fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
@@ -173,9 +187,11 @@ class _WebsiteState extends State<Website> {
                     onTap: () => Navigator.push(
                         context,
                         PageRouteBuilder(
-                          pageBuilder: (c, a1, a2) =>
-                              ((Prefs.getBool("new") ?? true) ? const ExplainPage() : const LevelPage()),
-                          transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                          pageBuilder: (c, a1, a2) => ((Prefs.getBool("new") ?? true)
+                              ? const ExplainPage()
+                              : const LevelPage()),
+                          transitionsBuilder: (c, anim, a2, child) =>
+                              FadeTransition(opacity: anim, child: child),
                           transitionDuration: const Duration(milliseconds: 300),
                         )),
                     child: frostedContainer(
@@ -189,7 +205,8 @@ class _WebsiteState extends State<Website> {
                             children: [
                               Text(
                                 "Try the game NOW",
-                                style: GoogleFonts.sarala(fontSize: blockM * 0.55, fontWeight: FontWeight.bold),
+                                style: GoogleFonts.sarala(
+                                    fontSize: blockM * 0.55, fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),

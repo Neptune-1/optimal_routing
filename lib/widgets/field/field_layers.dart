@@ -64,18 +64,18 @@ class _FieldState extends State<Field> {
     super.initState();
 
     fieldSize = widget.tree[3];
-    spacePointPoint *= 6.5 / fieldSize;
+    spacePointPoint *= 5.5 / fieldSize;
     showedPointDiameter = pointDiameter * 0.15;
     graph = Graph(fieldSize);
-    routesH = List.generate(
-        widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
-    routesV = List.generate(
-        widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
+    routesH = List.generate(widget.layerFullNum,
+        (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
+    routesV = List.generate(widget.layerFullNum,
+        (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
 
-    showedRoutesH = List.generate(
-        widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
-    showedRoutesV = List.generate(
-        widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
+    showedRoutesH = List.generate(widget.layerFullNum,
+        (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
+    showedRoutesV = List.generate(widget.layerFullNum,
+        (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
 
     int fullNumLinesSum = widget.tree[1];
 
@@ -87,20 +87,23 @@ class _FieldState extends State<Field> {
       currentNumOfLines.add(0);
     }
 
-    widget.currentNumOfLines.add(LinesData(currentLinesNum: currentNumOfLines, fullLinesNum: fullLinesNum));
+    widget.currentNumOfLines
+        .add(LinesData(currentLinesNum: currentNumOfLines, fullLinesNum: fullLinesNum));
 
-    List chosenPointsShuffle = (widget.tree[0] as List).map((e) => Point(e[0], e[1])).toList().cast<Point>();
+    List chosenPointsShuffle =
+        (widget.tree[0] as List).map((e) => Point(e[0], e[1])).toList().cast<Point>();
     chosenPointsShuffle.shuffle();
     int step = chosenPointsShuffle.length ~/ widget.layerFullNum;
     for (int i = 0; i < widget.layerFullNum; i++) {
       chosenPoints.add(chosenPointsShuffle
-          .sublist(i * step, i + 1 != widget.layerFullNum ? (i + 1) * step : chosenPointsShuffle.length)
+          .sublist(
+              i * step, i + 1 != widget.layerFullNum ? (i + 1) * step : chosenPointsShuffle.length)
           .cast<Point>());
     }
     print(chosenPoints);
 
-    points = List.generate(
-        widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
+    points = List.generate(widget.layerFullNum,
+        (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
 
     widget.layerNumStream.listen((n) => mounted ? setState(() => currentLayer = n) : null);
     widget.projectionData.add(FieldData(
@@ -146,7 +149,11 @@ class _FieldState extends State<Field> {
   }
 
   void chooseRout(int x, int y, String type, {state, bool refresh = true}) {
-    if (((type == "h" && x >= 0 && x < fieldSize - 1 && y >= 0) || (type == "v" && y >= 0 && y < fieldSize - 1)) && ((type == "h" && !showedRoutesH[currentLayer][x][y]) || (type == "v" && !showedRoutesV[currentLayer][x][y])) && !isGameOver) {
+    if (((type == "h" && x >= 0 && x < fieldSize - 1 && y >= 0) ||
+            (type == "v" && y >= 0 && y < fieldSize - 1)) &&
+        ((type == "h" && !showedRoutesH[currentLayer][x][y]) ||
+            (type == "v" && !showedRoutesV[currentLayer][x][y])) &&
+        !isGameOver) {
       late bool currentState;
       if (type == "v") {
         currentState = routesV[currentLayer][x][y];
@@ -190,9 +197,11 @@ class _FieldState extends State<Field> {
       } else if (!state) {
         currentNumOfLines[currentLayer] += currentState ? -1 : 0;
       }
-      widget.currentNumOfLines.add(LinesData(currentLinesNum: currentNumOfLines, fullLinesNum: fullLinesNum));
+      widget.currentNumOfLines
+          .add(LinesData(currentLinesNum: currentNumOfLines, fullLinesNum: fullLinesNum));
 
-      if (routeIsConnected && const DeepCollectionEquality().equals(currentNumOfLines, fullLinesNum)) {
+      if (routeIsConnected &&
+          const DeepCollectionEquality().equals(currentNumOfLines, fullLinesNum)) {
         widget.isGameOver.add(true);
         isGameOver = true;
       }
@@ -226,21 +235,22 @@ class _FieldState extends State<Field> {
 
   clearField() {
     graph.clear();
-    routesH = List.generate(
-        widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
-    routesV = List.generate(
-        widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
-    showedRoutesH = List.generate(
-        widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
-    showedRoutesV = List.generate(
-        widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
+    routesH = List.generate(widget.layerFullNum,
+        (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
+    routesV = List.generate(widget.layerFullNum,
+        (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
+    showedRoutesH = List.generate(widget.layerFullNum,
+        (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
+    showedRoutesV = List.generate(widget.layerFullNum,
+        (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
 
-    points = List.generate(
-        widget.layerFullNum, (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
+    points = List.generate(widget.layerFullNum,
+        (n) => List.generate(fieldSize, (x) => List.generate(fieldSize, (y) => false)));
 
     currentNumOfLines = List.generate(widget.layerFullNum, (index) => 0);
 
-    widget.currentNumOfLines.add(LinesData(currentLinesNum: currentNumOfLines, fullLinesNum: fullLinesNum));
+    widget.currentNumOfLines
+        .add(LinesData(currentLinesNum: currentNumOfLines, fullLinesNum: fullLinesNum));
   }
 
   showAnswer() {
@@ -248,8 +258,8 @@ class _FieldState extends State<Field> {
     int currentLayerTmp = currentLayer;
     for (int layer = 0; layer < widget.layerFullNum; layer++) {
       currentLayer = layer;
-      answerRoutesByLayer[layer]
-          .forEach((element) => chooseRout(element.x, element.y, element.direction, refresh: false));
+      answerRoutesByLayer[layer].forEach(
+          (element) => chooseRout(element.x, element.y, element.direction, refresh: false));
     }
     currentLayer = currentLayerTmp;
     setState(() {});
@@ -266,13 +276,15 @@ class _FieldState extends State<Field> {
       currentLayer = layer;
       for (var element in answerRoutesByLayer[layer]) {
         if (element.direction == "v") {
-          if (!showedRoutesV[layer][element.x][element.y] && !routesV[layer][element.x][element.y]) {
+          if (!showedRoutesV[layer][element.x][element.y] &&
+              !routesV[layer][element.x][element.y]) {
             chooseRout(element.x, element.y, element.direction, state: true);
             showedRoutesV[layer][element.x][element.y] = true;
             return;
           }
         } else if (element.direction == "h") {
-          if (!showedRoutesH[layer][element.x][element.y] && !routesH[layer][element.x][element.y]) {
+          if (!showedRoutesH[layer][element.x][element.y] &&
+              !routesH[layer][element.x][element.y]) {
             chooseRout(element.x, element.y, element.direction, state: true);
             showedRoutesH[layer][element.x][element.y] = true;
             return;
@@ -295,8 +307,9 @@ class _FieldState extends State<Field> {
         int y = (details.localPosition.dy) ~/ (pointDiameter + spacePointPoint);
         int x = (details.localPosition.dx) ~/ (pointDiameter + spacePointPoint);
         if (sqrt(pow(details.localPosition.dy % (pointDiameter + spacePointPoint), 2) +
-                pow(details.localPosition.dx % (pointDiameter + spacePointPoint), 2)) <
-            pointDiameter * 2 && (y<fieldSize)) {
+                    pow(details.localPosition.dx % (pointDiameter + spacePointPoint), 2)) <
+                pointDiameter * 2 &&
+            (y < fieldSize)) {
           currentPoint = Point(x, y);
         }
 
@@ -334,13 +347,16 @@ class _FieldState extends State<Field> {
                                       height: spacePointPoint - spaceLinePoint,
                                       width: lineThick,
                                       decoration: BoxDecoration(
-                                          color: showedRoutesV[currentLayer][x ~/ 2][y ~/ 2] ? Style.accentColor : (routesV[currentLayer][x ~/ 2][y ~/ 2]
-                                              ? (routeIsConnected
-                                                  ? Style.accentColor
-                                                  : Style.primaryColor.withOpacity(1))
-                                              : (isGameOver
-                                                  ? Colors.transparent
-                                                  : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0))),
+                                          color: showedRoutesV[currentLayer][x ~/ 2][y ~/ 2]
+                                              ? Style.accentColor
+                                              : (routesV[currentLayer][x ~/ 2][y ~/ 2]
+                                                  ? (routeIsConnected
+                                                      ? Style.accentColor
+                                                      : Style.primaryColor.withOpacity(1))
+                                                  : (isGameOver
+                                                      ? Colors.transparent
+                                                      : Style.primaryColor.withOpacity(
+                                                          widget.showLines ? 0.1 : 0))),
                                           borderRadius: BorderRadius.circular(100))),
                                 ),
                               ),
@@ -363,13 +379,16 @@ class _FieldState extends State<Field> {
                                       width: spacePointPoint - spaceLinePoint,
                                       height: lineThick,
                                       decoration: BoxDecoration(
-                                          color: showedRoutesH[currentLayer][x ~/ 2][y ~/ 2] ? Style.accentColor : (routesH[currentLayer][x ~/ 2][y ~/ 2]
-                                              ? (routeIsConnected
-                                                  ? Style.accentColor
-                                                  : Style.primaryColor.withOpacity(1))
-                                              : (isGameOver
-                                                  ? Colors.transparent
-                                                  : Style.primaryColor.withOpacity(widget.showLines ? 0.1 : 0))),
+                                          color: showedRoutesH[currentLayer][x ~/ 2][y ~/ 2]
+                                              ? Style.accentColor
+                                              : (routesH[currentLayer][x ~/ 2][y ~/ 2]
+                                                  ? (routeIsConnected
+                                                      ? Style.accentColor
+                                                      : Style.primaryColor.withOpacity(1))
+                                                  : (isGameOver
+                                                      ? Colors.transparent
+                                                      : Style.primaryColor.withOpacity(
+                                                          widget.showLines ? 0.1 : 0))),
                                           borderRadius: BorderRadius.circular(100))),
                                 ),
                               ),
@@ -391,15 +410,20 @@ class _FieldState extends State<Field> {
                                             ? 3
                                             : 1),
                                     decoration: BoxDecoration(
-                                        color: (Point(x ~/ 2, y ~/ 2).isPointInList(chosenPoints[currentLayer])
+                                        color: (Point(x ~/ 2, y ~/ 2)
+                                                .isPointInList(chosenPoints[currentLayer])
                                             ? (routeIsConnected
-                                                ? (isGameOver ? Style.accentColor : Style.primaryColor)
+                                                ? (isGameOver
+                                                    ? Style.accentColor
+                                                    : Style.primaryColor)
                                                 : Style.accentColor)
                                             : (((Point(x ~/ 2, y ~/ 2).isPointInList(chosenPoints[currentLayer])) ||
                                                     points[currentLayer][x ~/ 2][y ~/ 2])
                                                 ? (routeIsConnected
                                                     ? Style.accentColor
-                                                    : (isGameOver ? Style.accentColor : Style.primaryColor))
+                                                    : (isGameOver
+                                                        ? Style.accentColor
+                                                        : Style.primaryColor))
                                                 : (isGameOver
                                                     ? Style.primaryColor.withOpacity(1)
                                                     : Style.primaryColor.withOpacity(0.5)))),

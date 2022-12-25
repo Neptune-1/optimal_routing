@@ -27,8 +27,9 @@ class Ads {
             child: Container(
               height: Style.blockH * 5,
               width: Style.blockM * 13,
-              decoration:
-                  BoxDecoration(color: Style.secondaryColor, borderRadius: BorderRadius.circular(Style.blockM * 0.5)),
+              decoration: BoxDecoration(
+                  color: Style.secondaryColor,
+                  borderRadius: BorderRadius.circular(Style.blockM * 0.5)),
               child: Column(children: [
                 SizedBox(
                   height: Style.blockH * 2.8,
@@ -50,7 +51,8 @@ class Ads {
                   width: Style.blockM * 13,
                   decoration: BoxDecoration(
                       color: Style.accentColor,
-                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(Style.blockM * 0.5))),
+                      borderRadius:
+                          BorderRadius.vertical(bottom: Radius.circular(Style.blockM * 0.5))),
                   child: Stack(
                     children: [
                       Center(

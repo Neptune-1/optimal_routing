@@ -36,7 +36,7 @@ class TipsBottomSheetState extends State<TipsBottomSheet> {
   static const List<String> texts = ['- Get 1 line', '- Get the answer', '- To next level'];
 
   getTip(int number, BuildContext context) {
-    int lampNum = Prefs.getInt('lamps') ?? 0;
+    int lampNum = Prefs.getInt('lamps') ?? 1000000;
     if (lampNum >= costs[number]) {
       Prefs.setInt('lamps', lampNum - costs[number]);
       Navigator.pop(context);
@@ -72,7 +72,9 @@ class TipsBottomSheetState extends State<TipsBottomSheet> {
                 ),
                 Text((Prefs.getInt("lamps") ?? 0).toString(),
                     style: GoogleFonts.quicksand(
-                        fontSize: Style.blockM * 1, fontWeight: FontWeight.w800, color: Style.primaryColor))
+                        fontSize: Style.blockM * 1,
+                        fontWeight: FontWeight.w800,
+                        color: Style.primaryColor))
               ],
             ),
             Column(
@@ -129,13 +131,16 @@ class TipsBottomSheetState extends State<TipsBottomSheet> {
                         Navigator.pop(context);
                       })),
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: Style.blockM * 0.5, horizontal: 1.5 * Style.blockM),
+                padding: EdgeInsets.symmetric(
+                    vertical: Style.blockM * 0.5, horizontal: 1.5 * Style.blockM),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text("Get 2x",
                         style: GoogleFonts.quicksand(
-                            fontSize: Style.blockM * 1.4, fontWeight: FontWeight.w800, color: Style.secondaryColor)),
+                            fontSize: Style.blockM * 1.4,
+                            fontWeight: FontWeight.w800,
+                            color: Style.secondaryColor)),
                     Icon(
                       Icons.lightbulb,
                       size: Style.blockM * 1.1,

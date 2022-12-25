@@ -49,8 +49,8 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
       widget.layerNumStream!.listen((layerNum) => setState(() => selectedLayer = layerNum));
 
     if (widget.rotateAnimation) {
-      rotateAnimationTimer =
-          Timer.periodic(const Duration(milliseconds: 4), (timer) => setState(() => yAngle += 0.001));
+      rotateAnimationTimer = Timer.periodic(
+          const Duration(milliseconds: 4), (timer) => setState(() => yAngle += 0.001));
     }
     super.initState();
   }
@@ -76,7 +76,8 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
     final points = fieldData.points;
     final chosenPoints = fieldData.targets;
 
-    final double coef = initialSize / (fieldSize * pointDiameter + spacePointPoint * (fieldSize - 1)) * 0.85;
+    final double coef =
+        initialSize / (fieldSize * pointDiameter + spacePointPoint * (fieldSize - 1)) * 0.85;
     spacePointPoint *= coef;
     pointDiameter *= coef;
     showedPointDiameter *= coef;
@@ -105,8 +106,12 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
                                   width: lineThick,
                                   decoration: BoxDecoration(
                                       color: routesV[thisLayerNum][x ~/ 2][y ~/ 2]
-                                          ? (routeIsConnected ? Style.accentColor : Style.primaryColor.withOpacity(1))
-                                          : (isGameOver ? Colors.transparent : Style.primaryColor.withOpacity(0)),
+                                          ? (routeIsConnected
+                                              ? Style.accentColor
+                                              : Style.primaryColor.withOpacity(1))
+                                          : (isGameOver
+                                              ? Colors.transparent
+                                              : Style.primaryColor.withOpacity(0)),
                                       borderRadius: BorderRadius.circular(100))),
                             ),
                           ),
@@ -126,8 +131,12 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
                                   height: lineThick,
                                   decoration: BoxDecoration(
                                       color: routesH[thisLayerNum][x ~/ 2][y ~/ 2]
-                                          ? (routeIsConnected ? Style.accentColor : Style.primaryColor.withOpacity(1))
-                                          : (isGameOver ? Colors.transparent : Style.primaryColor.withOpacity(0)),
+                                          ? (routeIsConnected
+                                              ? Style.accentColor
+                                              : Style.primaryColor.withOpacity(1))
+                                          : (isGameOver
+                                              ? Colors.transparent
+                                              : Style.primaryColor.withOpacity(0)),
                                       borderRadius: BorderRadius.circular(100))),
                             ),
                           )
@@ -150,13 +159,18 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
                                   decoration: BoxDecoration(
                                       color: (Point(x ~/ 2, y ~/ 2).isPointInList(chosenPoints[thisLayerNum])
                                           ? (routeIsConnected
-                                              ? (isGameOver ? Style.accentColor : Style.primaryColor)
+                                              ? (isGameOver
+                                                  ? Style.accentColor
+                                                  : Style.primaryColor)
                                               : Style.accentColor)
-                                          : (((Point(x ~/ 2, y ~/ 2).isPointInList(chosenPoints[thisLayerNum])) ||
+                                          : (((Point(x ~/ 2, y ~/ 2)
+                                                      .isPointInList(chosenPoints[thisLayerNum])) ||
                                                   points[thisLayerNum][x ~/ 2][y ~/ 2])
                                               ? (routeIsConnected
                                                   ? Style.accentColor
-                                                  : (isGameOver ? Style.accentColor : Style.primaryColor))
+                                                  : (isGameOver
+                                                      ? Style.accentColor
+                                                      : Style.primaryColor))
                                               : (isGameOver
                                                   ? Style.primaryColor.withOpacity(1)
                                                   : Style.primaryColor.withOpacity(0.5)))),
@@ -175,9 +189,8 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
     final int fieldSize = fieldData.fieldSize;
     final points = fieldData.points;
     final chosenPoints = fieldData.targets;
-    chosenPoints
-        .asMap()
-        .forEach((layerNum, layer) => (layer.forEach((point) => points[layerNum][point.x][point.y] = true)));
+    chosenPoints.asMap().forEach(
+        (layerNum, layer) => (layer.forEach((point) => points[layerNum][point.x][point.y] = true)));
     final List<List<bool>> supportPoints = List.generate(
         fieldSize,
         (x) => List.generate(fieldSize, (y) {
@@ -186,7 +199,8 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
               return sum > 1;
             }));
 
-    final double coef = initialSize / (fieldSize * pointDiameter + spacePointPoint * (fieldSize - 1)) * 0.85;
+    final double coef =
+        initialSize / (fieldSize * pointDiameter + spacePointPoint * (fieldSize - 1)) * 0.85;
     spacePointPoint *= coef;
     pointDiameter *= coef;
     showedPointDiameter *= coef;
@@ -223,10 +237,13 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
                             child: Center(
                               child: AnimatedContainer(
                                   duration: const Duration(milliseconds: 200),
-                                  width: showedPointDiameter * (supportPoints[x ~/ 2][y ~/ 2] ? 1 : 0),
-                                  height: showedPointDiameter * (supportPoints[x ~/ 2][y ~/ 2] ? 1 : 0),
+                                  width:
+                                      showedPointDiameter * (supportPoints[x ~/ 2][y ~/ 2] ? 1 : 0),
+                                  height:
+                                      showedPointDiameter * (supportPoints[x ~/ 2][y ~/ 2] ? 1 : 0),
                                   decoration: BoxDecoration(
-                                      color: Style.accentColor.withOpacity(supportPoints[x ~/ 2][y ~/ 2] ? 0.7 : 0),
+                                      color: Style.accentColor
+                                          .withOpacity(supportPoints[x ~/ 2][y ~/ 2] ? 0.7 : 0),
                                       shape: BoxShape.circle)),
                             ),
                           ),
@@ -245,11 +262,15 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
             borderRadius: BorderRadius.circular(Style.blockM * 0.5),
             boxShadow: [
               BoxShadow(
-                  color: selected ? Style.accentColor.withOpacity(0.2) : Colors.black.withOpacity(0.08),
+                  color: selected
+                      ? Style.accentColor.withOpacity(0.2)
+                      : Colors.black.withOpacity(0.08),
                   blurRadius: Style.blockM * 0.5,
                   blurStyle: BlurStyle.outer),
             ],
-            color: viewFromBottom ? const Color(0xffeeeeee).withOpacity(0.8) : Style.secondaryColor.withOpacity(0.8),
+            color: viewFromBottom
+                ? const Color(0xffeeeeee).withOpacity(0.8)
+                : Style.secondaryColor.withOpacity(0.8),
             border: Border.all(
               width: Style.blockM * 0.1,
               color: Style.accentColor.withOpacity(selected ? 1 : 0),
@@ -278,7 +299,8 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
   }
 
   List<Widget> getPlanes() {
-    bool isReversed = zAngle % (2 * math.pi) < (math.pi * 1.5) && zAngle % (2 * math.pi) > (math.pi * 0.5);
+    bool isReversed =
+        zAngle % (2 * math.pi) < (math.pi * 1.5) && zAngle % (2 * math.pi) > (math.pi * 0.5);
     List<bool> mainOrSupport = [true];
     List<double> offsets = [0];
     switch (widget.layerNum) {
@@ -392,7 +414,9 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
               ..rotateX(zAngle)
               ..rotateZ(-yAngle),
             alignment: Alignment.center,
-            child: mainOrSupport[index] ? getPlane(isReversed, mainIndex == selectedLayer, mainIndex) : supportPlane,
+            child: mainOrSupport[index]
+                ? getPlane(isReversed, mainIndex == selectedLayer, mainIndex)
+                : supportPlane,
           ));
     });
     if (!isReversed) planes = planes.reversed.toList().cast<Widget>();

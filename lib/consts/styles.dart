@@ -56,7 +56,8 @@ class Style {
 
   static getTextStyle_1({Color? color}) {
     color ??= primaryColor;
-    return GoogleFonts.quicksand(fontSize: Style.blockM * 1, fontWeight: FontWeight.w800, color: color);
+    return GoogleFonts.quicksand(
+        fontSize: Style.blockM * 1, fontWeight: FontWeight.w800, color: color);
   }
 
   static getTextStyle_2() {
@@ -69,7 +70,10 @@ class Style {
 
   static getTextStyle_3({Color color = Colors.black}) {
     return GoogleFonts.quicksand(
-        fontSize: Style.blockM * 1.5, fontWeight: FontWeight.w800, color: color, decoration: TextDecoration.none);
+        fontSize: Style.blockM * 1.5,
+        fontWeight: FontWeight.w800,
+        color: color,
+        decoration: TextDecoration.none);
   }
 
   static changeStatusBarColor() {
@@ -83,7 +87,6 @@ class Style {
       statusBarIconBrightness: dark ? Brightness.dark : Brightness.light,
     ));
   }
-
 
   static init(BuildContext context) {
     //if(kIsWeb){
