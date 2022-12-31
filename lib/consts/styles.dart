@@ -56,12 +56,12 @@ class Style {
 
   static getTextStyle_1({Color? color}) {
     color ??= primaryColor;
-    return GoogleFonts.quicksand(
+    return GoogleFonts.josefinSans(
         fontSize: Style.blockM * 1, fontWeight: FontWeight.w800, color: color);
   }
 
   static getTextStyle_2() {
-    return GoogleFonts.quicksand(
+    return GoogleFonts.josefinSans(
         fontSize: Style.blockM * 1.5,
         fontWeight: FontWeight.w800,
         color: primaryColor,
@@ -69,7 +69,7 @@ class Style {
   }
 
   static getTextStyle_3({Color color = Colors.black}) {
-    return GoogleFonts.quicksand(
+    return GoogleFonts.josefinSans(
         fontSize: Style.blockM * 1.5,
         fontWeight: FontWeight.w800,
         color: color,

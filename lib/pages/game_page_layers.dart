@@ -14,6 +14,7 @@ import '../data_structures.dart';
 import '../utils/lamps.dart';
 import '../utils/prefs.dart';
 import '../widgets/field/field_layers.dart';
+import 'level_page_layers_v2.dart';
 
 class GamePage extends StatefulWidget {
   final int level;
@@ -108,7 +109,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        widget.level == 0
+        widget.level != 2
             ? Container()
             : StreamBuilder<int>(
                 stream: layerNumStream,
@@ -118,10 +119,10 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                       : Column(
                           mainAxisSize: MainAxisSize.min,
                           children: List.generate(
-                            widget.level + 1,
+                            2,
                             (layerNum) => SizedBox(
                                 width: Style.blockM * 0.2,
-                                height: Style.blockM * (widget.level == 0 ? 1.5 : 1),
+                                height: Style.blockM * (widget.level != 2 ? 1.5 : 1),
                                 child: Center(
                                   child: AnimatedContainer(
                                     duration: const Duration(milliseconds: 200),
@@ -144,14 +145,14 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                   : Column(
                       mainAxisSize: MainAxisSize.min,
                       children: List.generate(
-                        widget.level + 1,
+                        widget.level == 2 ? 2 : 1,
                         (layerNum) => SizedBox(
-                          width: Style.blockM * (widget.level == 0 ? 4 : 2),
-                          height: Style.blockM * (widget.level == 0 ? 1.5 : 1),
+                          width: Style.blockM * (widget.level != 2 ? 4 : 2),
+                          height: Style.blockM * (widget.level != 2 ? 1.5 : 1),
                           child: Center(
                             child: Text(
                               "${(snapshot.data!.currentLinesNum[layerNum])}/${snapshot.data!.fullLinesNum[layerNum]}",
-                              style: GoogleFonts.quicksand(
+                              style: GoogleFonts.josefinSans(
                                   fontSize: Style.blockM * 0.8,
                                   fontWeight: FontWeight.w800,
                                   color: Style.primaryColor),
@@ -168,9 +169,9 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     Style.init(context);
-    return SafeArea(
-      child: Scaffold(
-          body: AnimatedContainer(
+    return Scaffold(
+        body: SafeArea(
+      child: AnimatedContainer(
         color: Style.backgroundColor,
         duration: const Duration(milliseconds: 2000),
         child: Stack(children: [
@@ -179,7 +180,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
             child: Column(
               children: [
                 SizedBox(
-                  height: Style.blockH * 0.9,
+                  height: Style.blockH * 0.3,
                 ),
                 Stack(
                   children: [
@@ -204,7 +205,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
-                    if (widget.level == 0)
+                    if (widget.level != 2)
                       Align(
                         alignment: Alignment.center,
                         child: linesInfoWidget(),
@@ -287,19 +288,19 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                       return AnimatedContainer(
                         duration: const Duration(milliseconds: 600),
                         curve: Curves.easeOutCubic,
-                        height: (snapshot.data == true && widget.level != 0
+                        height: (snapshot.data == true && widget.level == 2
                             ? Style.blockH * 5
                             : Style.blockM * 1.2),
                       );
                     }),
-                widget.level == 0
+                widget.level != 2
                     ? Container()
                     : FieldProjection(
-                        layerNum: widget.level + 1,
+                        layerNum: 2,
                         layerNumController: layerNum,
                         projectionDataStream: projectionDataStream,
                         layerNumStream: layerNumStream),
-                widget.level == 0
+                widget.level != 2
                     ? Container()
                     : SizedBox(
                         height: Style.blockM * 2.5,
@@ -309,10 +310,10 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                   child: StreamBuilder<bool>(
                       stream: isGameOverStream,
                       builder: (context, snapshot) {
-                        return snapshot.data == true && widget.level != 0
+                        return snapshot.data == true && widget.level == 2
                             ? Container()
                             : Align(
-                                alignment: widget.level == 0
+                                alignment: widget.level != 2
                                     ? const Alignment(0, 0.3)
                                     : Alignment.topCenter,
                                 child: AnimatedSwitcher(
@@ -326,7 +327,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                                       isGameOver: isGameOver,
                                       showTip: showTipStream,
                                       layerNumStream: layerNumStream,
-                                      layerFullNum: widget.level + 1,
+                                      layerFullNum: widget.level == 2 ? 2 : 1,
                                       projectionData: projectionData),
                                 ),
                               );
@@ -341,7 +342,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
           Positioned(
             right: Style.blockM * 1,
             top: Style.blockH * 0.9 + Style.blockM * 2,
-            child: widget.level == 0 ? Container() : linesInfoWidget(),
+            child: widget.level != 2 ? Container() : linesInfoWidget(),
           ),
           widget.example
               ? Container()
@@ -385,7 +386,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                                               trees[widget.level].length - 1 == gameNum
                                                   ? "Back"
                                                   : "Next",
-                                              style: GoogleFonts.quicksand(
+                                              style: GoogleFonts.josefinSans(
                                                   fontSize: Style.blockM * 1.4,
                                                   fontWeight: FontWeight.w800,
                                                   color: Style.secondaryColor)),
@@ -407,7 +408,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                     child: Center(
                       child: Text(
                         "Level ${gameNum + 1} / ${trees[widget.level].length}",
-                        style: GoogleFonts.quicksand(
+                        style: GoogleFonts.josefinSans(
                             fontSize: Style.blockM * 0.7,
                             fontWeight: FontWeight.w800,
                             color: Style.primaryColor),
@@ -415,7 +416,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                     ),
                   ))
         ]),
-      )),
-    );
+      ),
+    ));
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:optimal_routing/pages/explain_page.dart';
 import 'package:optimal_routing/pages/game_page_layers.dart';
+import 'package:optimal_routing/pages/level_page_layers_v2.dart';
 import 'package:optimal_routing/utils/ads.dart';
 import 'package:optimal_routing/utils/prefs.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -67,7 +68,7 @@ class MyApp extends StatelessWidget {
           Style.init(context);
           return kIsWeb
               ? const GamePage(level: 0)
-              : ((Prefs.getBool("new") ?? true) ? const ExplainPage() : const LevelPage());
+              : ((Prefs.getBool("new") ?? true) ? const ExplainPage() : const LevelPageV2());
         },
       ),
     );

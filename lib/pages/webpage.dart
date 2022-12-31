@@ -9,6 +9,7 @@ import '../consts/styles.dart';
 import '../utils/prefs.dart';
 import 'explain_page.dart';
 import 'level_page_layers.dart';
+import 'level_page_layers_v2.dart';
 
 class Website extends StatefulWidget {
   const Website({Key? key}) : super(key: key);
@@ -189,7 +190,7 @@ class _WebsiteState extends State<Website> {
                         PageRouteBuilder(
                           pageBuilder: (c, a1, a2) => ((Prefs.getBool("new") ?? true)
                               ? const ExplainPage()
-                              : const LevelPage()),
+                              : const LevelPageV2()),
                           transitionsBuilder: (c, anim, a2, child) =>
                               FadeTransition(opacity: anim, child: child),
                           transitionDuration: const Duration(milliseconds: 300),

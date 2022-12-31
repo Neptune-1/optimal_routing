@@ -71,7 +71,7 @@ class TipsBottomSheetState extends State<TipsBottomSheet> {
                   width: Style.blockM * 0.3,
                 ),
                 Text((Prefs.getInt("lamps") ?? 0).toString(),
-                    style: GoogleFonts.quicksand(
+                    style: GoogleFonts.josefinSans(
                         fontSize: Style.blockM * 1,
                         fontWeight: FontWeight.w800,
                         color: Style.primaryColor))
@@ -91,7 +91,7 @@ class TipsBottomSheetState extends State<TipsBottomSheet> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text("${costs[index]}x ",
-                                    style: GoogleFonts.quicksand(
+                                    style: GoogleFonts.josefinSans(
                                         fontSize: Style.blockM * 1,
                                         fontWeight: FontWeight.w800,
                                         color: Style.primaryColor)),
@@ -106,7 +106,7 @@ class TipsBottomSheetState extends State<TipsBottomSheet> {
                                   width: Style.blockM * 0.3,
                                 ),
                                 Text(texts[index],
-                                    style: GoogleFonts.quicksand(
+                                    style: GoogleFonts.josefinSans(
                                         fontSize: Style.blockM * 1,
                                         fontWeight: FontWeight.w800,
                                         color: Style.primaryColor))
@@ -137,7 +137,7 @@ class TipsBottomSheetState extends State<TipsBottomSheet> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text("Get 2x",
-                        style: GoogleFonts.quicksand(
+                        style: GoogleFonts.josefinSans(
                             fontSize: Style.blockM * 1.4,
                             fontWeight: FontWeight.w800,
                             color: Style.secondaryColor)),
