@@ -14,7 +14,6 @@ import '../data_structures.dart';
 import '../utils/lamps.dart';
 import '../utils/prefs.dart';
 import '../widgets/field/field_layers.dart';
-import 'level_page_layers_v2.dart';
 
 class GamePage extends StatefulWidget {
   final int level;
@@ -170,6 +169,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     Style.init(context);
     return Scaffold(
+      backgroundColor: Style.backgroundColor,
         body: SafeArea(
       child: AnimatedContainer(
         color: Style.backgroundColor,
@@ -232,7 +232,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                                 },
                                 child: AnimatedBuilder(
                                     animation: restartAnimationController,
-                                    builder: (context, snapshot) {
+                                    builder: (context, _) {
                                       return Transform.rotate(
                                         angle: -pi * restartAnimation.value,
                                         child: Icon(

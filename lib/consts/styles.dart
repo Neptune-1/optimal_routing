@@ -13,6 +13,7 @@ class Style {
   static Color backgroundColor = secondaryColor;
 
   static Color primaryColor = Colors.black;
+  static Color deactivatedColor = Colors.grey;
   static Color secondaryColor = Colors.white;
   static Color accentColor = Colors.amber[500]!;
   static bool wideScreen = false;
@@ -85,7 +86,7 @@ class Style {
       statusBarColor: Colors.transparent,
       statusBarBrightness: dark ? Brightness.dark : Brightness.light,
       statusBarIconBrightness: dark ? Brightness.dark : Brightness.light,
-    ));
+    ).copyWith(systemNavigationBarColor: Style.backgroundColor));
   }
 
   static init(BuildContext context) {

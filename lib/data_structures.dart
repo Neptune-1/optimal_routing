@@ -75,3 +75,15 @@ class Direction {
   static const int up = 2;
   static const int down = 3;
 }
+
+class LevelData {
+  late final int fieldSize;
+  late final int layersNum;
+  late final int num;
+
+  LevelData({
+    required this.fieldSize,
+    required this.layersNum,
+    required this.num,
+  });
+}

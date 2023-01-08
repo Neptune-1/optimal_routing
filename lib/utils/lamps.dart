@@ -14,7 +14,7 @@ class Lamps {
     showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(Style.blockM * 0.5),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(Style.blockM * 0.5)),
         ),
         builder: (ctx) {
           return TipsBottomSheet(showTip: showTip);

@@ -1,16 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:optimal_routing/pages/explain_page.dart';
 import 'package:optimal_routing/pages/game_page_layers.dart';
-import 'package:optimal_routing/pages/level_page_layers_v2.dart';
+import 'package:optimal_routing/pages/level_page_layers_v4.dart';
 import 'package:optimal_routing/utils/ads.dart';
 import 'package:optimal_routing/utils/prefs.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'consts/styles.dart';
-import 'pages/level_page_layers.dart';
 
 Future<void> initFirebaseAdmob() async {
   if (kIsWeb) {
@@ -68,7 +68,7 @@ class MyApp extends StatelessWidget {
           Style.init(context);
           return kIsWeb
               ? const GamePage(level: 0)
-              : ((Prefs.getBool("new") ?? true) ? const ExplainPage() : const LevelPageV2());
+              : ((Prefs.getBool("new") ?? true) ? const ExplainPage() : const LevelPageV4());
         },
       ),
     );

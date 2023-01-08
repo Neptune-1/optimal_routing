@@ -11,8 +11,7 @@ import '../consts/styles.dart';
 import '../data/trees.dart';
 import '../utils/prefs.dart';
 import '../widgets/field/field_layers.dart';
-import 'level_page_layers.dart';
-import 'level_page_layers_v2.dart';
+import 'level_page_layers_v4.dart';
 
 class ExplainPage extends StatefulWidget {
   const ExplainPage({Key? key}) : super(key: key);
@@ -152,6 +151,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(
                         height: Style.blockH * 2.5,
@@ -187,9 +187,9 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                           layerFullNum: 1,
                           projectionData: StreamController())
                     ],
-                    crossAxisAlignment: CrossAxisAlignment.center,
                   ),
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(
                         height: Style.blockH * 2.5,
@@ -221,7 +221,6 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                         height: Style.blockH * 3,
                       )
                     ],
-                    crossAxisAlignment: CrossAxisAlignment.center,
                   ),
                   // Stack(
                   //   children: [
@@ -240,6 +239,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                   //   ],
                   // ),
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(
                         height: Style.blockH * 2,
@@ -279,13 +279,12 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                         height: Style.blockH * 5,
                       )
                     ],
-                    crossAxisAlignment: CrossAxisAlignment.center,
                   ),
                   Stack(
                     children: [
                       const GamePage(
                         example: true,
-                        level: 1,
+                        level: 2,
                       ),
                       Align(
                         alignment: const Alignment(0, 0.65),
@@ -303,23 +302,26 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                 alignment: const Alignment(0, 0.9),
                 child: ElevatedButton(
                   style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
+                      shape:
+                          MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(Style.blockM * 0.2),
                       )),
                       minimumSize: MaterialStateProperty.all(Size.zero),
                       padding: MaterialStateProperty.all(EdgeInsets.zero),
                       backgroundColor: MaterialStateProperty.all(Style.primaryColor),
-                      overlayColor: MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
+                      overlayColor:
+                          MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
                       elevation: MaterialStateProperty.all(0)),
                   onPressed: () {
                     if ((_pageController.page)!.round() != 3) {
                       _pageController.animateToPage((_pageController.page)!.round() + 1,
-                          duration: const Duration(milliseconds: 300), curve: Curves.linearToEaseOut);
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.linearToEaseOut);
                     } else {
                       Prefs.setBool("new", false);
                       Navigator.pushAndRemoveUntil(
                         context,
-                        Style.pageRouteBuilder(const LevelPageV2()),
+                        Style.pageRouteBuilder(const LevelPageV4()),
                         (Route<dynamic> route) => false,
                       );
                     }
@@ -331,8 +333,9 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                         animation: _pageController,
                         builder: (context, child) {
                           int page = 0;
-                          if (_pageController.positions.isNotEmpty)
+                          if (_pageController.positions.isNotEmpty) {
                             page = (_pageController.page ?? 0).round();
+                          }
                           return Text(
                               _pageController.positions.isEmpty
                                   ? "Next"
@@ -352,14 +355,17 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                 ),
               ),
               Positioned(
-                top: Style.blockH * 1,
+                top: Style.blockH * 0.3,
                 left: Style.blockM * 0.5,
                 child: AnimatedBuilder(
                     animation: _pageController,
                     builder: (context, child) {
                       bool show = false;
-                      if (_pageController.positions.isNotEmpty) if ((_pageController.page ?? 0) != 0)
-                        show = true;
+                      if (_pageController.positions.isNotEmpty) {
+                        if ((_pageController.page ?? 0) != 0) {
+                          show = true;
+                        }
+                      }
                       return AnimatedSwitcher(
                         duration: const Duration(milliseconds: 200),
                         child: show
@@ -412,6 +418,8 @@ class PageIndicator extends StatelessWidget {
           child: Stack(
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: List.generate(
                     pagesNumber,
                     (index) => Row(
@@ -438,8 +446,6 @@ class PageIndicator extends StatelessWidget {
                                 : Container()
                           ],
                         )),
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
               ),
               Positioned(
                 left: pageNumDouble * (diameter + spacer),

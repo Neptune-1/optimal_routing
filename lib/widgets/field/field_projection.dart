@@ -15,6 +15,7 @@ class FieldProjection extends StatefulWidget {
   final Stream<FieldData> projectionDataStream;
   final Stream<int>? layerNumStream;
   final bool rotateAnimation;
+  final bool rotatable;
 
   const FieldProjection(
       {Key? key,
@@ -22,7 +23,8 @@ class FieldProjection extends StatefulWidget {
       required this.layerNumController,
       required this.projectionDataStream,
       this.layerNumStream,
-      this.rotateAnimation = false})
+      this.rotateAnimation = false,
+      this.rotatable = true})
       : super(key: key);
 
   @override
@@ -425,22 +427,25 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onPanUpdate: (details) => setState(() {
-        if ((zAngle < 0 || details.delta.dy < 0) && (zAngle > -pi || details.delta.dy > 0)) {
-          zAngle += details.delta.dy / initialSize * 2;
-        }
-        yAngle += details.delta.dx / initialSize * 2;
-      }),
-      child: Container(
-        width: initialSize * 1.5,
-        height: initialSize * (1 + widget.layerNum * 0.25),
-        child: Stack(
-          children: getPlanes(),
-          //Text("z $zAngle")], Align(alignment: Alignment.bottomLeft, child: Text("y $yAngle"))],
-        ),
+    Widget field = SizedBox(
+      width: initialSize * 1.5,
+      height: initialSize * (1 + widget.layerNum * 0.25),
+      child: Stack(
+        children: getPlanes(),
+        //Text("z $zAngle")], Align(alignment: Alignment.bottomLeft, child: Text("y $yAngle"))],
       ),
     );
+    return widget.rotatable
+        ? GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onPanUpdate: (details) => setState(() {
+              if ((zAngle < 0 || details.delta.dy < 0) && (zAngle > -pi || details.delta.dy > 0)) {
+                zAngle += details.delta.dy / initialSize * 2;
+              }
+              yAngle += details.delta.dx / initialSize * 2;
+            }),
+            child: field,
+          )
+        : field;
   }
 }
