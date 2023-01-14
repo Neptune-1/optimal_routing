@@ -13,21 +13,18 @@ import '../data/trees.dart';
 import '../data_structures.dart';
 import '../utils/lamps.dart';
 import '../utils/prefs.dart';
-import '../widgets/field/field_layers.dart';
 
-class GamePage extends StatefulWidget {
+class GamePageV1 extends StatefulWidget {
   final int level;
   final bool example;
-  final int layerNum;
 
-  const GamePage({Key? key, required this.level, this.example = false, this.layerNum = 1})
-      : super(key: key);
+  const GamePageV1({Key? key, required this.level, this.example = false}) : super(key: key);
 
   @override
-  State<GamePage> createState() => _GamePageState();
+  State<GamePageV1> createState() => _GamePageV1State();
 }
 
-class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
+class _GamePageV1State extends State<GamePageV1> with TickerProviderStateMixin {
   late final AnimationController controller;
   late final AnimationController restartAnimationController;
   late final Animation restartAnimation;
@@ -110,7 +107,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        widget.layerNum == 1
+        widget.level != 2
             ? Container()
             : StreamBuilder<int>(
                 stream: layerNumStream,
@@ -123,7 +120,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                             2,
                             (layerNum) => SizedBox(
                                 width: Style.blockM * 0.2,
-                                height: Style.blockM * (widget.layerNum == 1 ? 1.5 : 1),
+                                height: Style.blockM * (widget.level != 2 ? 1.5 : 1),
                                 child: Center(
                                   child: AnimatedContainer(
                                     duration: const Duration(milliseconds: 200),
@@ -146,10 +143,10 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                   : Column(
                       mainAxisSize: MainAxisSize.min,
                       children: List.generate(
-                        widget.layerNum != 1 ? 2 : 1,
+                        widget.level == 2 ? 2 : 1,
                         (layerNum) => SizedBox(
-                          width: Style.blockM * (widget.layerNum == 1 ? 4 : 2),
-                          height: Style.blockM * (widget.layerNum == 1 ? 1.5 : 1),
+                          width: Style.blockM * (widget.level != 2 ? 4 : 2),
+                          height: Style.blockM * (widget.level != 2 ? 1.5 : 1),
                           child: Center(
                             child: Text(
                               "${(snapshot.data!.currentLinesNum[layerNum])}/${snapshot.data!.fullLinesNum[layerNum]}",
@@ -207,7 +204,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                             ),
                           ),
                         ),
-                        if (widget.layerNum == 1)
+                        if (widget.level != 2)
                           Align(
                             alignment: Alignment.center,
                             child: linesInfoWidget(),
@@ -291,19 +288,19 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                           return AnimatedContainer(
                             duration: const Duration(milliseconds: 600),
                             curve: Curves.easeOutCubic,
-                            height: (snapshot.data == true && widget.layerNum != 1
+                            height: (snapshot.data == true && widget.level == 2
                                 ? Style.blockH * 5
                                 : Style.blockM * 1.2),
                           );
                         }),
-                    widget.layerNum == 1
+                    widget.level != 2
                         ? Container()
                         : FieldProjection(
                             layerNum: 2,
                             layerNumController: layerNum,
                             projectionDataStream: projectionDataStream,
                             layerNumStream: layerNumStream),
-                    widget.layerNum == 1
+                    widget.level != 2
                         ? Container()
                         : SizedBox(
                             height: Style.blockM * 2.5,
@@ -313,25 +310,15 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                       child: StreamBuilder<bool>(
                           stream: isGameOverStream,
                           builder: (context, snapshot) {
-                            return snapshot.data == true && widget.layerNum != 1
+                            return snapshot.data == true && widget.level == 2
                                 ? Container()
                                 : Align(
-                                    alignment: widget.layerNum == 1
+                                    alignment: widget.level != 2
                                         ? const Alignment(0, 0.3)
                                         : Alignment.topCenter,
                                     child: AnimatedSwitcher(
                                       duration: const Duration(milliseconds: 400),
-                                      child: Field(
-                                          key: Key("${widget.level} $gameNum $restartedTime"),
-                                          currentNumOfLines: currentNumOfLines,
-                                          tree: widget.example
-                                              ? exampleTree
-                                              : trees[widget.level][gameNum],
-                                          isGameOver: isGameOver,
-                                          showTip: showTipStream,
-                                          layerNumStream: layerNumStream,
-                                          layerFullNum: widget.layerNum != 1 ? 2 : 1,
-                                          projectionData: projectionData),
+                                      child: Pseudo3dCube(),
                                     ),
                                   );
                           }),
@@ -345,7 +332,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
               Positioned(
                 right: Style.blockM * 1,
                 top: Style.blockH * 0.9 + Style.blockM * 2,
-                child: widget.layerNum == 1 ? Container() : linesInfoWidget(),
+                child: widget.level != 2 ? Container() : linesInfoWidget(),
               ),
               widget.example
                   ? Container()
@@ -421,5 +408,161 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
             ]),
           ),
         ));
+  }
+}
+
+class Pseudo3dCube extends StatefulWidget {
+  @override
+  _Pseudo3dCubeState createState() => _Pseudo3dCubeState();
+}
+
+class _Pseudo3dCubeState extends State<Pseudo3dCube> {
+  double originX = 0;
+  double x = 0;
+
+  void onDragStart(double originX) => setState(() {
+    this.originX = originX;
+  });
+
+  void onDragUpdate(double x) => setState(() {
+    this.x = originX - x;
+  });
+
+  double get turnRatio {
+    const step = -150.0;
+    var k = x / step;
+    k = k > 1 ? 1 : (k < 0 ? 0 : k);
+    return k;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onPanStart: (details) => onDragStart(details.globalPosition.dx),
+      onPanUpdate: (details) => onDragUpdate(details.globalPosition.dx),
+      child: Cube(
+        children: [
+          _Side(
+            color: Colors.blueAccent,
+            number: 1,
+          ),
+          _Side(
+            color: Colors.redAccent.shade200,
+            number: 2,
+          ),
+          _Side(
+            color: Colors.greenAccent.shade100,
+            number: 3,
+          ),
+          _Side(
+            color: Colors.yellowAccent,
+            number: 4,
+          ),
+          _Side(
+            color: Colors.pinkAccent.shade200,
+            number: 5,
+          ),
+          _Side(
+            color: Colors.purpleAccent.shade100,
+            number: 6,
+          ),
+        ],
+        k: turnRatio,
+      ),
+    );
+  }
+}
+
+class _Side extends StatelessWidget {
+  const _Side({Key? key, required this.color, required this.number}) : super(key: key);
+
+  final Color color;
+  final int number;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        width:150,
+      height: 150,
+      color: color,
+      child: Center(
+        child: Text(
+          number.toString(),
+          style: TextStyle(fontSize: 14),
+        ),
+      ),
+    );
+  }
+}
+
+class Cube extends StatelessWidget {
+  Cube({
+    Key? key,
+    required this.children,
+    required this.k,
+  }) : super(key: key) {
+    assert(children.length == 6, 'Wrong number of children');
+  }
+
+  final List<Widget> children;
+  final double k;
+
+  @override
+  Widget build(BuildContext context) {
+    var frontK = k;
+    var backK = 1 - k;
+    return Column(
+      children: <Widget>[
+// Front side
+        Transform(
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.003)
+            ..rotateY(pi / 2 * frontK),
+          alignment: FractionalOffset.centerRight,
+          child: children[0],
+        ),
+// Back side
+        Transform(
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.003)
+            ..rotateY(pi / 2 * backK + pi),
+          alignment: FractionalOffset.centerRight,
+          child: children[1],
+        ),
+// Left side
+        Transform(
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.003)
+            ..rotateY(pi / 2 * frontK - pi / 2),
+          alignment: FractionalOffset.centerRight,
+          child: children[2],
+        ),
+// Right side
+        Transform(
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.003)
+            ..rotateY(pi / 2 * frontK + pi / 2),
+          alignment: FractionalOffset.centerRight,
+          child: children[3],
+        ),
+// Top side
+        Transform(
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.003)
+            ..rotateX(pi / 2 * frontK - pi / 2),
+          alignment: FractionalOffset.centerRight,
+          child: children[4],
+        ),
+// Bottom side
+        Transform(
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.003)
+            ..rotateX(pi / 2 * frontK + pi / 2),
+          alignment: FractionalOffset.centerRight,
+          child: children[5],
+        ),
+      ],
+    );
   }
 }

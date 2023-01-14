@@ -15,6 +15,7 @@ import '../utils/prefs.dart';
 import '../widgets/field/field_projection.dart';
 import '../data/trees.dart';
 import 'explain_page.dart';
+import 'game_page_layersV1.dart';
 
 class LevelPageV4 extends StatefulWidget {
   const LevelPageV4({Key? key}) : super(key: key);
@@ -56,9 +57,14 @@ class _LevelPageV4State extends State<LevelPageV4> with TickerProviderStateMixin
           children: [
             Align(
               alignment: const Alignment(0.02, -0.5),
-              child: SvgPicture.asset(
-                "assets/logo_1.svg",
-                height: Style.blockH * 7,
+              child: GestureDetector(
+                onTap: () => setState(() {
+                  List.generate(4, (i) => i).forEach((i) => Prefs.setInt(i.toString(), 0));
+                }),
+                child: SvgPicture.asset(
+                  "assets/logo_1.svg",
+                  height: Style.blockH * 7,
+                ),
               ),
             ),
             //chose level
@@ -70,37 +76,37 @@ class _LevelPageV4State extends State<LevelPageV4> with TickerProviderStateMixin
                   onPageChanged: choseLevel,
                   controller: levelsController,
                   children: levelsNames
-                      .map((e) =>
-                      SizedBox(
-                        height: Style.blockH,
-                        child: Center(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                e,
-                                style: GoogleFonts.josefinSans(
-                                    fontSize: Style.blockM * 1.3,
-                                    fontWeight: FontWeight.w800,
-                                    color: Style.primaryColor),
-                              ), SizedBox(
-                                width: Style.block * 0.5,),
-                              SizedBox(
-                                width: Style.block * 0.5,
-                                height: Style.block * 0.5,
-
-                                child: CircularProgressIndicator(
-                                  value: ((Prefs.getInt(level.toString()) ?? 0) - 1) /
-                                      trees[level].length,
-                                  color: Style.accentColor,
-                                  backgroundColor: Style.primaryColor,
-                                  strokeWidth: 2.5,
-                                ),
+                      .map((e) => SizedBox(
+                            height: Style.blockH,
+                            child: Center(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    e,
+                                    style: GoogleFonts.josefinSans(
+                                        fontSize: Style.blockM * 1.3,
+                                        fontWeight: FontWeight.w800,
+                                        color: Style.primaryColor),
+                                  ),
+                                  SizedBox(
+                                    width: Style.block * 0.5,
+                                  ),
+                                  SizedBox(
+                                    width: Style.block * 0.5,
+                                    height: Style.block * 0.5,
+                                    child: CircularProgressIndicator(
+                                      value: ((Prefs.getInt(level.toString()) ?? 0) - 1) /
+                                          trees[level].length,
+                                      color: Style.accentColor,
+                                      backgroundColor: Style.primaryColor,
+                                      strokeWidth: 2.5,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
-                      ))
+                            ),
+                          ))
                       .toList(),
                 ),
               ),
@@ -119,14 +125,14 @@ class _LevelPageV4State extends State<LevelPageV4> with TickerProviderStateMixin
                           begin: Alignment.centerRight,
                           end: Alignment.centerLeft,
                           colors: [
-                            Colors.white,
-                            Colors.white,
-                            Colors.white.withOpacity(0),
-                            Colors.white.withOpacity(0),
-                            Colors.white.withOpacity(0),
-                            Colors.white,
-                            Colors.white
-                          ])),
+                        Colors.white,
+                        Colors.white,
+                        Colors.white.withOpacity(0),
+                        Colors.white.withOpacity(0),
+                        Colors.white.withOpacity(0),
+                        Colors.white,
+                        Colors.white
+                      ])),
                 ),
               ),
             ),
@@ -137,11 +143,10 @@ class _LevelPageV4State extends State<LevelPageV4> with TickerProviderStateMixin
                 color: Style.backgroundColor,
                 child: IconButton(
                   icon: const Icon(Icons.arrow_back_ios_new),
-                  onPressed: () =>
-                      levelsController.previousPage(
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.easeInCubic,
-                      ),
+                  onPressed: () => levelsController.previousPage(
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInCubic,
+                  ),
                   splashRadius: 24,
                 ),
               ),
@@ -152,11 +157,10 @@ class _LevelPageV4State extends State<LevelPageV4> with TickerProviderStateMixin
                 color: Style.backgroundColor,
                 child: IconButton(
                   icon: const Icon(Icons.arrow_forward_ios),
-                  onPressed: () =>
-                      levelsController.nextPage(
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.easeInCubic,
-                      ),
+                  onPressed: () => levelsController.nextPage(
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInCubic,
+                  ),
                   splashRadius: 24,
                 ),
               ),
@@ -208,11 +212,13 @@ class _LevelPageV4State extends State<LevelPageV4> with TickerProviderStateMixin
                     backgroundColor: MaterialStateProperty.all(Style.accentColor),
                     overlayColor: MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
                     elevation: MaterialStateProperty.all(0)),
-                onPressed: () =>
-                    Navigator.push(
-                      context,
-                      Style.pageRouteBuilder(GamePage(level: level)),
-                    ),
+                onPressed: () => Navigator.push(
+                  context,
+                  Style.pageRouteBuilder(GamePage(
+                    level: level,
+                    layerNum: level == 3 ? 2 : 1,
+                  )),
+                ),
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(Style.blockM * 2.5, Style.blockM * 0.7,
                       Style.blockM * 2.2, Style.blockM * 0.3),

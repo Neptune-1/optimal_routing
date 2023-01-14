@@ -285,6 +285,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                       const GamePage(
                         example: true,
                         level: 2,
+                        layerNum: 2,
                       ),
                       Align(
                         alignment: const Alignment(0, 0.65),
