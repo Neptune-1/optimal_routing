@@ -58,7 +58,7 @@ class _P4State extends State<P4> {
               width: pointDiameter * (lights[index] ? 1 : 0.7),
               height: pointDiameter * (lights[index] ? 1 : 0.7),
               decoration: BoxDecoration(
-                  color: lights[index] ? Style.accentColor : Style.primaryColor,
+                  color: lights[index] ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.primary,
                   shape: BoxShape.circle),
             ),
           ),

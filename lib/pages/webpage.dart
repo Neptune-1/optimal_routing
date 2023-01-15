@@ -54,12 +54,12 @@ class _WebsiteState extends State<Website> {
     return Container(
       width: blockM * 9,
       height: blockM * 9,
-      decoration: BoxDecoration(shape: BoxShape.circle, color: Style.accentColor),
+      decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).colorScheme.secondary),
       child: Center(
         child: Container(
           width: blockM * 2,
           height: blockM * 2,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: Style.primaryColor),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).colorScheme.primary),
         ),
       ),
     );
@@ -96,21 +96,21 @@ class _WebsiteState extends State<Website> {
                   child: Transform.rotate(
                       angle: pi * 0.151,
                       child: Container(
-                          color: Style.primaryColor, width: block * 19.5, height: block * 0.3))),
+                          color: Theme.of(context).colorScheme.primary, width: block * 19.5, height: block * 0.3))),
               Positioned(
                   left: blockM * 23.5,
                   top: blockH * 4.5 + blockM * 10,
                   child: Transform.rotate(
                       angle: pi * 0.65,
                       child: Container(
-                          color: Style.primaryColor, width: block * 8.5, height: block * 0.3))),
+                          color: Theme.of(context).colorScheme.primary, width: block * 8.5, height: block * 0.3))),
               Positioned(
                   left: blockM * 8.6,
                   top: blockH + blockM * 9,
                   child: Transform.rotate(
                       angle: pi * 0.015,
                       child: Container(
-                          color: Style.primaryColor, width: block * 22, height: block * 0.3))),
+                          color: Theme.of(context).colorScheme.primary, width: block * 22, height: block * 0.3))),
               Center(
                   child: frostedContainer(
                       Size(

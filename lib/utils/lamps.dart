@@ -51,7 +51,7 @@ class TipsBottomSheetState extends State<TipsBottomSheet> {
       width: Style.block * 20,
       height: Style.blockH * 8,
       decoration: BoxDecoration(
-        color: Style.backgroundColor,
+        color: Theme.of(context).colorScheme.background,
         borderRadius: BorderRadius.circular(Style.blockM * 0.5),
       ),
       child: Padding(
@@ -65,7 +65,7 @@ class TipsBottomSheetState extends State<TipsBottomSheet> {
                 Icon(
                   Icons.lightbulb,
                   size: Style.blockM * 1.1,
-                  color: Style.primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 SizedBox(
                   width: Style.blockM * 0.3,
@@ -74,7 +74,7 @@ class TipsBottomSheetState extends State<TipsBottomSheet> {
                     style: GoogleFonts.josefinSans(
                         fontSize: Style.blockM * 1,
                         fontWeight: FontWeight.w800,
-                        color: Style.primaryColor))
+                        color: Theme.of(context).colorScheme.primary))
               ],
             ),
             Column(
@@ -94,13 +94,13 @@ class TipsBottomSheetState extends State<TipsBottomSheet> {
                                     style: GoogleFonts.josefinSans(
                                         fontSize: Style.blockM * 1,
                                         fontWeight: FontWeight.w800,
-                                        color: Style.primaryColor)),
+                                        color: Theme.of(context).colorScheme.primary)),
                                 Icon(
                                   Icons.lightbulb,
                                   size: Style.blockM * 1.1,
                                   color: (Prefs.getInt("lamps") ?? 0) >= costs[index]
-                                      ? Style.accentColor
-                                      : Style.primaryColor,
+                                      ? Theme.of(context).colorScheme.secondary
+                                      : Theme.of(context).colorScheme.primary,
                                 ),
                                 SizedBox(
                                   width: Style.blockM * 0.3,
@@ -109,7 +109,7 @@ class TipsBottomSheetState extends State<TipsBottomSheet> {
                                     style: GoogleFonts.josefinSans(
                                         fontSize: Style.blockM * 1,
                                         fontWeight: FontWeight.w800,
-                                        color: Style.primaryColor))
+                                        color: Theme.of(context).colorScheme.primary))
                               ],
                             ),
                           ),
@@ -121,8 +121,8 @@ class TipsBottomSheetState extends State<TipsBottomSheet> {
                   )),
                   minimumSize: MaterialStateProperty.all(Size.zero),
                   padding: MaterialStateProperty.all(EdgeInsets.zero),
-                  backgroundColor: MaterialStateProperty.all(Style.primaryColor),
-                  overlayColor: MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
+                  backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.primary),
+                  overlayColor: MaterialStateProperty.all(Theme.of(context).colorScheme.secondary.withOpacity(0.1)),
                   elevation: MaterialStateProperty.all(0)),
               onPressed: () => Ads.showPreAdDialog(
                   context,
@@ -140,11 +140,11 @@ class TipsBottomSheetState extends State<TipsBottomSheet> {
                         style: GoogleFonts.josefinSans(
                             fontSize: Style.blockM * 1.4,
                             fontWeight: FontWeight.w800,
-                            color: Style.secondaryColor)),
+                            color: Theme.of(context).colorScheme.secondary)),
                     Icon(
                       Icons.lightbulb,
                       size: Style.blockM * 1.1,
-                      color: Style.secondaryColor,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                   ],
                 ),

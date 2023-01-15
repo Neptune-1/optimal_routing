@@ -1,8 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+\import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../consts/styles.dart';
 
@@ -28,7 +27,7 @@ class Ads {
               height: Style.blockH * 5,
               width: Style.blockM * 13,
               decoration: BoxDecoration(
-                  color: Style.secondaryColor,
+                  color: Theme.of(context).colorScheme.secondary,
                   borderRadius: BorderRadius.circular(Style.blockM * 0.5)),
               child: Column(children: [
                 SizedBox(
@@ -37,10 +36,11 @@ class Ads {
                     child: rewardedAd == null
                         ? Text(
                             "Sure?",
-                            style: Style.getTextStyle_2(),
+                            style: Style.getTextStyle_2(context: context),
                           )
-                        : SvgPicture.asset(
-                            "assets/ads_icon_1.svg",
+                        : Style.coloredSVG(
+                            path: "assets/ads_icon_1.svg",
+                            context: context,
                             width: Style.blockH * 1.7,
                             height: Style.blockH * 1.7,
                           ),
@@ -50,7 +50,7 @@ class Ads {
                   height: Style.blockH * 2.2,
                   width: Style.blockM * 13,
                   decoration: BoxDecoration(
-                      color: Style.accentColor,
+                      color: Theme.of(context).colorScheme.secondary,
                       borderRadius:
                           BorderRadius.vertical(bottom: Radius.circular(Style.blockM * 0.5))),
                   child: Stack(
@@ -84,7 +84,7 @@ class Ads {
                             height: Style.blockH * 2.2,
                             width: Style.blockM * 0.1,
                             decoration: BoxDecoration(
-                              color: Style.primaryColor.withOpacity(0.3),
+                              color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                             )),
                       )
                     ],

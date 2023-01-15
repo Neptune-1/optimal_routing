@@ -2,35 +2,24 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-//import 'dart:html' as html;
 class Style {
   static late double block;
   static late double blockH;
   static late double blockM;
 
-  static Color backgroundColor = secondaryColor;
-
-  static Color primaryColor = Colors.black;
-  static Color deactivatedColor = Colors.grey;
-  static Color secondaryColor = Colors.white;
-  static Color accentColor = Colors.amber[500]!;
   static bool wideScreen = false;
 
-  static toPallet1() {
-    primaryColor = Colors.white;
-    secondaryColor = Colors.grey.shade900;
-    accentColor = Colors.cyanAccent.shade200;
-    backgroundColor = secondaryColor;
-  }
-
-  static toPallet0() {
-    primaryColor = Colors.black;
-    secondaryColor = Colors.white;
-    accentColor = Colors.amber[500]!;
-    backgroundColor = secondaryColor;
-  }
+  static ThemeData theme1 = ThemeData(
+    // Define the default brightness and colors.
+    brightness: Brightness.light,
+    primaryColor: Colors.black,
+    colorScheme: ThemeData()
+        .colorScheme
+        .copyWith(secondary: Colors.amber[500]!, primary: Colors.black, background: Colors.white),
+  );
 
   static pageRouteBuilder(Widget page) {
     return PageRouteBuilder(
@@ -55,21 +44,21 @@ class Style {
     );
   }
 
-  static getTextStyle_1({Color? color}) {
-    color ??= primaryColor;
+  static getTextStyle_1({Color? color, required BuildContext context}) {
+    color ??= Theme.of(context).colorScheme.primary;
     return GoogleFonts.josefinSans(
         fontSize: Style.blockM * 1, fontWeight: FontWeight.w800, color: color);
   }
 
-  static getTextStyle_2() {
+  static getTextStyle_2({required BuildContext context}) {
     return GoogleFonts.josefinSans(
         fontSize: Style.blockM * 1.5,
         fontWeight: FontWeight.w800,
-        color: primaryColor,
+        color: Theme.of(context).colorScheme.primary,
         decoration: TextDecoration.none);
   }
 
-  static getTextStyle_3({Color color = Colors.black}) {
+  static getTextStyle_3({Color color = Colors.black, required BuildContext context}) {
     return GoogleFonts.josefinSans(
         fontSize: Style.blockM * 1.5,
         fontWeight: FontWeight.w800,
@@ -77,7 +66,7 @@ class Style {
         decoration: TextDecoration.none);
   }
 
-  static changeStatusBarColor() {
+  static changeStatusBarColor(BuildContext context) {
     bool dark = true;
 
     if (Platform.isIOS) dark = !dark;
@@ -86,7 +75,7 @@ class Style {
       statusBarColor: Colors.transparent,
       statusBarBrightness: dark ? Brightness.dark : Brightness.light,
       statusBarIconBrightness: dark ? Brightness.dark : Brightness.light,
-    ).copyWith(systemNavigationBarColor: Style.backgroundColor));
+    ).copyWith(systemNavigationBarColor: Theme.of(context).colorScheme.background));
   }
 
   static init(BuildContext context) {
@@ -103,5 +92,23 @@ class Style {
       wideScreen = true;
       blockM /= 1.5;
     }
+  }
+
+  static Widget coloredSVG(
+      {required String path, required BuildContext context, double? width, double? height}) {
+    return FutureBuilder<String>(
+        future: DefaultAssetBundle.of(context).loadString(path),
+        builder: (context, snapshot) {
+          return SvgPicture.string(
+            (snapshot.data ??
+                    "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1 1\"></svg>")
+                .replaceAll("#000000",
+                    '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).padLeft(6, '0').toUpperCase()}')
+                .replaceAll("#FFFFFF",
+                    '#${Theme.of(context).colorScheme.secondary.value.toRadixString(16).padLeft(6, '0').toUpperCase()}'),
+            height: height,
+            width: width,
+          );
+        });
   }
 }

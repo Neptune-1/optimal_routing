@@ -348,14 +348,14 @@ class _FieldState extends State<Field> {
                                       width: lineThick,
                                       decoration: BoxDecoration(
                                           color: showedRoutesV[currentLayer][x ~/ 2][y ~/ 2]
-                                              ? Style.accentColor
+                                              ? Theme.of(context).colorScheme.secondary
                                               : (routesV[currentLayer][x ~/ 2][y ~/ 2]
                                                   ? (routeIsConnected
-                                                      ? Style.accentColor
-                                                      : Style.primaryColor.withOpacity(1))
+                                                      ? Theme.of(context).colorScheme.secondary
+                                                      : Theme.of(context).colorScheme.primary.withOpacity(1))
                                                   : (isGameOver
                                                       ? Colors.transparent
-                                                      : Style.primaryColor.withOpacity(
+                                                      : Theme.of(context).colorScheme.primary.withOpacity(
                                                           widget.showLines ? 0.1 : 0))),
                                           borderRadius: BorderRadius.circular(100))),
                                 ),
@@ -380,14 +380,14 @@ class _FieldState extends State<Field> {
                                       height: lineThick,
                                       decoration: BoxDecoration(
                                           color: showedRoutesH[currentLayer][x ~/ 2][y ~/ 2]
-                                              ? Style.accentColor
+                                              ? Theme.of(context).colorScheme.secondary
                                               : (routesH[currentLayer][x ~/ 2][y ~/ 2]
                                                   ? (routeIsConnected
-                                                      ? Style.accentColor
-                                                      : Style.primaryColor.withOpacity(1))
+                                                      ? Theme.of(context).colorScheme.secondary
+                                                      : Theme.of(context).colorScheme.primary.withOpacity(1))
                                                   : (isGameOver
                                                       ? Colors.transparent
-                                                      : Style.primaryColor.withOpacity(
+                                                      : Theme.of(context).colorScheme.primary.withOpacity(
                                                           widget.showLines ? 0.1 : 0))),
                                           borderRadius: BorderRadius.circular(100))),
                                 ),
@@ -414,19 +414,19 @@ class _FieldState extends State<Field> {
                                                 .isPointInList(chosenPoints[currentLayer])
                                             ? (routeIsConnected
                                                 ? (isGameOver
-                                                    ? Style.accentColor
-                                                    : Style.primaryColor)
-                                                : Style.accentColor)
+                                                    ? Theme.of(context).colorScheme.secondary
+                                                    : Theme.of(context).colorScheme.primary)
+                                                : Theme.of(context).colorScheme.secondary)
                                             : (((Point(x ~/ 2, y ~/ 2).isPointInList(chosenPoints[currentLayer])) ||
                                                     points[currentLayer][x ~/ 2][y ~/ 2])
                                                 ? (routeIsConnected
-                                                    ? Style.accentColor
+                                                    ? Theme.of(context).colorScheme.secondary
                                                     : (isGameOver
-                                                        ? Style.accentColor
-                                                        : Style.primaryColor))
+                                                        ? Theme.of(context).colorScheme.secondary
+                                                        : Theme.of(context).colorScheme.primary))
                                                 : (isGameOver
-                                                    ? Style.primaryColor.withOpacity(1)
-                                                    : Style.primaryColor.withOpacity(0.5)))),
+                                                    ? Theme.of(context).colorScheme.primary.withOpacity(1)
+                                                    : Theme.of(context).colorScheme.primary.withOpacity(0.5)))),
                                         shape: BoxShape.circle)),
                               ),
                             ),

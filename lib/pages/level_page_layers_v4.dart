@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:optimal_routing/pages/game_page_layers.dart';
@@ -12,10 +10,8 @@ import 'package:optimal_routing/pages/game_page_layers.dart';
 import '../consts/styles.dart';
 import '../data_structures.dart';
 import '../utils/prefs.dart';
-import '../widgets/field/field_projection.dart';
 import '../data/trees.dart';
 import 'explain_page.dart';
-import 'game_page_layersV1.dart';
 
 class LevelPageV4 extends StatefulWidget {
   const LevelPageV4({Key? key}) : super(key: key);
@@ -52,7 +48,7 @@ class _LevelPageV4State extends State<LevelPageV4> with TickerProviderStateMixin
   Widget build(BuildContext context) {
     Style.init(context);
     return Scaffold(
-        backgroundColor: Style.backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: Stack(
           children: [
             Align(
@@ -61,8 +57,9 @@ class _LevelPageV4State extends State<LevelPageV4> with TickerProviderStateMixin
                 onTap: () => setState(() {
                   List.generate(4, (i) => i).forEach((i) => Prefs.setInt(i.toString(), 0));
                 }),
-                child: SvgPicture.asset(
-                  "assets/logo_1.svg",
+                child: Style.coloredSVG(
+                  path: "assets/logo_1.svg",
+                  context: context,
                   height: Style.blockH * 7,
                 ),
               ),
@@ -87,7 +84,7 @@ class _LevelPageV4State extends State<LevelPageV4> with TickerProviderStateMixin
                                     style: GoogleFonts.josefinSans(
                                         fontSize: Style.blockM * 1.3,
                                         fontWeight: FontWeight.w800,
-                                        color: Style.primaryColor),
+                                        color: Theme.of(context).colorScheme.primary),
                                   ),
                                   SizedBox(
                                     width: Style.block * 0.5,
@@ -98,9 +95,9 @@ class _LevelPageV4State extends State<LevelPageV4> with TickerProviderStateMixin
                                     child: CircularProgressIndicator(
                                       value: ((Prefs.getInt(level.toString()) ?? 0) - 1) /
                                           trees[level].length,
-                                      color: Style.accentColor,
-                                      backgroundColor: Style.primaryColor,
-                                      strokeWidth: 2.5,
+                                      color: Theme.of(context).colorScheme.secondary,
+                                      backgroundColor: Theme.of(context).colorScheme.primary,
+                                      strokeWidth: Style.block*0.13,
                                     ),
                                   ),
                                 ],
@@ -125,13 +122,13 @@ class _LevelPageV4State extends State<LevelPageV4> with TickerProviderStateMixin
                           begin: Alignment.centerRight,
                           end: Alignment.centerLeft,
                           colors: [
-                        Colors.white,
-                        Colors.white,
-                        Colors.white.withOpacity(0),
-                        Colors.white.withOpacity(0),
-                        Colors.white.withOpacity(0),
-                        Colors.white,
-                        Colors.white
+                        Theme.of(context).colorScheme.background,
+                        Theme.of(context).colorScheme.background,
+                        Theme.of(context).colorScheme.background.withOpacity(0),
+                        Theme.of(context).colorScheme.background.withOpacity(0),
+                        Theme.of(context).colorScheme.background.withOpacity(0),
+                        Theme.of(context).colorScheme.background,
+                        Theme.of(context).colorScheme.background
                       ])),
                 ),
               ),
@@ -140,9 +137,12 @@ class _LevelPageV4State extends State<LevelPageV4> with TickerProviderStateMixin
             Align(
               alignment: const Alignment(-0.9, 0.4),
               child: Material(
-                color: Style.backgroundColor,
+                color: Theme.of(context).colorScheme.background,
                 child: IconButton(
-                  icon: const Icon(Icons.arrow_back_ios_new),
+                  icon: Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   onPressed: () => levelsController.previousPage(
                     duration: const Duration(milliseconds: 500),
                     curve: Curves.easeInCubic,
@@ -154,9 +154,12 @@ class _LevelPageV4State extends State<LevelPageV4> with TickerProviderStateMixin
             Align(
               alignment: const Alignment(0.9, 0.4),
               child: Material(
-                color: Style.backgroundColor,
+                color: Theme.of(context).colorScheme.background,
                 child: IconButton(
-                  icon: const Icon(Icons.arrow_forward_ios),
+                  icon: Icon(
+                    Icons.arrow_forward_ios,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   onPressed: () => levelsController.nextPage(
                     duration: const Duration(milliseconds: 500),
                     curve: Curves.easeInCubic,
@@ -209,8 +212,10 @@ class _LevelPageV4State extends State<LevelPageV4> with TickerProviderStateMixin
                     ),
                     minimumSize: MaterialStateProperty.all(Size.zero),
                     padding: MaterialStateProperty.all(EdgeInsets.zero),
-                    backgroundColor: MaterialStateProperty.all(Style.accentColor),
-                    overlayColor: MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
+                    backgroundColor:
+                        MaterialStateProperty.all(Theme.of(context).colorScheme.secondary),
+                    overlayColor: MaterialStateProperty.all(
+                        Theme.of(context).colorScheme.secondary.withOpacity(0.1)),
                     elevation: MaterialStateProperty.all(0)),
                 onPressed: () => Navigator.push(
                   context,
@@ -227,7 +232,7 @@ class _LevelPageV4State extends State<LevelPageV4> with TickerProviderStateMixin
                     style: GoogleFonts.josefinSans(
                         fontSize: Style.blockM * 1.3,
                         fontWeight: FontWeight.w800,
-                        color: Style.primaryColor),
+                        color: Theme.of(context).colorScheme.primary),
                   ),
                 ),
               ),
@@ -242,7 +247,7 @@ class _LevelPageV4State extends State<LevelPageV4> with TickerProviderStateMixin
                   style: GoogleFonts.josefinSans(
                       fontSize: Style.blockM * 1,
                       fontWeight: FontWeight.w500,
-                      color: Style.primaryColor),
+                      color: Theme.of(context).colorScheme.primary),
                 ),
               ),
             ),

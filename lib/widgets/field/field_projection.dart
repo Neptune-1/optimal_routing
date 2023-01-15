@@ -109,11 +109,11 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
                                   decoration: BoxDecoration(
                                       color: routesV[thisLayerNum][x ~/ 2][y ~/ 2]
                                           ? (routeIsConnected
-                                              ? Style.accentColor
-                                              : Style.primaryColor.withOpacity(1))
+                                              ? Theme.of(context).colorScheme.secondary
+                                              : Theme.of(context).colorScheme.primary.withOpacity(1))
                                           : (isGameOver
                                               ? Colors.transparent
-                                              : Style.primaryColor.withOpacity(0)),
+                                              : Theme.of(context).colorScheme.primary.withOpacity(0)),
                                       borderRadius: BorderRadius.circular(100))),
                             ),
                           ),
@@ -134,11 +134,11 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
                                   decoration: BoxDecoration(
                                       color: routesH[thisLayerNum][x ~/ 2][y ~/ 2]
                                           ? (routeIsConnected
-                                              ? Style.accentColor
-                                              : Style.primaryColor.withOpacity(1))
+                                              ? Theme.of(context).colorScheme.secondary
+                                              : Theme.of(context).colorScheme.primary.withOpacity(1))
                                           : (isGameOver
                                               ? Colors.transparent
-                                              : Style.primaryColor.withOpacity(0)),
+                                              : Theme.of(context).colorScheme.primary.withOpacity(0)),
                                       borderRadius: BorderRadius.circular(100))),
                             ),
                           )
@@ -162,20 +162,20 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
                                       color: (Point(x ~/ 2, y ~/ 2).isPointInList(chosenPoints[thisLayerNum])
                                           ? (routeIsConnected
                                               ? (isGameOver
-                                                  ? Style.accentColor
-                                                  : Style.primaryColor)
-                                              : Style.accentColor)
+                                                  ? Theme.of(context).colorScheme.secondary
+                                                  : Theme.of(context).colorScheme.primary)
+                                              : Theme.of(context).colorScheme.secondary)
                                           : (((Point(x ~/ 2, y ~/ 2)
                                                       .isPointInList(chosenPoints[thisLayerNum])) ||
                                                   points[thisLayerNum][x ~/ 2][y ~/ 2])
                                               ? (routeIsConnected
-                                                  ? Style.accentColor
+                                                  ? Theme.of(context).colorScheme.secondary
                                                   : (isGameOver
-                                                      ? Style.accentColor
-                                                      : Style.primaryColor))
+                                                      ? Theme.of(context).colorScheme.secondary
+                                                      : Theme.of(context).colorScheme.primary))
                                               : (isGameOver
-                                                  ? Style.primaryColor.withOpacity(1)
-                                                  : Style.primaryColor.withOpacity(0.5)))),
+                                                  ? Theme.of(context).colorScheme.primary.withOpacity(1)
+                                                  : Theme.of(context).colorScheme.primary.withOpacity(0.5)))),
                                       shape: BoxShape.circle)),
                             ),
                           ),
@@ -244,7 +244,7 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
                                   height:
                                       showedPointDiameter * (supportPoints[x ~/ 2][y ~/ 2] ? 1 : 0),
                                   decoration: BoxDecoration(
-                                      color: Style.accentColor
+                                      color: Theme.of(context).colorScheme.secondary
                                           .withOpacity(supportPoints[x ~/ 2][y ~/ 2] ? 0.7 : 0),
                                       shape: BoxShape.circle)),
                             ),
@@ -265,17 +265,17 @@ class _FieldProjectionState extends State<FieldProjection> with SingleTickerProv
             boxShadow: [
               BoxShadow(
                   color: selected
-                      ? Style.accentColor.withOpacity(0.2)
-                      : Colors.black.withOpacity(0.08),
+                      ? Theme.of(context).colorScheme.secondary.withOpacity(0.2)
+                      : Theme.of(context).colorScheme.primary.withOpacity(0.08),
                   blurRadius: Style.blockM * 0.5,
                   blurStyle: BlurStyle.outer),
             ],
             color: viewFromBottom
                 ? const Color(0xffeeeeee).withOpacity(0.8)
-                : Style.secondaryColor.withOpacity(0.8),
+                : Theme.of(context).colorScheme.background.withOpacity(0.8),
             border: Border.all(
               width: Style.blockM * 0.1,
-              color: Style.accentColor.withOpacity(selected ? 1 : 0),
+              color: Theme.of(context).colorScheme.secondary.withOpacity(selected ? 1 : 0),
               style: BorderStyle.solid,
             ),
           ),

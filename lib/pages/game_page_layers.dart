@@ -131,8 +131,8 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                                     height: Style.blockM * 0.6,
                                     decoration: BoxDecoration(
                                         color: (snapshot.data ?? 0) == layerNum
-                                            ? Style.accentColor
-                                            : Style.primaryColor,
+                                            ? Theme.of(context).colorScheme.secondary
+                                            : Theme.of(context).colorScheme.primary,
                                         borderRadius: BorderRadius.circular(Style.blockM * 0.3)),
                                   ),
                                 )),
@@ -156,7 +156,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                               style: GoogleFonts.josefinSans(
                                   fontSize: Style.blockM * 0.8,
                                   fontWeight: FontWeight.w800,
-                                  color: Style.primaryColor),
+                                  color: Theme.of(context).colorScheme.primary),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -171,10 +171,10 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     Style.init(context);
     return Scaffold(
-        backgroundColor: Style.backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: SafeArea(
           child: AnimatedContainer(
-            color: Style.backgroundColor,
+            color: Theme.of(context).colorScheme.background,
             duration: const Duration(milliseconds: 2000),
             child: Stack(children: [
               Padding(
@@ -202,7 +202,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                                   : Icon(
                                       Icons.arrow_back_ios,
                                       size: Style.blockM * 1.2,
-                                      color: Style.primaryColor,
+                                      color: Theme.of(context).colorScheme.primary,
                                     ),
                             ),
                           ),
@@ -240,7 +240,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                                             child: Icon(
                                               Icons.cached,
                                               size: Style.blockM * 1.2,
-                                              color: Style.primaryColor,
+                                              color: Theme.of(context).colorScheme.primary,
                                             ),
                                           );
                                         }),
@@ -263,7 +263,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                                                   height: Style.blockM * 1.4,
                                                   child: CircularProgressIndicator(
                                                     value: 1 - controller.value,
-                                                    color: Style.primaryColor,
+                                                    color: Theme.of(context).colorScheme.primary,
                                                     strokeWidth: Style.blockM * 0.1,
                                                   ),
                                                 ));
@@ -274,7 +274,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                                               onTap: () => Lamps.showBottomSheet(context, showTip),
                                               child: Icon(Icons.lightbulb,
                                                   size: Style.blockM * 1.1,
-                                                  color: Style.primaryColor),
+                                                  color: Theme.of(context).colorScheme.primary),
                                             ),
                                           ),
                                         ],
@@ -372,9 +372,9 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                                                 minimumSize: MaterialStateProperty.all(Size.zero),
                                                 padding: MaterialStateProperty.all(EdgeInsets.zero),
                                                 backgroundColor:
-                                                    MaterialStateProperty.all(Style.primaryColor),
+                                                    MaterialStateProperty.all(Theme.of(context).colorScheme.primary),
                                                 overlayColor: MaterialStateProperty.all(
-                                                    Style.secondaryColor.withOpacity(0.1)),
+                                                    Theme.of(context).colorScheme.secondary.withOpacity(0.1)),
                                                 elevation: MaterialStateProperty.all(0)),
                                             onPressed: () {
                                               trees[widget.level].length - 1 == gameNum
@@ -392,7 +392,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                                                   style: GoogleFonts.josefinSans(
                                                       fontSize: Style.blockM * 1.4,
                                                       fontWeight: FontWeight.w800,
-                                                      color: Style.secondaryColor)),
+                                                      color: Theme.of(context).colorScheme.secondary)),
                                             ),
                                           )
                                         : Container());
@@ -414,7 +414,7 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                             style: GoogleFonts.josefinSans(
                                 fontSize: Style.blockM * 0.7,
                                 fontWeight: FontWeight.w800,
-                                color: Style.primaryColor),
+                                color: Theme.of(context).colorScheme.primary),
                           ),
                         ),
                       ))

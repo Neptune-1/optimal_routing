@@ -1,8 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+\import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:optimal_routing/pages/explain_page.dart';
 import 'package:optimal_routing/pages/game_page_layers.dart';
 import 'package:optimal_routing/pages/level_page_layers_v4.dart';
@@ -45,7 +44,6 @@ void main() async {
     },
     appRunner: () => runApp(const MyApp()),
   );
-  if (!kIsWeb) Style.changeStatusBarColor();
 }
 
 class MyApp extends StatelessWidget {
@@ -57,15 +55,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Routes',
-      theme: ThemeData(
-        primarySwatch: Colors.amber,
-      ),
+      theme: Style.theme1,
       home: Builder(
         builder: (BuildContext context) {
           Style.init(context);
+          if (!kIsWeb) Style.changeStatusBarColor(context);
+
           return kIsWeb
               ? const GamePage(level: 0)
               : ((Prefs.getBool("new") ?? true) ? const ExplainPage() : const LevelPageV4());

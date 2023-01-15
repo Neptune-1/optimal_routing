@@ -1,8 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
+\import 'package:google_fonts/google_fonts.dart';
 import 'package:optimal_routing/data_structures.dart';
 import 'package:optimal_routing/pages/game_page_layers.dart';
 import 'package:optimal_routing/widgets/field/field_projection.dart';
@@ -117,10 +116,10 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
       duration: const Duration(milliseconds: 300),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(Style.blockM * 0.5),
-        color: Colors.white.withOpacity(0.1),
+        color: Theme.of(context).colorScheme.background.withOpacity(0.1),
         border: Border.all(
           width: Style.blockM * 0.15,
-          color: Style.accentColor.withOpacity(activate ? 1 : 0),
+          color: Theme.of(context).colorScheme.secondary.withOpacity(activate ? 1 : 0),
           style: BorderStyle.solid,
         ),
       ),
@@ -142,7 +141,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     Style.init(context);
     return Scaffold(
-        backgroundColor: Style.backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: SafeArea(
           child: Stack(
             children: [
@@ -158,7 +157,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                       ),
                       Text(
                         "How to play?",
-                        style: Style.getTextStyle_2(),
+                        style: Style.getTextStyle_2(context: context),
                       ),
                       SizedBox(
                         height: Style.blockH * 4,
@@ -169,10 +168,13 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                           children: [
                             TextSpan(
                                 text: "yellow",
-                                style: Style.getTextStyle_1(color: Style.accentColor)),
+                                style: Style.getTextStyle_1(
+                                    color: Theme.of(context).colorScheme.secondary,
+                                    context: context)),
                             const TextSpan(text: " dots")
                           ],
-                          style: Style.getTextStyle_1(color: Style.primaryColor),
+                          style: Style.getTextStyle_1(
+                              color: Theme.of(context).colorScheme.primary, context: context),
                         ),
                       ),
                       SizedBox(
@@ -196,28 +198,30 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                       ),
                       Text(
                         "BUT",
-                        style: Style.getTextStyle_2(),
+                        style: Style.getTextStyle_2(context: context),
                       ),
                       SizedBox(
                         height: Style.blockH * 1,
                       ),
                       Text(
                         "You can use only a definite number of lines",
-                        style: Style.getTextStyle_1(),
+                        style: Style.getTextStyle_1(context: context),
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(
                         height: Style.blockH * 2,
                       ),
-                      SvgPicture.asset(
-                        "assets/explain_1_page_0.svg",
+                      Style.coloredSVG(
+                        path: "assets/explain_1_page_0.svg",
+                        context: context,
                         height: Style.blockH * 2.5,
                       ),
                       SizedBox(
                         height: Style.blockH * 2.5,
                       ),
-                      SvgPicture.asset(
-                        "assets/explain_1_page_1.svg",
+                      Style.coloredSVG(
+                        path: "assets/explain_1_page_1.svg",
+                        context: context,
                         height: Style.blockH * 3,
                       )
                     ],
@@ -246,7 +250,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                       ),
                       Text(
                         "Too easy?",
-                        style: Style.getTextStyle_2(),
+                        style: Style.getTextStyle_2(context: context),
                       ),
                       SizedBox(
                         height: Style.blockH * 0.5,
@@ -254,7 +258,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                       Text(
                         "Imagine you have 2 fields,\n which are connected",
                         textAlign: TextAlign.center,
-                        style: Style.getTextStyle_1(),
+                        style: Style.getTextStyle_1(context: context),
                       ),
                       SizedBox(
                         height: Style.blockH * 0.5,
@@ -262,6 +266,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                       Icon(
                         Icons.swipe,
                         size: Style.blockM,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                       SizedBox(
                         height: Style.blockH * 0.5,
@@ -274,8 +279,9 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                       SizedBox(
                         height: Style.blockH * 0.5,
                       ),
-                      SvgPicture.asset(
-                        "assets/explain_3_page_1.svg",
+                      Style.coloredSVG(
+                        path: "assets/explain_3_page_1.svg",
+                        context: context,
                         height: Style.blockH * 5,
                       )
                     ],
@@ -291,7 +297,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                         alignment: const Alignment(0, 0.65),
                         child: Text(
                           "Tip: for selection\ntap on a layer on the 3D projection",
-                          style: Style.getTextStyle_1(),
+                          style: Style.getTextStyle_1(context: context),
                           textAlign: TextAlign.center,
                         ),
                       )
@@ -309,9 +315,10 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                       )),
                       minimumSize: MaterialStateProperty.all(Size.zero),
                       padding: MaterialStateProperty.all(EdgeInsets.zero),
-                      backgroundColor: MaterialStateProperty.all(Style.primaryColor),
-                      overlayColor:
-                          MaterialStateProperty.all(Style.secondaryColor.withOpacity(0.1)),
+                      backgroundColor:
+                          MaterialStateProperty.all(Theme.of(context).colorScheme.primary),
+                      overlayColor: MaterialStateProperty.all(
+                          Theme.of(context).colorScheme.secondary.withOpacity(0.1)),
                       elevation: MaterialStateProperty.all(0)),
                   onPressed: () {
                     if ((_pageController.page)!.round() != 3) {
@@ -350,7 +357,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                               style: GoogleFonts.josefinSans(
                                   fontSize: Style.blockM * 1.4,
                                   fontWeight: FontWeight.w800,
-                                  color: Style.secondaryColor));
+                                  color: Theme.of(context).colorScheme.secondary));
                         }),
                   ),
                 ),
@@ -380,7 +387,7 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                                   child: Icon(
                                     Icons.arrow_back_ios,
                                     size: Style.blockM * 1.3,
-                                    color: Style.primaryColor,
+                                    color: Theme.of(context).colorScheme.primary,
                                   ),
                                 ),
                               )
@@ -435,7 +442,7 @@ class PageIndicator extends StatelessWidget {
                                   width: diameter * 0.5,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: Style.primaryColor,
+                                    color: Theme.of(context).colorScheme.primary,
                                   ),
                                 ),
                               ),
@@ -455,7 +462,7 @@ class PageIndicator extends StatelessWidget {
                   width: indicatorDiameter,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Style.accentColor,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
               )
