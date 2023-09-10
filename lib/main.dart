@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-\import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:optimal_routing/pages/explain_page.dart';
 import 'package:optimal_routing/pages/game_page_layers.dart';
 import 'package:optimal_routing/pages/level_page_layers_v4.dart';
@@ -42,34 +42,38 @@ void main() async {
     (options) {
       options.dsn = 'https://a8c1056062c345239476ea6986608faf@o625447.ingest.sentry.io/6255950';
     },
-    appRunner: () => runApp(const MyApp()),
+    appRunner: () => runApp(MyApp()),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final ThemeNotifier theme = ThemeNotifier(value: Style.theme1);
 
-  Future<bool> init(context) async {
-    return true;
+  MyApp({Key? key}) : super(key: key) {
+    Style.changeTheme = theme.change;
   }
 
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: theme,
+      builder: (BuildContext context, ThemeData value, Widget? child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Routes',
+          theme: value,
+          home: Builder(
+            builder: (BuildContext context) {
+              Style.init(context);
+              if (!kIsWeb) Style.changeStatusBarColor(Theme.of(context).colorScheme.background);
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Routes',
-      theme: Style.theme1,
-      home: Builder(
-        builder: (BuildContext context) {
-          Style.init(context);
-          if (!kIsWeb) Style.changeStatusBarColor(context);
-
-          return kIsWeb
-              ? const GamePage(level: 0)
-              : ((Prefs.getBool("new") ?? true) ? const ExplainPage() : const LevelPageV4());
-        },
-      ),
+              return kIsWeb
+                  ? const GamePage(level: 0)
+                  : ((Prefs.getBool("new") ?? true) ? const ExplainPage() : const LevelPageV4());
+            },
+          ),
+        );
+      },
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-\import 'package:google_fonts/google_fonts.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:optimal_routing/data_structures.dart';
 import 'package:optimal_routing/pages/game_page_layers.dart';
 import 'package:optimal_routing/widgets/field/field_projection.dart';
@@ -335,8 +335,12 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                     }
                   },
                   child: Padding(
-                    padding: EdgeInsets.symmetric(
-                        vertical: Style.blockM * 0.5, horizontal: 2.5 * Style.blockM),
+                    padding: EdgeInsets.fromLTRB(
+                      2.5 * Style.blockM,
+                      Style.blockM * 0.5,
+                      2.5 * Style.blockM,
+                      Style.blockM * 0.3,
+                    ),
                     child: AnimatedBuilder(
                         animation: _pageController,
                         builder: (context, child) {
@@ -349,7 +353,6 @@ class _ExplainPageState extends State<ExplainPage> with SingleTickerProviderStat
                                   ? "Next"
                                   : ([
                                       "Next",
-                                      // "Try",
                                       "Next",
                                       "Try",
                                       "GO",

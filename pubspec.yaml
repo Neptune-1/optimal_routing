@@ -15,7 +15,7 @@ dependencies:
   firebase_core: ^2.4.0
   firebase_analytics: ^10.0.7
 
-  google_fonts: ^3.0.1
+  google_fonts: ^4.0.4
   universal_html: ^2.0.8
   shared_preferences: ^2.0.13
   package_info_plus: ^3.0.2

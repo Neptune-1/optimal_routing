@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -321,17 +320,21 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                                         : Alignment.topCenter,
                                     child: AnimatedSwitcher(
                                       duration: const Duration(milliseconds: 400),
-                                      child: Field(
-                                          key: Key("${widget.level} $gameNum $restartedTime"),
-                                          currentNumOfLines: currentNumOfLines,
-                                          tree: widget.example
-                                              ? exampleTree
-                                              : trees[widget.level][gameNum],
-                                          isGameOver: isGameOver,
-                                          showTip: showTipStream,
-                                          layerNumStream: layerNumStream,
-                                          layerFullNum: widget.layerNum != 1 ? 2 : 1,
-                                          projectionData: projectionData),
+                                      child: Transform(
+                                        transform:
+                                            Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1),
+                                        child: Field(
+                                            key: Key("${widget.level} $gameNum $restartedTime"),
+                                            currentNumOfLines: currentNumOfLines,
+                                            tree: widget.example
+                                                ? exampleTree
+                                                : trees[widget.level][gameNum],
+                                            isGameOver: isGameOver,
+                                            showTip: showTipStream,
+                                            layerNumStream: layerNumStream,
+                                            layerFullNum: widget.layerNum != 1 ? 2 : 1,
+                                            projectionData: projectionData),
+                                      ),
                                     ),
                                   );
                           }),
@@ -371,10 +374,13 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                                                 )),
                                                 minimumSize: MaterialStateProperty.all(Size.zero),
                                                 padding: MaterialStateProperty.all(EdgeInsets.zero),
-                                                backgroundColor:
-                                                    MaterialStateProperty.all(Theme.of(context).colorScheme.primary),
+                                                backgroundColor: MaterialStateProperty.all(
+                                                    Theme.of(context).colorScheme.primary),
                                                 overlayColor: MaterialStateProperty.all(
-                                                    Theme.of(context).colorScheme.secondary.withOpacity(0.1)),
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .secondary
+                                                        .withOpacity(0.1)),
                                                 elevation: MaterialStateProperty.all(0)),
                                             onPressed: () {
                                               trees[widget.level].length - 1 == gameNum
@@ -382,9 +388,12 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                                                   : startNewGame();
                                             },
                                             child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: Style.blockM * 0.3,
-                                                  horizontal: 2.5 * Style.blockM),
+                                              padding: EdgeInsets.fromLTRB(
+                                                2.5 * Style.blockM,
+                                                Style.blockM * 0.5,
+                                                2.5 * Style.blockM,
+                                                Style.blockM * 0.3,
+                                              ),
                                               child: Text(
                                                   trees[widget.level].length - 1 == gameNum
                                                       ? "Back"
@@ -392,7 +401,8 @@ class _GamePageState extends State<GamePage> with TickerProviderStateMixin {
                                                   style: GoogleFonts.josefinSans(
                                                       fontSize: Style.blockM * 1.4,
                                                       fontWeight: FontWeight.w800,
-                                                      color: Theme.of(context).colorScheme.secondary)),
+                                                      color:
+                                                          Theme.of(context).colorScheme.secondary)),
                                             ),
                                           )
                                         : Container());
