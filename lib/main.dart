@@ -1,13 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:optimal_routing/pages/explain_page.dart';
 import 'package:optimal_routing/pages/game_page_layers.dart';
 import 'package:optimal_routing/pages/level_page_layers_v4.dart';
 import 'package:optimal_routing/utils/ads.dart';
 import 'package:optimal_routing/utils/prefs.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
+// import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'consts/styles.dart';
 
@@ -24,9 +24,9 @@ Future<void> initFirebaseAdmob() async {
           measurementId: "G-5WDJ5DJHFX"),
     );
   } else {
-    MobileAds.instance.initialize();
+    // MobileAds.instance.initialize();
     Firebase.initializeApp();
-    if (!kIsWeb) Ads.createRewardedAd();
+    // if (!kIsWeb) Ads.createRewardedAd();
   }
 }
 
@@ -38,12 +38,13 @@ void main() async {
   //if(Prefs.getInt("lamps") == null)
   //Prefs.setInt("lamps", 20);
   //Prefs.clear();// TODO remove
-  await SentryFlutter.init(
-    (options) {
-      options.dsn = 'https://a8c1056062c345239476ea6986608faf@o625447.ingest.sentry.io/6255950';
-    },
-    appRunner: () => runApp(MyApp()),
-  );
+  // await SentryFlutter.init(
+  //   (options) {
+  //     options.dsn = 'https://a8c1056062c345239476ea6986608faf@o625447.ingest.sentry.io/6255950';
+  //   },
+  //   appRunner: () => runApp(MyApp()),
+  // );
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {

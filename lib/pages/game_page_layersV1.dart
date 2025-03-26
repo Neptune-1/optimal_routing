@@ -59,7 +59,7 @@ class _GamePageV1State extends State<GamePageV1> with TickerProviderStateMixin {
     projectionDataStream = projectionData.stream.asBroadcastStream();
     isGameOverStream = isGameOver.stream.asBroadcastStream();
 
-    Lamps();
+    // Lamps();
 
     controller = AnimationController(
       value: 1,
@@ -216,7 +216,7 @@ class _GamePageV1State extends State<GamePageV1> with TickerProviderStateMixin {
                             children: [
                               SizedBox(
                                 width: Style.blockM *
-                                    (Ads.rewardedAd == null || widget.example ? 3 : 1.4),
+                                    (null == null || widget.example ? 3 : 1.4),
                                 height: Style.blockM * 1.4,
                                 child: Center(
                                   child: GestureDetector(
@@ -244,7 +244,7 @@ class _GamePageV1State extends State<GamePageV1> with TickerProviderStateMixin {
                                   ),
                                 ),
                               ),
-                              (Ads.rewardedAd == null || widget.example) && !kIsWeb
+                              (null == null || widget.example) && !kIsWeb
                                   ? const SizedBox()
                                   : SizedBox(
                                       width: Style.blockM * 3,
@@ -265,15 +265,15 @@ class _GamePageV1State extends State<GamePageV1> with TickerProviderStateMixin {
                                                   ),
                                                 ));
                                               }),
-                                          Center(
-                                            child: GestureDetector(
-                                              behavior: HitTestBehavior.translucent,
-                                              onTap: () => Lamps.showBottomSheet(context, showTip),
-                                              child: Icon(Icons.lightbulb,
-                                                  size: Style.blockM * 1.1,
-                                                  color: Theme.of(context).colorScheme.primary),
-                                            ),
-                                          ),
+                                          // Center(
+                                          //   child: GestureDetector(
+                                          //     behavior: HitTestBehavior.translucent,
+                                          //     onTap: () => Lamps.showBottomSheet(context, showTip),
+                                          //     child: Icon(Icons.lightbulb,
+                                          //         size: Style.blockM * 1.1,
+                                          //         color: Theme.of(context).colorScheme.primary),
+                                          //   ),
+                                          // ),
                                         ],
                                       ),
                                     ),

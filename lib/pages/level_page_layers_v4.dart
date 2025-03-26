@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:in_app_review/in_app_review.dart';
+// import 'package:in_app_review/in_app_review.dart';
 import 'package:optimal_routing/pages/game_page_layers.dart';
 
 import '../consts/styles.dart';
@@ -23,7 +23,7 @@ class LevelPageV4 extends StatefulWidget {
 
 class _LevelPageV4State extends State<LevelPageV4> with TickerProviderStateMixin {
   int level = 0;
-  final InAppReview inAppReview = InAppReview.instance;
+  // final InAppReview inAppReview = InAppReview.instance;
   late final List<Widget> allLevelFields;
   late final PageController levelsController;
 
