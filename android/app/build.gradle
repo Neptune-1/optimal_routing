@@ -42,12 +42,12 @@ android {
     compileSdkVersion 35
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
-        jvmTarget = '11'  // Update to Java 11 for Kotlin 2.x compatibility
+        jvmTarget = '1.8'  // Update to Java 11 for Kotlin 2.x compatibility
     }
 
     sourceSets {
@@ -92,7 +92,7 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation platform('com.google.firebase:firebase-bom:33.11.0')
+    implementation platform('com.google.firebase:firebase-bom:29.1.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.android.support:multidex:1.0.3'
 }
