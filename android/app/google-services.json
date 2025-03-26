@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "655739182965",
     "project_id": "routes-ce6ef",
-    "storage_bucket": "routes-ce6ef.appspot.com"
+    "storage_bucket": "routes-ce6ef.firebasestorage.app"
   },
   "client": [
     {
@@ -13,14 +13,6 @@
         }
       },
       "oauth_client": [
-        {
-          "client_id": "655739182965-45l98ki2o4hi92tcthdtggh253q5j62h.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.alexosh.optimal_routing",
-            "certificate_hash": "ab7b59d1deceea0e35dcbf8f07cffe6846e4b451"
-          }
-        },
         {
           "client_id": "655739182965-j75vdoq6p2jlp066a6kg31d0v2f86gp8.apps.googleusercontent.com",
           "client_type": 1,
@@ -45,17 +37,11 @@
             {
               "client_id": "655739182965-d29mbid1g2tho27t377fc911jurees0e.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "655739182965-felsq12bj5enaint840ak850kmj3sgeb.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.alexosh.optimalRouting"
-              }
             }
           ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-6051303150575720~7740393645"
     }
   ],
   "configuration_version": "1"
